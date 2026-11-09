@@ -6,21 +6,23 @@ Your music, a little closer.
 3. Choose Spotify or Apple Music, open that desktop app, and play a song.
 4. Allow the macOS Automation prompt so FloatLyrics can read the track and position.
 
-The floating window stays on top. Open Appearance with the sliders button,
-the menu bar, or Command-comma. Window and Island have separate background
-opacity and lyric colors. Choose Automatic, a color swatch, a custom color,
-or enter a six-digit hex color. Changes preview live and are saved.
-Choose Glass, Smoke or Ink for a neutral material. Appearance uses the same
-glass panel and controls as the lyrics window. Text presets are automatic,
-graphite, charcoal, silver and white; older blue/purple presets are replaced.
-Lyrics stay crisp as the background fades. Drag the window to place it.
+The floating window shows the song, current lyric and next line. Drag it to
+place it. Open the three-dot menu for the music player, Dynamic Island,
+Settings or Hide. The window stays on top by default.
 
-Use the MacBook button to enter Dynamic Island. Its black shape joins the camera
+Settings opens with three choices: Music player, Appearance, Behavior & timing.
+Appearance holds separate Window and Island opacity and neutral text colors.
+More options holds custom colors, hex entry, material, text size and island layout.
+Changes apply immediately and are saved. Open Settings with Command-comma or
+from the menu bar. Lyrics stay crisp as the background fades.
+
+Use the three-dot menu to enter Dynamic Island. Its black shape joins the camera
 housing at the screen's top edge. It stays one line high and 320 points wide by
 default. Click to expand; it automatically shrinks when you return to work.
 Hover expansion is optional. Use the up chevron to collapse, or the window arrow
-to return to floating lyrics. Adjust island width, background and text color in
-the Island appearance tab. The camera cap stays black as the lyric area fades.
+to return to floating lyrics. Adjust island background and text color under
+Settings > Appearance > Island, and width under More options. The camera cap
+stays black as the lyric area fades.
 
 If click through is enabled or lyrics are hidden, use the menu bar to restore them.
 

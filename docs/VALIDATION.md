@@ -39,3 +39,12 @@ The default distributable is ad-hoc signed. Developer ID notarization requires a
 - Legacy colored preset/custom selections are migrated while opacity and island size remain unchanged. Explicit new custom color choices still use the native picker and hex field.
 - On-device inspection confirmed the borderless glass Appearance panel, neutral segmented control, grayscale swatches and slider tint, and migrated island text color. The live window/island previews retain independent controls.
 - The 1.2.1 universal DMG passed checksum verification and a read-only mount verified installer contents, both architectures and the strict app signature.
+
+## 1.3 simple primary interface
+
+- Reduced the floating card from 440 × 304 to 400 × 224 points. It shows the song, current lyric, next line and one options menu. Branding, waveform, playback animation, source switcher and provider/sync badges were removed from the primary view.
+- Player selection, island mode, Settings and Hide remain in the options menu. The menu bar follows the same hierarchy, with player actions in a submenu.
+- Settings starts at a compact three-row index. Appearance exposes only the profile, opacity and text presets; custom colors, material, type size and island layout live under More options. Playback connection and behavior/timing have their own pages. Decorative previews were removed.
+- On-device checks verified live Spotify lyrics, the main menu opening Settings at its root, both appearance detail profiles, the music and behavior pages, resizing, visible Back controls, and Escape stepping back through nested pages. Existing opacity, color and island width choices were retained.
+- All 24 existing playback, lyrics, appearance and geometry tests pass. No new tests were added for this visual/navigation change.
+- The 1.3.0 universal release compiled for both architectures. Its DMG passed checksum verification and a read-only installer-content/strict-signature check. The packaged app's primary view was visually inspected with original sample lyrics.
