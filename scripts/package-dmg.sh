@@ -29,5 +29,8 @@ if [[ -n "${NOTARY_PROFILE:-}" ]]; then
     xcrun stapler staple "$output"
 fi
 hdiutil verify "$output"
-shasum -a 256 "$output" > "$output.sha256"
+(
+    cd dist
+    shasum -a 256 "FloatLyrics-$version.dmg" > "FloatLyrics-$version.dmg.sha256"
+)
 printf 'Packaged %s\n' "$output"
