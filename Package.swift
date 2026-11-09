@@ -8,6 +8,7 @@ let package = Package(
     targets: [
         .target(name: "LyricsCore"),
         .executableTarget(name: "FloatLyrics", dependencies: ["LyricsCore"]),
-        .testTarget(name: "LyricsCoreTests", dependencies: ["LyricsCore"])
+        .testTarget(name: "LyricsCoreTests", dependencies: ["LyricsCore"]),
+        .testTarget(name: "PlaybackTests", dependencies: ["FloatLyrics"])
     ]
 )

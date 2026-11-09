@@ -1,0 +1,24 @@
+FLOATLYRICS
+Your music, a little closer.
+
+1. Drag FloatLyrics into Applications.
+2. Open FloatLyrics. Look for the quotation bubble in your menu bar.
+3. Choose Spotify or Apple Music, open that desktop app, and play a song.
+4. Allow the macOS Automation prompt so FloatLyrics can read the track and position.
+
+The floating window stays on top at 88% opacity. Use the sliders button to adjust
+opacity, lyric size, timing, and click through. Drag the window to place it.
+
+Use the notch button to tuck lyrics below the camera cutout. On a Mac without a
+notch it becomes a compact strip below the menu bar. Expand it with the arrow.
+The physical camera cutout itself cannot display text.
+
+If click through is enabled or lyrics are hidden, use the menu bar to restore them.
+
+Needs macOS 14 or later. Native Liquid Glass requires macOS 26.
+Lyrics by LRCLIB. Some recordings have unsynced lyrics or no lyrics available.
+Browser music players and playback on other devices are not supported.
+
+Developer builds are ad-hoc signed unless a Developer ID and notarization profile
+are supplied at build time. To open an unnotarized build you trust, use System
+Settings > Privacy & Security > Open Anyway after the initial launch attempt.

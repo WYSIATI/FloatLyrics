@@ -29,9 +29,15 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         statusItem.button?.image = NSImage(systemSymbolName: "quote.bubble", accessibilityDescription: "FloatLyrics")
         statusItem.button?.toolTip = "FloatLyrics · lyrics beside your work"
         rebuildMenu()
-        model.$opacity.sink { [weak self] value in self?.floating.alphaValue = value; self?.notch.alphaValue = max(0.6, value) }.store(in: &subscriptions)
-        model.$alwaysOnTop.sink { [weak self] value in self?.floating.level = value ? .floating : .normal; self?.rebuildMenu() }.store(in: &subscriptions)
-        model.$clickThrough.sink { [weak self] value in self?.floating.ignoresMouseEvents = value; self?.notch.ignoresMouseEvents = value; self?.rebuildMenu() }.store(in: &subscriptions)
+        model.$opacity.sink { [weak self] value in self?.floating.alphaValue = value; self?.notch.alphaValue = value }.store(in: &subscriptions)
+        model.$alwaysOnTop.sink { [weak self] value in
+            self?.floating.level = value ? .floating : .normal
+            DispatchQueue.main.async { self?.rebuildMenu() }
+        }.store(in: &subscriptions)
+        model.$clickThrough.sink { [weak self] value in
+            self?.floating.ignoresMouseEvents = value; self?.notch.ignoresMouseEvents = value
+            DispatchQueue.main.async { self?.rebuildMenu() }
+        }.store(in: &subscriptions)
         model.$notchMode.dropFirst().sink { [weak self] _ in
             // @Published emits before the value changes. Apply the new model state on the next turn.
             DispatchQueue.main.async { self?.hidden = false; self?.updatePresentation(); self?.rebuildMenu() }
@@ -80,10 +86,10 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         guard let screen = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? floating.screen ?? NSScreen.main else { return }
         let inset = screen.safeAreaInsets.top
         // A physical camera cutout cannot display pixels. The lyric strip hangs just below it.
-        let height = inset + 84
+        let height: CGFloat = 84
         notch.level = NSWindow.Level(rawValue: NSWindow.Level.statusBar.rawValue + 1)
-        notch.contentView = NSHostingView(rootView: NotchView(model: model, topInset: inset))
-        let top = inset > 0 ? screen.frame.maxY : screen.visibleFrame.maxY - 8
+        notch.contentView = NSHostingView(rootView: NotchView(model: model, hasNotch: inset > 0))
+        let top = inset > 0 ? screen.frame.maxY - inset : screen.visibleFrame.maxY - 8
         notch.setFrame(NSRect(x: screen.frame.midX - 255, y: top - height, width: 510, height: height), display: true)
     }
 

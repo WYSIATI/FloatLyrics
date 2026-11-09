@@ -2,13 +2,13 @@ import SwiftUI
 
 struct NotchView: View {
     @ObservedObject var model: AppModel
-    let topInset: CGFloat
+    let hasNotch: Bool
     @State private var hovered = false
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear.frame(height: topInset)
             HStack(spacing: 15) {
                 PlaybackPulse(active: model.snapshot.isPlaying)
+                    .accessibilityValue("\(Int(model.snapshot.position)) seconds")
                 TimelineView(.periodic(from: .now, by: 0.1)) { context in
                     VStack(alignment: .leading, spacing: 5) {
                         Text(model.snapshot.track.map { "\($0.title) · \($0.artist)" } ?? model.source.name)
@@ -22,9 +22,12 @@ struct NotchView: View {
                     Image(systemName: "arrow.down.right.and.arrow.up.left").font(.system(size: 11, weight: .semibold)).foregroundStyle(.white.opacity(hovered ? 0.8 : 0.3)).frame(width: 28, height: 32)
                 }.buttonStyle(.plain).help("Expand floating lyrics").accessibilityLabel("Expand floating lyrics")
             }.padding(.horizontal, 25).frame(height: 84)
-                .background(.black.opacity(0.95), in: UnevenRoundedRectangle(bottomLeadingRadius: 24, bottomTrailingRadius: 24))
-                .overlay(alignment: .bottom) { UnevenRoundedRectangle(bottomLeadingRadius: 24, bottomTrailingRadius: 24).strokeBorder(.white.opacity(0.08)).allowsHitTesting(false) }
+                .background(.black.opacity(0.95), in: islandShape)
+                .overlay { islandShape.strokeBorder(.white.opacity(0.08)).allowsHitTesting(false) }
         }.frame(width: 510).onHover { hovered = $0 }
             .preferredColorScheme(.dark)
+    }
+    private var islandShape: UnevenRoundedRectangle {
+        UnevenRoundedRectangle(topLeadingRadius: hasNotch ? 0 : 24, bottomLeadingRadius: 24, bottomTrailingRadius: 24, topTrailingRadius: hasNotch ? 0 : 24)
     }
 }

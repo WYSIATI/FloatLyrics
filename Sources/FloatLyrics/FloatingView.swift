@@ -31,6 +31,7 @@ struct FloatingView: View {
                 }
                 Spacer(minLength: 0)
                 PlaybackPulse(active: model.snapshot.isPlaying)
+                    .accessibilityValue("\(Int(model.snapshot.position)) seconds")
             }.padding(.horizontal, 24).padding(.top, 19)
 
             lyricContent.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -44,7 +45,7 @@ struct FloatingView: View {
                     Button("Open \(model.source.name)") { model.openPlayer() }
                 } label: {
                     HStack(spacing: 5) { Text(model.source.name); Image(systemName: "chevron.down").font(.system(size: 8, weight: .bold)) }
-                }.menuStyle(.borderlessButton).fixedSize().help("Choose your music app")
+                }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().help("Choose your music app")
                 if model.demo { Text("PREVIEW").font(.system(size: 9, weight: .bold)).foregroundStyle(.mint) }
                 Spacer()
                 if model.snapshot.track != nil {

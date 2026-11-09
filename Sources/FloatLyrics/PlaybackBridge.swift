@@ -12,20 +12,24 @@ struct PlaybackError: LocalizedError, Sendable {
 final class PlaybackBridge: Sendable {
     private let queue = DispatchQueue(label: "app.floatlyrics.playback", qos: .userInitiated)
 
+    static func script(for source: PlayerSource) -> String {
+        let duration = source == .spotify ? "((duration of t) / 1000.0)" : "(duration of t)"
+        let identifier = source == .spotify ? "(id of t as text)" : "(persistent ID of t as text)"
+        return """
+        with timeout of 3 seconds
+            tell application id "\(source.bundleID)"
+                if player state is stopped then return {"idle"}
+                set t to current track
+                return {name of t as text, artist of t as text, album of t as text, \(duration), player position, (player state is playing), \(identifier)}
+            end tell
+        end timeout
+        """
+    }
+
     func read(_ source: PlayerSource) async throws -> PlaybackSnapshot {
         try await withCheckedThrowingContinuation { continuation in
             queue.async {
-                let duration = source == .spotify ? "((duration of t) / 1000.0)" : "(duration of t)"
-                let identifier = source == .spotify ? "(id of t as text)" : "(persistent ID of t as text)"
-                let script = """
-                with timeout of 3 seconds
-                    tell application id "\(source.bundleID)"
-                        if player state is stopped then return {"idle"}
-                        set t to current track
-                        return {name of t as text, artist of t as text, album of t as text, \(duration), player position, (player state is playing), \(identifier)}
-                    end tell
-                end timeout
-                """
+                let script = Self.script(for: source)
                 var error: NSDictionary?
                 guard let appleScript = NSAppleScript(source: script) else {
                     continuation.resume(throwing: PlaybackError(code: -1, message: "Could not prepare the playback connection.")); return

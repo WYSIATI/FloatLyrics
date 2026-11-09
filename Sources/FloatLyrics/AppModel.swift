@@ -89,6 +89,7 @@ final class AppModel: NSObject, ObservableObject {
         do {
             let next = try await bridge.read(requestedSource)
             guard requestedSource == source else { return }
+            diagnostic("playback source=\(requestedSource.rawValue) position=\(next.position) duration=\(next.track?.duration ?? 0) playing=\(next.isPlaying)")
             connectionMessage = nil
             let changed = next.track?.cacheKey != snapshot.track?.cacheKey
             snapshot = next
@@ -116,6 +117,7 @@ final class AppModel: NSObject, ObservableObject {
                 let result = try await client.fetch(track, force: force)
                 guard let self, !Task.isCancelled, self.generation == requestGeneration else { return }
                 self.lyrics = result; self.loading = false
+                self.diagnostic("lyrics synced=\(result.isSynced) lines=\(result.lines.count) first=\(result.lines.first?.time ?? -1)")
             } catch {
                 guard let self, !Task.isCancelled, self.generation == requestGeneration else { return }
                 self.loading = false
@@ -142,10 +144,17 @@ final class AppModel: NSObject, ObservableObject {
     }
 
     func line(at date: Date) -> String {
+        if denied { return "Allow playback access · expand to connect" }
+        if lyricsMessage != nil { return "Lyrics unavailable · expand to retry" }
         guard let lyrics else { return loading ? "Finding the words…" : (snapshot.track?.title ?? "Your music, a little closer.") }
         if lyrics.instrumental { return "Instrumental ♪" }
         guard lyrics.isSynced else { return "Unsynced lyrics · open the floating view" }
         guard let index = lyrics.activeIndex(at: snapshot.position(at: date), adjustment: timingAdjustment) else { return "♪" }
         return lyrics.lines[index].text.isEmpty ? "♪" : lyrics.lines[index].text
+    }
+
+    private func diagnostic(_ message: String) {
+        guard ProcessInfo.processInfo.arguments.contains("--diagnostics") else { return }
+        FileHandle.standardOutput.write(Data((message + "\n").utf8))
     }
 }
