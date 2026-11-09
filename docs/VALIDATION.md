@@ -2,7 +2,7 @@
 
 - Xcode 26.6 / Swift 6.3.3; deployment target macOS 14.
 - Universal release build compiles for arm64 and x86_64.
-- 24 automated tests pass: lyrics/timing/network behavior, both player dictionaries, camera-aware island bounds, independent appearance persistence, malformed/older preferences, custom hex validation, automatic-color contrast, legacy accent migration, and grayscale-only shipped presets/materials.
+- 27 automated tests pass: lyrics/timing/network behavior, both player dictionaries, camera-aware island bounds, independent appearance persistence, malformed/older preferences, custom hex validation, automatic-color contrast, legacy accent migration, grayscale-only shipped presets/materials, empty-record fallback and malformed service responses.
 - Live Spotify on this Mac detected track changes automatically, fetched LRCLIB synchronized lyrics, and displayed advancing lines in both floating and notch modes.
 - Native controls verified: opacity adjustment, timing adjustment, notch transition and expansion, and pause/resume indication. Spotify backward seeking was exercised while monitoring the app's playback position and current lyric.
 - A recording absent from LRCLIB correctly displayed a no-lyrics state with retry.
@@ -48,3 +48,12 @@ The default distributable is ad-hoc signed. Developer ID notarization requires a
 - On-device checks verified live Spotify lyrics, the main menu opening Settings at its root, both appearance detail profiles, the music and behavior pages, resizing, visible Back controls, and Escape stepping back through nested pages. Existing opacity, color and island width choices were retained.
 - All 24 existing playback, lyrics, appearance and geometry tests pass. No new tests were added for this visual/navigation change.
 - The 1.3.0 universal release compiled for both architectures. Its DMG passed checksum verification and a read-only installer-content/strict-signature check. The packaged app's primary view was visually inspected with original sample lyrics.
+
+## 1.3.1 public-release review
+
+- Reviewed playback sampling, cancellation on track/source changes, lyric matching/cache behavior, island geometry/pointer containment, preference migration and nested settings navigation. Fixed the empty-record fallback and added readable invalid-response errors and whitespace-only rejection.
+- Added connect/open/retry actions to expanded-island recovery states; the compact footprint is unchanged. Native normal-state window and compact/expanded island layouts were inspected with original sample lyrics.
+- Preview mode uses a separate preferences domain. A before/after SHA-256 comparison of exported listener preferences confirmed that capturing window, opacity, settings and island scenes did not change listener preferences.
+- The local universal DMG passed checksum, license-content, version, both-architecture and strict app-signature checks.
+- GitHub Actions run 42636030937 passed all 27 tests, universal packaging and read-only installer verification on a clean macOS 26 runner.
+- The 14 original milestone commits and five annotated release tags were polished using the GitHub privacy identity. Each rewritten commit's source tree was compared with its original; a complete private backup is kept outside tracked files. No coauthor trailers were added.
