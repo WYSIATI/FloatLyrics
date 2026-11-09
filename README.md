@@ -14,7 +14,9 @@ The window defaults to **always on top** without stealing focus. Drag it whereve
 
 The MacBook button switches to **Dynamic Island**. Its default footprint is **320 points wide** with a **24-point single lyric line below the camera**, growing only as needed to fit the camera housing. Width adjusts from 280–400 points. It stays compact when the pointer passes by: click to expand, then move away to auto-collapse after 2.5 seconds. Hover expansion is optional. Expansion is limited to song details, the current lyric and collapse/return controls. On displays without a cutout, it becomes a top-edge island. Space outside its silhouette passes clicks through. The camera cap stays solid black while the lyric area's opacity adjusts independently.
 
-On macOS 26 the floating surface uses AppKit's native `NSGlassEffectView` with clear glass and a behind-window material backdrop. **Glacier, Midnight and Lavender** palettes provide light, dark and violet-tinted surfaces. Flat controls and broad fluid highlights replace embossed chrome; decorative movement happens only on hover and respects Reduce Motion. References: [Vibe Notch](https://github.com/farouqaldori/vibe-notch), [Chahat Soni's liquid-metal button](https://dribbble.com/shots/27633863-Liquid-metal-button-in-Figma) and [Konpo's flowing metal logo](https://dribbble.com/shots/25673199-Konpo-Liquid-Metal-Effect-on-Our-Logo). No reference media assets are bundled.
+The lyric window and Appearance panel share the same native glass surface, rounded edges, typography and selection controls. **Glass, Smoke and Ink** are neutral materials, with automatic, graphite, charcoal, silver and white lyric presets. Former blue/purple presets and legacy cool custom colors migrate to neutral defaults without changing opacity or island layout. The custom color picker and hex entry remain available for explicit personal choices.
+
+On macOS 26 both panels use AppKit's native `NSGlassEffectView` with clear glass and a behind-window material backdrop. Flat controls and neutral fluid highlights replace embossed chrome; decorative movement happens only on hover and respects Reduce Motion. References: [Vibe Notch](https://github.com/farouqaldori/vibe-notch), [Chahat Soni's liquid-metal button](https://dribbble.com/shots/27633863-Liquid-metal-button-in-Figma) and [Konpo's flowing metal logo](https://dribbble.com/shots/25673199-Konpo-Liquid-Metal-Effect-on-Our-Logo). No reference media assets are bundled.
 
 Track changes trigger a new lyrics lookup. Playback notifications plus a 750 ms poll detect changes, pause/resume and seeks; a local clock updates line timing between samples. Timed blank lines preserve instrumental breaks. Tracks with plain lyrics get a scrollable, explicitly unsynced view. Missing lyrics and network errors have a retry action. Exact lookup falls back to title/artist search, accepting only matching names and nearby durations; remix/live version tags stay intact.
 
@@ -26,7 +28,7 @@ Open `Package.swift` in Xcode 26 or build with `swift build`. Run the timing and
 
 ```sh
 bash scripts/build-app.sh     # universal Apple Silicon + Intel .app
-bash scripts/package-dmg.sh   # dist/FloatLyrics-1.2.0.dmg + SHA-256
+bash scripts/package-dmg.sh   # dist/FloatLyrics-1.2.1.dmg + SHA-256
 bash scripts/verify-dmg.sh    # mount read-only and verify the packaged app
 ```
 

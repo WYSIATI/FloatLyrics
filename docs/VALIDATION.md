@@ -2,7 +2,7 @@
 
 - Xcode 26.6 / Swift 6.3.3; deployment target macOS 14.
 - Universal release build compiles for arm64 and x86_64.
-- 21 automated tests pass: lyrics/timing/network behavior, both player dictionaries, camera-aware island bounds, independent appearance persistence, malformed/older preferences, custom hex validation, and automatic-color contrast on light/dark surfaces.
+- 24 automated tests pass: lyrics/timing/network behavior, both player dictionaries, camera-aware island bounds, independent appearance persistence, malformed/older preferences, custom hex validation, automatic-color contrast, legacy accent migration, and grayscale-only shipped presets/materials.
 - Live Spotify on this Mac detected track changes automatically, fetched LRCLIB synchronized lyrics, and displayed advancing lines in both floating and notch modes.
 - Native controls verified: opacity adjustment, timing adjustment, notch transition and expansion, and pause/resume indication. Spotify backward seeking was exercised while monitoring the app's playback position and current lyric.
 - A recording absent from LRCLIB correctly displayed a no-lyrics state with retry.
@@ -31,3 +31,11 @@ The default distributable is ad-hoc signed. Developer ID notarization requires a
 - Passing the pointer over the island does not expand it by default. Click expansion collapses 2.5 seconds after the pointer leaves; hover expansion is an explicit preference. Areas outside the silhouette continue passing clicks through.
 - Glacier, Midnight and Lavender palettes replace the raised chrome treatment. Fluid accent motion is limited to hover and respects Reduce Motion. The camera cap remains opaque while the lyric extension fades independently.
 - The 1.2 universal DMG passed checksum, mounted installer-content and strict app-signature verification.
+
+## 1.2.1 consistent neutral styling
+
+- The lyric and Appearance panels use the same glass-card style and segmented control component. All settings entry points open the same borderless glass panel, with a matching close button and dark/light appearance.
+- Shipped material and text colors are grayscale. Glass, Smoke and Ink replace the colored materials. Graphite, charcoal, silver and white replace the blue/purple text presets; the icon and accent reflections are neutral as well.
+- Legacy colored preset/custom selections are migrated while opacity and island size remain unchanged. Explicit new custom color choices still use the native picker and hex field.
+- On-device inspection confirmed the borderless glass Appearance panel, neutral segmented control, grayscale swatches and slider tint, and migrated island text color. The live window/island previews retain independent controls.
+- The 1.2.1 universal DMG passed checksum verification and a read-only mount verified installer contents, both architectures and the strict app signature.

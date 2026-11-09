@@ -10,7 +10,9 @@ The floating window stays on top. Open Appearance with the sliders button,
 the menu bar, or Command-comma. Window and Island have separate background
 opacity and lyric colors. Choose Automatic, a color swatch, a custom color,
 or enter a six-digit hex color. Changes preview live and are saved.
-Choose Glacier, Midnight or Lavender for the floating material.
+Choose Glass, Smoke or Ink for a neutral material. Appearance uses the same
+glass panel and controls as the lyrics window. Text presets are automatic,
+graphite, charcoal, silver and white; older blue/purple presets are replaced.
 Lyrics stay crisp as the background fades. Drag the window to place it.
 
 Use the MacBook button to enter Dynamic Island. Its black shape joins the camera
