@@ -13,9 +13,12 @@ hdiutil attach -readonly -nobrowse -mountpoint "$mount" "$image"
 app="$mount/FloatLyrics.app"
 test -x "$app/Contents/MacOS/FloatLyrics"
 test -f "$app/Contents/Resources/AppIcon.icns"
+test -f "$app/Contents/Resources/LICENSE.txt"
 test "$(readlink "$mount/Applications")" = /Applications
 test -f "$mount/Read me.txt"
+test -f "$mount/License.txt"
 plutil -lint "$app/Contents/Info.plist"
+test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")" = "$version"
 lipo "$app/Contents/MacOS/FloatLyrics" -verify_arch arm64 x86_64
 codesign --verify --deep --strict "$app"
 printf 'Installer contents, universal executable, and app signature verified.\n'

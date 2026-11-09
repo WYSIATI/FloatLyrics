@@ -1,59 +1,96 @@
 # FloatLyrics
 
-A native macOS companion for singing along while you work. Rebuilt from scratch in Swift 6 and SwiftUI, with no third-party dependencies.
+**Keep working. Keep the words close.**
 
-Requires macOS 14 or later. Native Liquid Glass is available on macOS 26; earlier systems use a translucent material.
+A small, native macOS lyrics companion for Spotify and Apple Music. The current
+line floats beside your work, or tucks into your Mac's notch.
 
-## Use
+[**Download for macOS →**](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/FloatLyrics.dmg)
+· [All releases](https://github.com/WYSIATI/FloatLyrics/releases)
+· [Launch film](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/FloatLyrics-launch.mp4)
 
-1. Open the DMG and drag **FloatLyrics** into **Applications**.
-2. Launch it and choose **Music Player → Spotify** or **Apple Music** from the **•••** menu or menu bar.
-3. Play a song in that desktop app. Allow the Automation prompt if macOS asks.
+![FloatLyrics with original sample lyrics](docs/images/floatlyrics-window.jpg)
 
-The main window shows the song, current lyric and a quiet next line in a 400 × 224 point glass card. The **•••** menu holds the music player, Dynamic Island, Settings and Hide actions. The window defaults to **always on top** without stealing focus; drag it wherever you like.
+## Install
 
-Open **Settings** through **•••**, the menu bar, or **⌘,**. Its first level has just **Music player**, **Appearance**, and **Behavior & timing**. Under Appearance, Window and Island have independent background opacity (15–100%) and neutral text presets. **More options** holds custom color/hex, window material/text size, and island width/hover behavior. Changes apply live and persist. Behavior & timing contains always-on-top, click through, display mode and timing (±5 seconds). New installs start with 70% window glass opacity; existing choices are preserved. Text stays crisp as the background fades. The menu bar always provides access to Settings and hidden lyrics.
+1. Download the DMG and drag **FloatLyrics** to **Applications**.
+2. Open it. Choose **Music Player → Spotify** or **Apple Music** from **•••**.
+3. Play a song in that desktop app and allow macOS Automation when asked.
 
-Choose **Move to Dynamic Island** in **•••**. Its default footprint is **320 points wide** with a **24-point single lyric line below the camera**, growing only as needed to fit the camera housing. Width adjusts from 280–400 points. It stays compact when the pointer passes by: click to expand, then move away to auto-collapse after 2.5 seconds. Hover expansion is optional. Expansion is limited to song details, the current lyric and collapse/return controls. On displays without a cutout, it becomes a top-edge island. Space outside its silhouette passes clicks through. The camera cap stays solid black while the lyric area's opacity adjusts independently.
+Requires **macOS 14+**, with a universal Apple Silicon/Intel build. Native Liquid
+Glass is available on **macOS 26+**; earlier systems use a translucent material.
 
-The lyric window and Settings share the same native glass surface, rounded edges and typography. **Glass, Smoke and Ink** are neutral materials, with automatic, graphite, charcoal, silver and white lyric presets. Former blue/purple presets and legacy cool custom colors migrate to neutral defaults without changing opacity or island layout. The custom color picker and hex entry remain available under More options.
+**Public preview:** the download is ad-hoc signed and **not notarized**. After an
+initial launch attempt, macOS may require **System Settings → Privacy & Security
+→ Open Anyway**. Download only from this repository's Releases page. The release
+includes [SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/SHA256SUMS.txt).
+You can also build from source.
 
-On macOS 26 both panels use AppKit's native `NSGlassEffectView` with clear glass and a behind-window material backdrop. Flat controls and neutral fluid highlights replace embossed chrome; decorative movement happens only on hover and respects Reduce Motion. References: [Vibe Notch](https://github.com/farouqaldori/vibe-notch), [Chahat Soni's liquid-metal button](https://dribbble.com/shots/27633863-Liquid-metal-button-in-Figma) and [Konpo's flowing metal logo](https://dribbble.com/shots/25673199-Konpo-Liquid-Metal-Effect-on-Our-Logo). No reference media assets are bundled.
+## Quiet by default
 
-Track changes trigger a new lyrics lookup. Playback notifications plus a 750 ms poll detect changes, pause/resume and seeks; a local clock updates line timing between samples. Timed blank lines preserve instrumental breaks. Tracks with plain lyrics get a scrollable, explicitly unsynced view. Missing lyrics and network errors have a retry action. Exact lookup falls back to title/artist search, accepting only matching names and nearby durations; remix/live version tags stay intact.
+- **A glance, then back to work.** The 400 × 224 point window shows the song,
+  current line, next line and one menu. It stays on top without taking focus.
+- **A line in your notch.** Dynamic Island joins the camera housing, with a
+  24-point lyric extension and a default width of 320 points. Click to expand;
+  it shrinks when you return to work. No-notch displays use a top-edge island.
+- **Your player, in time.** Local Spotify and Apple Music playback drive free
+  LRCLIB lookups, with pause/seek updates, cached lyrics and retry states.
+- **Adjust only when you want to.** Settings starts with three choices.
+  Appearance holds opacity and neutral text colors; More options holds custom
+  colors, material, type size and island layout.
 
-Window position, source, material, opacity, lyric size, both lyric colors, island width, hover preference, always-on-top and display mode persist. Timing adjustment resets per song, and click through resets on relaunch so the app is recoverable.
+Open Settings from **•••**, the menu bar, or **⌘,**. Window and Island have separate
+opacity and text preferences. Only the background fades; lyrics stay crisp.
+Always-on-top, click through and lyric timing live under Behavior & timing.
+The menu bar restores access when lyrics are hidden or click through is enabled.
 
-## Development
+## Privacy and limitations
 
-Open `Package.swift` in Xcode 26 or build with `swift build`. Run the timing and lyrics-service tests with `swift test`.
+No account, analytics, event taps or Accessibility permission is required.
+macOS Automation reads the selected player's track and position. Only the
+current track's **title, artist, album and duration** are sent to
+[LRCLIB](https://lrclib.net/docs) over HTTPS. Lyrics are cached locally.
+
+Some recordings have no lyrics or only untimed lyrics, which are explicitly
+shown as unsynced. Browser players, Spotify Connect playback on another device
+and radio streams without usable metadata are outside the supported path.
+
+Live Spotify playback was checked on the development Mac. Apple Music's
+scripting integration was compiled against its installed dictionary; an active
+Apple Music playback session, Intel execution and older-macOS material rendering
+have not been tested end to end. See [validation](docs/VALIDATION.md).
+
+## Build and contribute
+
+Use **Xcode 26 or newer**. The Swift 6 / SwiftUI / AppKit app has no third-party
+runtime dependencies.
 
 ```sh
-bash scripts/build-app.sh     # universal Apple Silicon + Intel .app
-bash scripts/package-dmg.sh   # dist/FloatLyrics-1.3.0.dmg + SHA-256
-bash scripts/verify-dmg.sh    # mount read-only and verify the packaged app
+swift test
+ARCHITECTURE=native bash scripts/build-app.sh
+open build/FloatLyrics.app
+
+# Universal installer, stable download alias and checksums:
+bash scripts/package-dmg.sh
+bash scripts/verify-dmg.sh
 ```
 
-Build scripts need Xcode 26 or later and have no downloaded dependencies. Set `ARCHITECTURE=native` for a faster local build. Launch `build/FloatLyrics.app/Contents/MacOS/FloatLyrics --demo` for an original-lyrics visual preview, or `--diagnostics` for opt-in playback position diagnostics on standard output.
+For original-lyrics visual previews, launch the executable with `--demo`.
+`--demo-position 15` starts at a chosen sample time. Preview preferences are
+separate from listening preferences. `--diagnostics` prints opt-in playback
+diagnostics.
 
-The default package is **ad-hoc signed and unnotarized**. For distribution outside this Mac, use an installed Developer ID certificate and a configured notarization keychain profile:
+[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) ·
+[Release/signing instructions](docs/RELEASING.md) · [Changelog](CHANGELOG.md)
 
-```sh
-SIGNING_IDENTITY='Developer ID Application: …' NOTARY_PROFILE='…' bash scripts/package-dmg.sh
-```
+## Credits
 
-The script signs with the hardened runtime and Automation entitlement, notarizes and staples the app, then notarizes and staples the DMG. No credentials or signing certificates belong in the repository. An unnotarized downloaded build may require **System Settings → Privacy & Security → Open Anyway**.
+[LRCLIB](https://lrclib.net) supplies lyrics. The notch interaction was inspired
+by [Vibe Notch](https://github.com/farouqaldori/vibe-notch). Motion studies by
+[Chahat Soni](https://dribbble.com/shots/27633863-Liquid-metal-button-in-Figma) and
+[Konpo](https://dribbble.com/shots/25673199-Konpo-Liquid-Metal-Effect-on-Our-Logo)
+informed earlier explorations; no reference media is bundled.
 
-## Permissions and troubleshooting
-
-- If playback access is denied, enable FloatLyrics for the selected player under **Privacy & Security → Automation**, then choose **Music Player → Reconnect / Refresh Lyrics** in the menu bar.
-- Spotify must be running locally. Spotify Connect on another device can report a different clock and is outside the supported playback path.
-- Apple Music needs a playable local or streamed song; radio streams without usable metadata may have no match.
-- Lyrics cache: `~/Library/Caches/app.floatlyrics.desktop/lyrics`. Preferences: the `app.floatlyrics.desktop` user defaults domain. There is no account login or telemetry.
-- Always-on-top works across ordinary apps and Spaces. macOS protected system screens and some exclusive full-screen apps can restrict third-party overlays.
-
-## Data sources
-
-Playback comes from the selected **desktop** app, Spotify or Apple Music, through macOS Automation. Browser players and playback on other devices are not supported. Lyrics come from [LRCLIB](https://lrclib.net/docs), a free public API without an API key. Only the current track's title, artist, album and duration are sent to LRCLIB. Successfully fetched lyrics are cached locally. Availability and timing depend on the recording and community data.
-
-FloatLyrics is an independent app, unaffiliated with Apple, Spotify or LRCLIB. Lyrics remain the property of their respective owners.
+[MIT license](LICENSE). Third-party lyrics and trademarks retain their owners'
+rights. FloatLyrics is independent of Apple, Spotify, Manus and Cue.
+[Full notices](NOTICE.md).

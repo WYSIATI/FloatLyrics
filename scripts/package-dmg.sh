@@ -11,6 +11,7 @@ trap 'rm -rf "$staging"' EXIT
 ditto "$app" "$staging/FloatLyrics.app"
 ln -s /Applications "$staging/Applications"
 cp Resources/Install.txt "$staging/Read me.txt"
+cp LICENSE "$staging/License.txt"
 
 if [[ -n "${NOTARY_PROFILE:-}" ]]; then
     ditto -c -k --keepParent "$app" build/FloatLyrics-notarize.zip
@@ -34,3 +35,8 @@ hdiutil verify "$output"
     shasum -a 256 "FloatLyrics-$version.dmg" > "FloatLyrics-$version.dmg.sha256"
 )
 printf 'Packaged %s\n' "$output"
+cp "$output" "$PWD/dist/FloatLyrics.dmg"
+(
+    cd dist
+    shasum -a 256 FloatLyrics.dmg > SHA256SUMS.txt
+)
