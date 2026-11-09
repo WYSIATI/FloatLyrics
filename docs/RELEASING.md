@@ -8,6 +8,8 @@
 5. Tag the tested commit. Upload `dist/FloatLyrics.dmg` and
    `dist/SHA256SUMS.txt` to that release. Keep the repository public so anonymous
    users can download through the README's stable latest-release link.
+   If including launch media, run `bash marketing/build.sh`, add the media files
+   to `SHA256SUMS.txt`, and upload the MP4, poster and optional captions too.
 6. Download the published DMG without authentication, compare its checksum and
    run the installer verifier against that downloaded copy.
 
