@@ -7,18 +7,18 @@ final class AppModel: NSObject, ObservableObject {
     @Published var source: PlayerSource {
         didSet {
             guard source != oldValue else { return }
-            UserDefaults.standard.set(source.rawValue, forKey: "source")
+            defaults.set(source.rawValue, forKey: "source")
             denied = false; resetPlayback(); Task { await poll() }
         }
     }
-    @Published var opacity: Double { didSet { UserDefaults.standard.set(opacity, forKey: "opacity") } }
+    @Published var opacity: Double { didSet { defaults.set(opacity, forKey: "opacity") } }
     @Published var appearance: AppearancePreferences {
-        didSet { if let data = try? JSONEncoder().encode(appearance) { UserDefaults.standard.set(data, forKey: "appearance.v1") } }
+        didSet { if let data = try? JSONEncoder().encode(appearance) { defaults.set(data, forKey: "appearance.v1") } }
     }
-    @Published var alwaysOnTop: Bool { didSet { UserDefaults.standard.set(alwaysOnTop, forKey: "alwaysOnTop") } }
+    @Published var alwaysOnTop: Bool { didSet { defaults.set(alwaysOnTop, forKey: "alwaysOnTop") } }
     @Published var clickThrough = false
-    @Published var notchMode: Bool { didSet { UserDefaults.standard.set(notchMode, forKey: "notchMode") } }
-    @Published var fontSize: Double { didSet { UserDefaults.standard.set(fontSize, forKey: "fontSize") } }
+    @Published var notchMode: Bool { didSet { defaults.set(notchMode, forKey: "notchMode") } }
+    @Published var fontSize: Double { didSet { defaults.set(fontSize, forKey: "fontSize") } }
     @Published var timingAdjustment: Double = 0
     @Published private(set) var snapshot = PlaybackSnapshot(track: nil, isPlaying: false, position: 0)
     @Published private(set) var lyrics: Lyrics?
@@ -27,6 +27,7 @@ final class AppModel: NSObject, ObservableObject {
     @Published private(set) var connectionMessage: String?
     @Published private(set) var denied = false
     let demo: Bool
+    private let defaults: UserDefaults
     private let bridge = PlaybackBridge()
     private let client: LRCLibClient
     private var monitoring: Task<Void, Never>?
@@ -35,14 +36,17 @@ final class AppModel: NSObject, ObservableObject {
     private var generation = 0
 
     override init() {
-        let defaults = UserDefaults.standard
+        let arguments = ProcessInfo.processInfo.arguments
+        demo = arguments.contains("--demo")
+        // Visual previews must not overwrite the listener's real preferences.
+        defaults = demo ? UserDefaults(suiteName: "app.floatlyrics.preview")! : .standard
+        let defaults = self.defaults
         source = PlayerSource(rawValue: defaults.string(forKey: "source") ?? "") ?? .spotify
         appearance = .restore(defaults.data(forKey: "appearance.v1"))
         opacity = defaults.object(forKey: "opacity").map { _ in min(1, max(0.15, defaults.double(forKey: "opacity"))) } ?? 0.70
         alwaysOnTop = defaults.object(forKey: "alwaysOnTop") == nil || defaults.bool(forKey: "alwaysOnTop")
         notchMode = defaults.bool(forKey: "notchMode")
         fontSize = defaults.object(forKey: "fontSize").map { _ in min(34, max(18, defaults.double(forKey: "fontSize"))) } ?? 26
-        demo = ProcessInfo.processInfo.arguments.contains("--demo")
         let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?
             .appendingPathComponent("app.floatlyrics.desktop/lyrics", isDirectory: true)
         client = LRCLibClient(cacheDirectory: caches)
@@ -51,7 +55,11 @@ final class AppModel: NSObject, ObservableObject {
 
     func start() {
         if demo {
-            snapshot = PlaybackSnapshot(track: Track(id: "demo", title: "A little room to sing", artist: "FloatLyrics · Preview", album: "Original demo", duration: 180), isPlaying: true, position: 8)
+            let arguments = ProcessInfo.processInfo.arguments
+            let position = arguments.firstIndex(of: "--demo-position").flatMap { index in
+                arguments.indices.contains(index + 1) ? Double(arguments[index + 1]) : nil
+            } ?? 8
+            snapshot = PlaybackSnapshot(track: Track(id: "demo", title: "A little room to sing", artist: "FloatLyrics · Preview", album: "Original demo", duration: 180), isPlaying: true, position: min(39, max(0, position.isFinite ? position : 8)))
             lyrics = Lyrics(lines: [
                 .init(time: 0, text: "Let the day move softly"), .init(time: 7, text: "There's a little room to sing"),
                 .init(time: 15, text: "Keep a melody beside you"), .init(time: 23, text: "See what a moment can bring"),

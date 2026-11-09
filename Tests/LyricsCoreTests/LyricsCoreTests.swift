@@ -72,6 +72,26 @@ final class LyricsCoreTests: XCTestCase {
         let count = await transport.count
         XCTAssertEqual(count, 1)
     }
+    func testEmptyExactRecordFallsBackToUsableSearchResult() async throws {
+        let empty = #"{"id":3,"trackName":"Cafe","artistName":"Artist","duration":200,"instrumental":false,"plainLyrics":"  ","syncedLyrics":"[00:00.00]"}"#
+        let transport = MockTransport(responses: [(Data(empty.utf8), 200), (Data(Self.records.utf8), 200)])
+        let result = try await LRCLibClient(transport: transport).fetch(Track(id: "1", title: "Cafe", artist: "Artist", album: "Album", duration: 200))
+        XCTAssertEqual(result.recordID, 2)
+        let count = await transport.count
+        XCTAssertEqual(count, 2)
+    }
+    func testMalformedResponseHasReadableError() async throws {
+        let transport = MockTransport(responses: [(Data("not json".utf8), 200)])
+        do {
+            _ = try await LRCLibClient(transport: transport).fetch(Track(id: "1", title: "A", artist: "B", album: "", duration: 20))
+            XCTFail("Must reject malformed JSON")
+        } catch LyricsError.invalidResponse { }
+    }
+    func testSearchRejectsWhitespaceOnlyLyrics() throws {
+        let empty = #"[{"id":3,"trackName":"Cafe","artistName":"Artist","duration":200,"instrumental":false,"plainLyrics":" ","syncedLyrics":"[00:00.00]"}]"#
+        let records = try JSONDecoder().decode([LyricsRecord].self, from: Data(empty.utf8))
+        XCTAssertNil(LyricsRecord.bestMatch(in: records, for: Track(id: "1", title: "Cafe", artist: "Artist", album: "", duration: 200)))
+    }
     private static let records = #"[{"id":1,"trackName":"Cafe","artistName":"Artist","albumName":"Live","duration":240,"instrumental":false,"plainLyrics":"Wrong","syncedLyrics":null},{"id":2,"trackName":"Cafe","artistName":"Artist","albumName":"Album","duration":200,"instrumental":false,"plainLyrics":"Hello","syncedLyrics":"[00:02.00]Hello"}]"#
 }
 

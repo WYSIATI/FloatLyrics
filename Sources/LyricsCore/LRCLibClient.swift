@@ -39,6 +39,12 @@ public struct LyricsRecord: Codable, Sendable {
         Lyrics(lines: LRCParser.parse(syncedLyrics ?? ""), plainText: plainLyrics ?? "", instrumental: instrumental, recordID: id)
     }
 
+    fileprivate var usableLyrics: Lyrics? {
+        let result = lyrics
+        let hasWords = result.lines.contains { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        return instrumental || hasWords || !result.plainText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? result : nil
+    }
+
     public static func normalized(_ value: String) -> String {
         value.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "en_US_POSIX"))
             .components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty }.joined(separator: " ")
@@ -54,7 +60,7 @@ public struct LyricsRecord: Codable, Sendable {
             normalized(lookupTitle($0.trackName)) == normalized(lookupTitle(track.title)) &&
             normalized($0.artistName) == normalized(track.artist) &&
             (track.duration == 0 || abs($0.duration - track.duration) <= 4) &&
-            ($0.instrumental || !$0.lyrics.lines.isEmpty || !($0.plainLyrics ?? "").isEmpty)
+            $0.usableLyrics != nil
         }.max { a, b in
             func score(_ r: Self) -> Double {
                 (normalized(r.albumName ?? "") == normalized(track.album) ? 20 : 0) +
@@ -91,16 +97,16 @@ public actor LRCLibClient {
         try Task.checkCancellation()
         var record: LyricsRecord?
         if status == 200 {
-            record = try JSONDecoder().decode(LyricsRecord.self, from: data)
+            record = try decode(LyricsRecord.self, from: data)
         } else if status != 404 { throw LyricsError.server(status) }
-        if record == nil {
+        if record?.usableLyrics == nil {
             let searchQuery = [URLQueryItem(name: "track_name", value: LyricsRecord.lookupTitle(track.title)), URLQueryItem(name: "artist_name", value: track.artist)]
             let (searchData, searchStatus) = try await request(path: "search", query: searchQuery)
             try Task.checkCancellation()
             guard searchStatus == 200 else { throw LyricsError.server(searchStatus) }
-            record = LyricsRecord.bestMatch(in: try JSONDecoder().decode([LyricsRecord].self, from: searchData), for: track)
+            record = LyricsRecord.bestMatch(in: try decode([LyricsRecord].self, from: searchData), for: track)
         }
-        guard let lyrics = record?.lyrics, lyrics.instrumental || lyrics.isSynced || !lyrics.plainText.isEmpty else { throw LyricsError.notFound }
+        guard let lyrics = record?.usableLyrics else { throw LyricsError.notFound }
         memory[key] = lyrics
         if let file, let cacheDirectory {
             try? FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
@@ -109,12 +115,17 @@ public actor LRCLibClient {
         return lyrics
     }
 
+    private func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
+        do { return try JSONDecoder().decode(type, from: data) }
+        catch { throw LyricsError.invalidResponse }
+    }
+
     private func request(path: String, query: [URLQueryItem]) async throws -> (Data, Int) {
         var components = URLComponents(string: "https://lrclib.net/api/\(path)")!
         components.queryItems = query
         var request = URLRequest(url: components.url!)
         request.timeoutInterval = 15
-        request.setValue("FloatLyrics/1.0 (macOS; personal lyrics companion)", forHTTPHeaderField: "User-Agent")
+        request.setValue("FloatLyrics (macOS; https://github.com/WYSIATI/FloatLyrics)", forHTTPHeaderField: "User-Agent")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         return try await transport.get(request)
     }

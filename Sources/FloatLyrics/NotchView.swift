@@ -27,8 +27,7 @@ struct NotchView: View {
                         .contentTransition(.opacity)
                         .help(model.line(at: context.date))
                     if expanded {
-                        HStack(spacing: 4) { Text(model.source.name); Text("·"); Text(model.snapshot.isPlaying ? "Live lyrics" : "Paused") }
-                            .font(.system(size: 9)).foregroundStyle(.white.opacity(0.4))
+                        recoveryOrStatus
                     }
                 }.padding(.horizontal, expanded ? 26 : 18)
             }
@@ -46,6 +45,21 @@ struct NotchView: View {
         .animation(reduceMotion ? nil : .spring(response: 0.34, dampingFraction: 0.9), value: expanded)
         .frame(width: geometry.windowFrame.width, height: geometry.windowFrame.height, alignment: .top)
         .ignoresSafeArea().preferredColorScheme(.dark)
+    }
+    @ViewBuilder private var recoveryOrStatus: some View {
+        if model.denied {
+            Button("Connect \(model.source.name)") { model.openAutomationSettings() }
+                .buttonStyle(.plain).font(.system(size: 10, weight: .medium)).foregroundStyle(.white.opacity(0.85))
+        } else if model.lyricsMessage != nil {
+            Button("Retry lyrics") { model.retry() }
+                .buttonStyle(.plain).font(.system(size: 10, weight: .medium)).foregroundStyle(.white.opacity(0.85))
+        } else if model.snapshot.track == nil {
+            Button("Open \(model.source.name)") { model.openPlayer() }
+                .buttonStyle(.plain).font(.system(size: 10, weight: .medium)).foregroundStyle(.white.opacity(0.85))
+        } else {
+            HStack(spacing: 4) { Text(model.source.name); Text("·"); Text(model.snapshot.isPlaying ? "Live lyrics" : "Paused") }
+                .font(.system(size: 9)).foregroundStyle(.white.opacity(0.4))
+        }
     }
     private var cameraRow: some View {
         HStack(spacing: 0) {
