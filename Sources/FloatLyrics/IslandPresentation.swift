@@ -29,17 +29,19 @@ final class IslandPresentation: ObservableObject {
         let frame = geometry.islandFrame(expanded: expanded)
         let point = NSEvent.mouseLocation
         let local = CGPoint(x: point.x - frame.minX, y: frame.maxY - point.y)
-        let inside = IslandSilhouette(shoulder: expanded ? 18 : 7, bottom: expanded ? 30 : 18)
+        let inside = IslandSilhouette(shoulder: expanded ? 12 : 5, bottom: expanded ? 22 : 12)
             .path(in: CGRect(origin: .zero, size: frame.size)).contains(local)
         panel.ignoresMouseEvents = app.clickThrough || !inside
         guard !app.clickThrough else { close(); return }
         if !inside { requiresPointerExit = false }
-        if inside, !requiresPointerExit { open() }
-        else if !inside, expanded, !pinned, collapse == nil {
+        if inside { collapse?.cancel(); collapse = nil }
+        if inside, !requiresPointerExit, app.appearance.expandOnHover { open() }
+        else if !inside, expanded, collapse == nil {
+            let delay = pinned ? 2500 : 450
             collapse = Task { [weak self] in
-                try? await Task.sleep(for: .milliseconds(380))
+                try? await Task.sleep(for: .milliseconds(delay))
                 guard !Task.isCancelled else { return }
-                self?.expanded = false; self?.collapse = nil
+                self?.expanded = false; self?.pinned = false; self?.collapse = nil
             }
         }
     }

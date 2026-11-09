@@ -1,10 +1,12 @@
 import AppKit
 import SwiftUI
+import LyricsCore
 
 /// The actual macOS glass compositor, rather than a tinted SwiftUI fill.
 struct NativeGlass: NSViewRepresentable {
     var opacity: Double
     var radius: CGFloat = 30
+    var palette: SurfacePalette = .glacier
     func makeNSView(context: Context) -> NSView {
         let backdrop = NSVisualEffectView()
         backdrop.material = .hudWindow
@@ -28,7 +30,21 @@ struct NativeGlass: NSViewRepresentable {
         return surface
     }
     func updateNSView(_ view: NSView, context: Context) {
-        view.alphaValue = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency ? 1 : opacity
+        let alpha = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency ? 1 : opacity
+        if view.alphaValue != alpha { view.alphaValue = alpha }
+        for child in view.subviews {
+            if let material = child as? NSVisualEffectView {
+                let name: NSAppearance.Name = palette.isDark ? .vibrantDark : .vibrantLight
+                if material.appearance?.name != name { material.appearance = NSAppearance(named: name) }
+            }
+            if #available(macOS 26, *), let glass = child as? NSGlassEffectView {
+                let name: NSAppearance.Name = palette.isDark ? .darkAqua : .aqua
+                if glass.appearance?.name != name { glass.appearance = NSAppearance(named: name) }
+                let rgb = palette.surface
+                let tint = NSColor(red: rgb.red, green: rgb.green, blue: rgb.blue, alpha: 0.10)
+                if glass.tintColor != tint { glass.tintColor = tint }
+            }
+        }
     }
 }
 
@@ -36,38 +52,23 @@ private final class GlassBackdropView: NSView {
     override func layout() {
         super.layout()
         for view in subviews {
-            view.frame = bounds
-            if #available(macOS 26, *), let glass = view as? NSGlassEffectView { glass.contentView?.frame = bounds }
+            if view.frame != bounds { view.frame = bounds }
+            if #available(macOS 26, *), let glass = view as? NSGlassEffectView, glass.contentView?.frame != bounds { glass.contentView?.frame = bounds }
         }
     }
 }
 
-struct SilverRim: View {
+struct SurfaceRim: View {
     var radius: CGFloat = 30
     var body: some View {
         RoundedRectangle(cornerRadius: radius, style: .continuous)
             .strokeBorder(LinearGradient(stops: [
-                .init(color: .white.opacity(0.95), location: 0),
-                .init(color: .white.opacity(0.2), location: 0.35),
-                .init(color: .black.opacity(0.10), location: 0.65),
-                .init(color: .white.opacity(0.65), location: 1)
-            ], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
+                .init(color: .white.opacity(0.45), location: 0),
+                .init(color: .white.opacity(0.08), location: 0.35),
+                .init(color: .black.opacity(0.04), location: 0.65),
+                .init(color: .white.opacity(0.2), location: 1)
+            ], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 0.65)
             .allowsHitTesting(false)
-    }
-}
-
-struct SilverSelection: View {
-    var body: some View {
-        Capsule()
-            .fill(LinearGradient(colors: [.white.opacity(0.9), Color(white: 0.93).opacity(0.55), .white.opacity(0.75)], startPoint: .top, endPoint: .bottom))
-            .overlay {
-                Capsule().strokeBorder(AngularGradient(colors: [
-                    .white, Color(white: 0.62).opacity(0.6), .white,
-                    Color(red: 0.74, green: 0.75, blue: 0.82).opacity(0.7), .white,
-                    Color(white: 0.50).opacity(0.4), .white
-                ], center: .center, angle: .degrees(35)), lineWidth: 1.6)
-            }
-            .shadow(color: .black.opacity(0.10), radius: 4, y: 2)
     }
 }
 
@@ -80,7 +81,7 @@ struct IconButton: View {
         Button(action: action) {
             Image(systemName: symbol).font(.system(size: 11, weight: .medium))
                 .frame(width: 28, height: 28)
-                .background { if hovered { SilverSelection() } }
+                .background { if hovered { Circle().fill(.primary.opacity(0.06)) } }
                 .contentShape(Circle())
         }.buttonStyle(.plain).foregroundStyle(.primary.opacity(hovered ? 0.9 : 0.5))
             .onHover { hovered = $0 }.animation(.easeOut(duration: 0.16), value: hovered)

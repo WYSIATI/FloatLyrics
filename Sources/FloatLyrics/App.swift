@@ -6,6 +6,12 @@ struct FloatLyricsApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     var body: some Scene {
         Settings { EmptyView() }
+            .commands {
+                CommandGroup(replacing: .appSettings) {
+                    Button("Appearance…") { NotificationCenter.default.post(name: .init("FloatLyrics.showAppearance"), object: nil) }
+                        .keyboardShortcut(",", modifiers: .command)
+                }
+            }
     }
 }
 

@@ -36,7 +36,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         notch.acceptsMouseMovedEvents = true
         notch.becomesKeyOnlyIfNeeded = true
         let display = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? NSScreen.main ?? NSScreen.screens[0]
-        island = IslandPresentation(geometry: NotchGeometry(screen: display))
+        island = IslandPresentation(geometry: NotchGeometry(screen: display, preferredWidth: model.appearance.islandWidth))
         notch.contentView = NSHostingView(rootView: NotchView(model: model, presentation: island))
         island.track(panel: notch, app: model)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -58,7 +58,11 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
             DispatchQueue.main.async { self?.hidden = false; self?.updatePresentation(); self?.rebuildMenu() }
         }.store(in: &subscriptions)
         model.$source.dropFirst().sink { [weak self] _ in DispatchQueue.main.async { self?.rebuildMenu() } }.store(in: &subscriptions)
+        model.$appearance.map(\.islandWidth).removeDuplicates().dropFirst().sink { [weak self] _ in
+            DispatchQueue.main.async { if self?.model.notchMode == true { self?.positionNotch(reset: false) } }
+        }.store(in: &subscriptions)
         NotificationCenter.default.addObserver(self, selector: #selector(screenChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appearanceRequested(_:)), name: NSNotification.Name("FloatLyrics.showAppearance"), object: nil)
         updatePresentation()
         model.start()
     }
@@ -98,16 +102,17 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         }
     }
 
-    private func positionNotch() {
+    private func positionNotch(reset: Bool = true) {
         guard let screen = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? floating.screen ?? NSScreen.main else { return }
-        island.geometry = NotchGeometry(screen: screen)
-        island.close()
+        island.geometry = NotchGeometry(screen: screen, preferredWidth: model.appearance.islandWidth)
+        if reset { island.close() }
         notch.alphaValue = 1
         notch.level = NSWindow.Level(rawValue: NSWindow.Level.mainMenu.rawValue + 3)
         notch.setFrame(island.geometry.windowFrame, display: true)
     }
 
     @objc private func screenChanged() { restoreFloatingPosition(); if model.notchMode { positionNotch() } }
+    @objc private func appearanceRequested(_ notification: Notification) { showPreferences() }
 
     func windowDidMove(_ notification: Notification) {
         UserDefaults.standard.set(NSStringFromRect(floating.frame), forKey: "floatingFrame")
@@ -125,9 +130,9 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
 
     @objc private func showPreferences() {
         if preferences == nil {
-            let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 354, height: 430), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 366, height: 600), styleMask: [.titled, .closable], backing: .buffered, defer: false)
             window.title = "FloatLyrics Settings"; window.isReleasedWhenClosed = false
-            window.contentView = NSHostingView(rootView: PreferencesView(model: model).padding(24).frame(width: 354))
+            window.contentView = NSHostingView(rootView: PreferencesView(model: model).padding(22).frame(width: 366).preferredColorScheme(.light))
             window.center(); preferences = window
         }
         preferences?.level = .floating

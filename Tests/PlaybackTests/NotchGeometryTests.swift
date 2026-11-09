@@ -19,4 +19,22 @@ final class NotchGeometryTests: XCTestCase {
         XCTAssertEqual(layout.islandFrame(expanded: false).midX, -960)
         XCTAssertEqual(layout.windowFrame.maxY, 1280)
     }
+    func testCompactIslandFitsCameraAndStaysWithinDisplay() {
+        for displayWidth: CGFloat in [800, 1512, 1728] {
+            for cameraWidth: CGFloat in [180, 240, 280] {
+                for preference: CGFloat in [280, 320, 400] {
+                    let side = (displayWidth - cameraWidth) / 2
+                    let screen = CGRect(x: 0, y: 0, width: displayWidth, height: 982)
+                    let layout = NotchGeometry(screenFrame: screen, safeTop: 32,
+                        leftArea: CGRect(x: 0, y: 950, width: side, height: 32),
+                        rightArea: CGRect(x: side + cameraWidth, y: 950, width: side, height: 32), preferredWidth: preference)
+                    XCTAssertTrue(screen.contains(layout.islandFrame(expanded: false)))
+                    XCTAssertTrue(screen.contains(layout.islandFrame(expanded: true)))
+                    XCTAssertGreaterThanOrEqual(layout.compactSize.width - layout.cameraWidth, 60)
+                    XCTAssertLessThanOrEqual(layout.compactSize.width, 400)
+                    XCTAssertEqual(layout.compactSize.height, 56)
+                }
+            }
+        }
+    }
 }
