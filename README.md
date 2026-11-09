@@ -10,15 +10,15 @@ Requires macOS 14 or later. Native Liquid Glass is available on macOS 26; earlie
 2. Launch it and select **Spotify** or **Apple Music** in the window or menu bar.
 3. Play a song in that desktop app. Allow the Automation prompt if macOS asks.
 
-The window defaults to **always on top** at **88% glass opacity**, without stealing focus. Drag it wherever you like. The sliders button adjusts background opacity (25–100%), lyric size, and timing (±5 seconds); text stays crisp as the glass fades. The silver player selector slides between Spotify and Apple Music. Enable click through to work through the overlay; the menu bar always lets you restore interaction, change settings, show hidden lyrics, or quit.
+The window defaults to **always on top** without stealing focus. Drag it wherever you like. Open **Appearance** with the sliders button, the menu bar, or **⌘,**. Window and Island have independent background opacity (15–100%) and lyric colors: automatic contrast, preset swatches, a native custom color picker and six-digit hex entry. Changes preview live and persist. New installs start with 70% window glass opacity; existing opacity choices are preserved. Text stays crisp as the background fades. Lyric size and timing (±5 seconds) remain adjustable. Enable click through to work through the overlay; the menu bar always restores interaction, settings or hidden lyrics.
 
-The MacBook button switches to **Dynamic Island**. The black silhouette starts at the physical display's top edge and joins the camera housing, with indicators beside the camera and the current lyric inside its extended lower section. Hover to expand with a spring transition, or click to keep it open. Expansion reveals track details, the next line, collapse and return-to-window controls. Moving away closes a hover-opened island; use the collapse button after clicking it open. On displays without a camera cutout, it becomes a top-edge island. Transparent space around it passes clicks to the apps underneath. The island stays fully black to blend with the physical housing.
+The MacBook button switches to **Dynamic Island**. Its default footprint is **320 points wide** with a **24-point single lyric line below the camera**, growing only as needed to fit the camera housing. Width adjusts from 280–400 points. It stays compact when the pointer passes by: click to expand, then move away to auto-collapse after 2.5 seconds. Hover expansion is optional. Expansion is limited to song details, the current lyric and collapse/return controls. On displays without a cutout, it becomes a top-edge island. Space outside its silhouette passes clicks through. The camera cap stays solid black while the lyric area's opacity adjusts independently.
 
-On macOS 26 the floating surface uses AppKit's native `NSGlassEffectView` with clear glass and a behind-window material backdrop. Silver specular rims, restrained typography and the moving selected-player capsule replace the earlier green/dark palette. Reduce Motion is respected. The interaction references are [Vibe Notch](https://github.com/farouqaldori/vibe-notch) and Rafał Staromłyński's [Liquid Metal Animation](https://dribbble.com/shots/26943526-Liquid-Metal-Animation); no media assets from those projects are bundled.
+On macOS 26 the floating surface uses AppKit's native `NSGlassEffectView` with clear glass and a behind-window material backdrop. **Glacier, Midnight and Lavender** palettes provide light, dark and violet-tinted surfaces. Flat controls and broad fluid highlights replace embossed chrome; decorative movement happens only on hover and respects Reduce Motion. References: [Vibe Notch](https://github.com/farouqaldori/vibe-notch), [Chahat Soni's liquid-metal button](https://dribbble.com/shots/27633863-Liquid-metal-button-in-Figma) and [Konpo's flowing metal logo](https://dribbble.com/shots/25673199-Konpo-Liquid-Metal-Effect-on-Our-Logo). No reference media assets are bundled.
 
 Track changes trigger a new lyrics lookup. Playback notifications plus a 750 ms poll detect changes, pause/resume and seeks; a local clock updates line timing between samples. Timed blank lines preserve instrumental breaks. Tracks with plain lyrics get a scrollable, explicitly unsynced view. Missing lyrics and network errors have a retry action. Exact lookup falls back to title/artist search, accepting only matching names and nearby durations; remix/live version tags stay intact.
 
-Window position, source, opacity, size, always-on-top and display mode persist. Timing adjustment resets per song, and click through resets on relaunch so the app is recoverable.
+Window position, source, material, opacity, lyric size, both lyric colors, island width, hover preference, always-on-top and display mode persist. Timing adjustment resets per song, and click through resets on relaunch so the app is recoverable.
 
 ## Development
 
@@ -26,7 +26,7 @@ Open `Package.swift` in Xcode 26 or build with `swift build`. Run the timing and
 
 ```sh
 bash scripts/build-app.sh     # universal Apple Silicon + Intel .app
-bash scripts/package-dmg.sh   # dist/FloatLyrics-1.1.0.dmg + SHA-256
+bash scripts/package-dmg.sh   # dist/FloatLyrics-1.2.0.dmg + SHA-256
 bash scripts/verify-dmg.sh    # mount read-only and verify the packaged app
 ```
 

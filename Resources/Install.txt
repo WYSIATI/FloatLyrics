@@ -6,15 +6,19 @@ Your music, a little closer.
 3. Choose Spotify or Apple Music, open that desktop app, and play a song.
 4. Allow the macOS Automation prompt so FloatLyrics can read the track and position.
 
-The silver floating window stays on top at 88% glass opacity. Use the sliders
-button to adjust glass opacity, lyric size, timing, and click through. Lyrics stay
-crisp as the glass fades. Drag the window to place it.
+The floating window stays on top. Open Appearance with the sliders button,
+the menu bar, or Command-comma. Window and Island have separate background
+opacity and lyric colors. Choose Automatic, a color swatch, a custom color,
+or enter a six-digit hex color. Changes preview live and are saved.
+Choose Glacier, Midnight or Lavender for the floating material.
+Lyrics stay crisp as the background fades. Drag the window to place it.
 
 Use the MacBook button to enter Dynamic Island. Its black shape joins the camera
-housing at the screen's top edge. Hover to expand; click to keep it open. Use the
-up chevron to collapse, or the window arrow to return to floating lyrics. On a Mac
-without a notch it becomes a top-edge island. The island stays black and opaque
-to blend with the camera; the glass opacity slider controls the floating view.
+housing at the screen's top edge. It stays one line high and 320 points wide by
+default. Click to expand; it automatically shrinks when you return to work.
+Hover expansion is optional. Use the up chevron to collapse, or the window arrow
+to return to floating lyrics. Adjust island width, background and text color in
+the Island appearance tab. The camera cap stays black as the lyric area fades.
 
 If click through is enabled or lyrics are hidden, use the menu bar to restore them.
 
