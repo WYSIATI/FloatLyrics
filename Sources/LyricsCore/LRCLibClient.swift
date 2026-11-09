@@ -44,9 +44,14 @@ public struct LyricsRecord: Codable, Sendable {
             .components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty }.joined(separator: " ")
     }
 
+    public static func lookupTitle(_ value: String) -> String {
+        value.replacingOccurrences(of: #"\s*[\(\[]\s*(?:feat\.?|ft\.?|featuring)\s+[^\)\]]+[\)\]]"#, with: "", options: [.regularExpression, .caseInsensitive])
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     public static func bestMatch(in records: [Self], for track: Track) -> Self? {
         records.filter {
-            normalized($0.trackName) == normalized(track.title) &&
+            normalized(lookupTitle($0.trackName)) == normalized(lookupTitle(track.title)) &&
             normalized($0.artistName) == normalized(track.artist) &&
             (track.duration == 0 || abs($0.duration - track.duration) <= 4) &&
             ($0.instrumental || !$0.lyrics.lines.isEmpty || !($0.plainLyrics ?? "").isEmpty)
@@ -89,7 +94,8 @@ public actor LRCLibClient {
             record = try JSONDecoder().decode(LyricsRecord.self, from: data)
         } else if status != 404 { throw LyricsError.server(status) }
         if record == nil {
-            let (searchData, searchStatus) = try await request(path: "search", query: Array(query.prefix(2)))
+            let searchQuery = [URLQueryItem(name: "track_name", value: LyricsRecord.lookupTitle(track.title)), URLQueryItem(name: "artist_name", value: track.artist)]
+            let (searchData, searchStatus) = try await request(path: "search", query: searchQuery)
             try Task.checkCancellation()
             guard searchStatus == 200 else { throw LyricsError.server(searchStatus) }
             record = LyricsRecord.bestMatch(in: try JSONDecoder().decode([LyricsRecord].self, from: searchData), for: track)

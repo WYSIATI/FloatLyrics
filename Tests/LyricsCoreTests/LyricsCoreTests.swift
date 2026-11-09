@@ -28,6 +28,26 @@ final class LyricsCoreTests: XCTestCase {
     func testEnhancedLRC() {
         XCTAssertEqual(LRCParser.parse("[00:01.00]<00:01.00>Hello <00:01.50>world").first?.text, "Hello world")
     }
+    func testFeaturedTagsKeepRecordingVersion() {
+        XCTAssertEqual(LyricsRecord.lookupTitle("The Way (Remix) [feat. Emma Rae]"), "The Way (Remix)")
+        XCTAssertEqual(LyricsRecord.lookupTitle("Song (Live)"), "Song (Live)")
+        XCTAssertEqual(LyricsRecord.lookupTitle("Song (feat. Guest)"), "Song")
+    }
+    func testPlainLyricsAreNotInventedTimings() {
+        let lyrics = Lyrics(lines: [], plainText: "One\nTwo")
+        XCTAssertFalse(lyrics.isSynced)
+        XCTAssertNil(lyrics.activeIndex(at: 120))
+    }
+    func testInstrumentalBreakAndEnd() {
+        let lyrics = Lyrics(lines: [.init(time: 2, text: "One"), .init(time: 5, text: ""), .init(time: 9, text: "Two")], plainText: "")
+        XCTAssertEqual(lyrics.lines[lyrics.activeIndex(at: 7)!].text, "")
+        XCTAssertEqual(lyrics.activeIndex(at: 99), 2)
+    }
+    func testEmptySearchIsNotFound() async throws {
+        let transport = MockTransport(responses: [(Data(), 404), (Data("[]".utf8), 200)])
+        do { _ = try await LRCLibClient(transport: transport).fetch(Track(id: "1", title: "A", artist: "B", album: "", duration: 20)); XCTFail("Must throw") }
+        catch { XCTAssertTrue(error.localizedDescription.contains("No lyrics")) }
+    }
     func testMatchingRejectsWrongRecording() throws {
         let records = try JSONDecoder().decode([LyricsRecord].self, from: Data(Self.records.utf8))
         let track = Track(id: "1", title: "Café!", artist: "Artist", album: "Album", duration: 200)

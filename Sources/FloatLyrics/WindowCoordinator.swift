@@ -1,0 +1,145 @@
+import AppKit
+import SwiftUI
+import Combine
+import LyricsCore
+
+private final class LyricsPanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { false }
+}
+
+@MainActor
+final class WindowCoordinator: NSObject, NSWindowDelegate {
+    let model = AppModel()
+    private var floating: LyricsPanel!
+    private var notch: LyricsPanel!
+    private var statusItem: NSStatusItem!
+    private var preferences: NSWindow?
+    private var subscriptions = Set<AnyCancellable>()
+    private var hidden = false
+
+    func start() {
+        floating = makePanel(size: NSSize(width: 460, height: 342))
+        floating.isMovableByWindowBackground = true
+        floating.delegate = self
+        floating.contentView = NSHostingView(rootView: FloatingView(model: model, hide: { [weak self] in self?.hide() }))
+        restoreFloatingPosition()
+        notch = makePanel(size: NSSize(width: 510, height: 116))
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        statusItem.button?.image = NSImage(systemSymbolName: "quote.bubble", accessibilityDescription: "FloatLyrics")
+        statusItem.button?.toolTip = "FloatLyrics · lyrics beside your work"
+        rebuildMenu()
+        model.$opacity.sink { [weak self] value in self?.floating.alphaValue = value; self?.notch.alphaValue = max(0.6, value) }.store(in: &subscriptions)
+        model.$alwaysOnTop.sink { [weak self] value in self?.floating.level = value ? .floating : .normal; self?.rebuildMenu() }.store(in: &subscriptions)
+        model.$clickThrough.sink { [weak self] value in self?.floating.ignoresMouseEvents = value; self?.notch.ignoresMouseEvents = value; self?.rebuildMenu() }.store(in: &subscriptions)
+        model.$notchMode.dropFirst().sink { [weak self] _ in
+            // @Published emits before the value changes. Apply the new model state on the next turn.
+            DispatchQueue.main.async { self?.hidden = false; self?.updatePresentation(); self?.rebuildMenu() }
+        }.store(in: &subscriptions)
+        model.$source.dropFirst().sink { [weak self] _ in DispatchQueue.main.async { self?.rebuildMenu() } }.store(in: &subscriptions)
+        NotificationCenter.default.addObserver(self, selector: #selector(screenChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        updatePresentation()
+        model.start()
+    }
+
+    private func makePanel(size: NSSize) -> LyricsPanel {
+        let panel = LyricsPanel(contentRect: NSRect(origin: .zero, size: size), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        panel.isReleasedWhenClosed = false; panel.isOpaque = false; panel.backgroundColor = .clear
+        panel.hasShadow = true; panel.hidesOnDeactivate = false
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
+        panel.animationBehavior = .utilityWindow
+        panel.isFloatingPanel = true
+        panel.title = "FloatLyrics"
+        return panel
+    }
+
+    private func restoreFloatingPosition() {
+        let screen = NSScreen.main ?? NSScreen.screens.first
+        guard let area = screen?.visibleFrame else { return }
+        let saved = UserDefaults.standard.string(forKey: "floatingFrame").map(NSRectFromString)
+        if let saved, NSScreen.screens.contains(where: { $0.visibleFrame.contains(saved) }) {
+            floating.setFrame(saved, display: false)
+        } else {
+            floating.setFrameOrigin(NSPoint(x: area.maxX - 496, y: area.minY + 70))
+        }
+    }
+
+    private func updatePresentation() {
+        guard !hidden else { floating.orderOut(nil); notch.orderOut(nil); return }
+        if model.notchMode {
+            floating.orderOut(nil)
+            positionNotch()
+            notch.orderFrontRegardless()
+        } else {
+            notch.orderOut(nil)
+            floating.orderFrontRegardless()
+        }
+    }
+
+    private func positionNotch() {
+        guard let screen = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? floating.screen ?? NSScreen.main else { return }
+        let inset = screen.safeAreaInsets.top
+        // A physical camera cutout cannot display pixels. The lyric strip hangs just below it.
+        let height = inset + 84
+        notch.level = NSWindow.Level(rawValue: NSWindow.Level.statusBar.rawValue + 1)
+        notch.contentView = NSHostingView(rootView: NotchView(model: model, topInset: inset))
+        let top = inset > 0 ? screen.frame.maxY : screen.visibleFrame.maxY - 8
+        notch.setFrame(NSRect(x: screen.frame.midX - 255, y: top - height, width: 510, height: height), display: true)
+    }
+
+    @objc private func screenChanged() { restoreFloatingPosition(); if model.notchMode { positionNotch() } }
+
+    func windowDidMove(_ notification: Notification) {
+        UserDefaults.standard.set(NSStringFromRect(floating.frame), forKey: "floatingFrame")
+    }
+
+    private func hide() { hidden = true; updatePresentation(); rebuildMenu() }
+    @objc private func toggleVisibility() { hidden.toggle(); updatePresentation(); rebuildMenu() }
+    @objc private func toggleNotch() { model.notchMode.toggle() }
+    @objc private func toggleTop() { model.alwaysOnTop.toggle() }
+    @objc private func toggleClickThrough() { model.clickThrough.toggle() }
+    @objc private func chooseSource(_ sender: NSMenuItem) { if let raw = sender.representedObject as? String, let source = PlayerSource(rawValue: raw) { model.source = source } }
+    @objc private func retry() { model.retry() }
+    @objc private func openPlayer() { model.openPlayer() }
+    @objc private func quit() { NSApp.terminate(nil) }
+
+    @objc private func showPreferences() {
+        if preferences == nil {
+            let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 354, height: 430), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            window.title = "FloatLyrics Settings"; window.isReleasedWhenClosed = false
+            window.contentView = NSHostingView(rootView: PreferencesView(model: model).padding(24).frame(width: 354))
+            window.center(); preferences = window
+        }
+        preferences?.level = .floating
+        preferences?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func rebuildMenu() {
+        guard statusItem != nil else { return }
+        let menu = NSMenu()
+        let title = NSMenuItem(title: "FloatLyrics", action: nil, keyEquivalent: "")
+        title.isEnabled = false; menu.addItem(title)
+        menu.addItem(.separator())
+        add(hidden ? "Show Lyrics" : "Hide Lyrics", action: #selector(toggleVisibility), key: "l", menu: menu)
+        add("Notch Mode", action: #selector(toggleNotch), key: "n", checked: model.notchMode, menu: menu)
+        add("Always on Top", action: #selector(toggleTop), checked: model.alwaysOnTop, menu: menu)
+        add("Click Through Lyrics", action: #selector(toggleClickThrough), checked: model.clickThrough, menu: menu)
+        menu.addItem(.separator())
+        for source in PlayerSource.allCases {
+            let item = add(source.name, action: #selector(chooseSource(_:)), checked: source == model.source, menu: menu)
+            item.representedObject = source.rawValue
+        }
+        add("Open Music App", action: #selector(openPlayer), menu: menu)
+        add("Reconnect / Refresh Lyrics", action: #selector(retry), menu: menu)
+        menu.addItem(.separator())
+        add("Settings…", action: #selector(showPreferences), key: ",", menu: menu)
+        add("Quit FloatLyrics", action: #selector(quit), key: "q", menu: menu)
+        statusItem.menu = menu
+    }
+
+    @discardableResult private func add(_ title: String, action: Selector, key: String = "", checked: Bool = false, menu: NSMenu) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+        item.target = self; item.state = checked ? .on : .off; menu.addItem(item); return item
+    }
+}
