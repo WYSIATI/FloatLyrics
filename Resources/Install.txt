@@ -30,6 +30,8 @@ Needs macOS 14 or later. Native Liquid Glass requires macOS 26.
 Lyrics by LRCLIB. Some recordings have unsynced lyrics or no lyrics available.
 Browser music players and playback on other devices are not supported.
 
-Developer builds are ad-hoc signed unless a Developer ID and notarization profile
-are supplied at build time. To open an unnotarized build you trust, use System
+This public preview is ad-hoc signed and is not notarized. To open a preview
+downloaded from the official FloatLyrics GitHub release, use System
 Settings > Privacy & Security > Open Anyway after the initial launch attempt.
+Compare the release's SHA-256 checksum before installing. Source is available
+under the MIT license at https://github.com/WYSIATI/FloatLyrics.

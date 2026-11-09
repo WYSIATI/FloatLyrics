@@ -1,0 +1,7 @@
+I made FloatLyrics because I kept losing the next line while working.
+
+Live lyrics for Spotify + Apple Music, floating beside your work or tucked into your Mac’s notch.
+
+Free and open source. macOS 14+.
+
+https://github.com/WYSIATI/FloatLyrics/releases/latest

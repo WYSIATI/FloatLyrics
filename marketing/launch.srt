@@ -1,0 +1,36 @@
+1
+00:00:00,000 --> 00:00:03,000
+Know the song. Your playlist is on.
+
+2
+00:00:03,000 --> 00:00:06,000
+Lose the next line?
+
+3
+00:00:06,000 --> 00:00:09,000
+Meet FloatLyrics. The words, a little closer.
+
+4
+00:00:09,000 --> 00:00:16,000
+Keep your flow. The words stay beside your work.
+
+5
+00:00:16,000 --> 00:00:21,000
+Your player. Your lyrics. Spotify and Apple Music.
+
+6
+00:00:21,000 --> 00:00:29,000
+Meet your notch. One line. Out of your way.
+
+7
+00:00:29,000 --> 00:00:36,000
+As quiet as you like. Opacity. Text color. Your call.
+
+8
+00:00:36,000 --> 00:00:41,000
+Work in flow. Sing along.
+
+9
+00:00:41,000 --> 00:00:48,000
+FloatLyrics. Free. Open source. Made for Mac.
+github.com/WYSIATI/FloatLyrics
