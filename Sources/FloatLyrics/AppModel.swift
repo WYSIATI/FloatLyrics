@@ -12,6 +12,9 @@ final class AppModel: NSObject, ObservableObject {
         }
     }
     @Published var opacity: Double { didSet { UserDefaults.standard.set(opacity, forKey: "opacity") } }
+    @Published var appearance: AppearancePreferences {
+        didSet { if let data = try? JSONEncoder().encode(appearance) { UserDefaults.standard.set(data, forKey: "appearance.v1") } }
+    }
     @Published var alwaysOnTop: Bool { didSet { UserDefaults.standard.set(alwaysOnTop, forKey: "alwaysOnTop") } }
     @Published var clickThrough = false
     @Published var notchMode: Bool { didSet { UserDefaults.standard.set(notchMode, forKey: "notchMode") } }
@@ -34,7 +37,8 @@ final class AppModel: NSObject, ObservableObject {
     override init() {
         let defaults = UserDefaults.standard
         source = PlayerSource(rawValue: defaults.string(forKey: "source") ?? "") ?? .spotify
-        opacity = defaults.object(forKey: "opacity").map { _ in min(1, max(0.25, defaults.double(forKey: "opacity"))) } ?? 0.88
+        appearance = .restore(defaults.data(forKey: "appearance.v1"))
+        opacity = defaults.object(forKey: "opacity").map { _ in min(1, max(0.15, defaults.double(forKey: "opacity"))) } ?? 0.70
         alwaysOnTop = defaults.object(forKey: "alwaysOnTop") == nil || defaults.bool(forKey: "alwaysOnTop")
         notchMode = defaults.bool(forKey: "notchMode")
         fontSize = defaults.object(forKey: "fontSize").map { _ in min(34, max(18, defaults.double(forKey: "fontSize"))) } ?? 26
