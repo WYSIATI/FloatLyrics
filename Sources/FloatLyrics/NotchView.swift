@@ -38,7 +38,7 @@ struct NotchView: View {
         .clipShape(IslandSilhouette(shoulder: expanded ? 18 : 7, bottom: expanded ? 30 : 18))
         .shadow(color: .black.opacity(expanded ? 0.3 : 0), radius: 12, y: 8)
         .contentShape(IslandSilhouette(shoulder: expanded ? 18 : 7, bottom: expanded ? 30 : 18))
-        .onTapGesture { presentation.open() }
+        .onTapGesture { presentation.pin() }
         .animation(reduceMotion ? nil : .spring(response: 0.48, dampingFraction: 0.82), value: expanded)
         .frame(width: geometry.windowFrame.width, height: geometry.windowFrame.height, alignment: .top)
         .ignoresSafeArea()
@@ -60,7 +60,7 @@ struct NotchView: View {
                     Button { presentation.close() } label: { Image(systemName: "chevron.up").font(.system(size: 10, weight: .medium)) }
                         .buttonStyle(.plain).help("Collapse island").accessibilityLabel("Collapse island")
                 } else {
-                    PlaybackPulse(active: model.snapshot.isPlaying)
+                    PlaybackPulse(active: model.snapshot.isPlaying, color: .white)
                         .accessibilityValue("\(Int(model.snapshot.position)) seconds")
                 }
             }.foregroundStyle(.white.opacity(0.65)).frame(maxWidth: .infinity)

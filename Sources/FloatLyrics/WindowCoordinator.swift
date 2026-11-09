@@ -4,8 +4,12 @@ import Combine
 import LyricsCore
 
 private final class LyricsPanel: NSPanel {
+    var anchorsToScreenTop = false
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
+        anchorsToScreenTop ? frameRect : super.constrainFrameRect(frameRect, to: screen)
+    }
 }
 
 @MainActor
@@ -20,13 +24,14 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     private var hidden = false
 
     func start() {
-        floating = makePanel(size: NSSize(width: 460, height: 342))
+        floating = makePanel(size: FloatingView.size)
         floating.isMovableByWindowBackground = true
         floating.delegate = self
         floating.contentView = NSHostingView(rootView: FloatingView(model: model, hide: { [weak self] in self?.hide() }))
         restoreFloatingPosition()
         notch = makePanel(size: NSSize(width: 580, height: 220))
         notch.hasShadow = false
+        notch.anchorsToScreenTop = true
         notch.isMovable = false
         notch.acceptsMouseMovedEvents = true
         notch.becomesKeyOnlyIfNeeded = true
@@ -38,7 +43,8 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         statusItem.button?.image = NSImage(systemSymbolName: "quote.bubble", accessibilityDescription: "FloatLyrics")
         statusItem.button?.toolTip = "FloatLyrics · lyrics beside your work"
         rebuildMenu()
-        model.$opacity.sink { [weak self] value in self?.floating.alphaValue = value }.store(in: &subscriptions)
+        // The native glass background changes opacity; lyrics retain full contrast.
+        floating.alphaValue = 1
         model.$alwaysOnTop.sink { [weak self] value in
             self?.floating.level = value ? .floating : .normal
             DispatchQueue.main.async { self?.rebuildMenu() }
@@ -71,11 +77,12 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     private func restoreFloatingPosition() {
         let screen = NSScreen.main ?? NSScreen.screens.first
         guard let area = screen?.visibleFrame else { return }
-        let saved = UserDefaults.standard.string(forKey: "floatingFrame").map(NSRectFromString)
+        var saved = UserDefaults.standard.string(forKey: "floatingFrame").map(NSRectFromString)
+        saved?.size = FloatingView.size
         if let saved, NSScreen.screens.contains(where: { $0.visibleFrame.contains(saved) }) {
             floating.setFrame(saved, display: false)
         } else {
-            floating.setFrameOrigin(NSPoint(x: area.maxX - 496, y: area.minY + 70))
+            floating.setFrameOrigin(NSPoint(x: area.maxX - FloatingView.size.width - 36, y: area.minY + 70))
         }
     }
 
@@ -135,7 +142,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         title.isEnabled = false; menu.addItem(title)
         menu.addItem(.separator())
         add(hidden ? "Show Lyrics" : "Hide Lyrics", action: #selector(toggleVisibility), key: "l", menu: menu)
-        add("Notch Mode", action: #selector(toggleNotch), key: "n", checked: model.notchMode, menu: menu)
+        add("Dynamic Island", action: #selector(toggleNotch), key: "n", checked: model.notchMode, menu: menu)
         add("Always on Top", action: #selector(toggleTop), checked: model.alwaysOnTop, menu: menu)
         add("Click Through Lyrics", action: #selector(toggleClickThrough), checked: model.clickThrough, menu: menu)
         menu.addItem(.separator())

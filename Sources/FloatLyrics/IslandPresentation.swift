@@ -9,6 +9,8 @@ final class IslandPresentation: ObservableObject {
     private var collapse: Task<Void, Never>?
     private weak var panel: NSPanel?
     private weak var app: AppModel?
+    private var pinned = false
+    private var requiresPointerExit = false
 
     init(geometry: NotchGeometry) { self.geometry = geometry }
     func track(panel: NSPanel, app: AppModel) {
@@ -20,7 +22,8 @@ final class IslandPresentation: ObservableObject {
         RunLoop.main.add(tracking!, forMode: .common)
     }
     func open() { collapse?.cancel(); collapse = nil; expanded = true }
-    func close() { collapse?.cancel(); collapse = nil; expanded = false }
+    func pin() { pinned = true; requiresPointerExit = false; open() }
+    func close() { collapse?.cancel(); collapse = nil; pinned = false; requiresPointerExit = true; expanded = false }
     private func updatePointer() {
         guard let panel, panel.isVisible, let app, app.notchMode else { return }
         let frame = geometry.islandFrame(expanded: expanded)
@@ -30,8 +33,9 @@ final class IslandPresentation: ObservableObject {
             .path(in: CGRect(origin: .zero, size: frame.size)).contains(local)
         panel.ignoresMouseEvents = app.clickThrough || !inside
         guard !app.clickThrough else { close(); return }
-        if inside { open() }
-        else if expanded, collapse == nil {
+        if !inside { requiresPointerExit = false }
+        if inside, !requiresPointerExit { open() }
+        else if !inside, expanded, !pinned, collapse == nil {
             collapse = Task { [weak self] in
                 try? await Task.sleep(for: .milliseconds(380))
                 guard !Task.isCancelled else { return }

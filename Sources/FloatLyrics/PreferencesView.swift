@@ -4,18 +4,18 @@ struct PreferencesView: View {
     @ObservedObject var model: AppModel
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Make room for your music").font(.system(size: 16, weight: .semibold, design: .rounded))
+            Text("Make it yours").font(.system(size: 16, weight: .semibold))
             VStack(alignment: .leading, spacing: 7) {
-                HStack { Text("Opacity"); Spacer(); Text(model.opacity, format: .percent.precision(.fractionLength(0))).monospacedDigit().foregroundStyle(.secondary) }
+                HStack { Text("Glass opacity"); Spacer(); Text(model.opacity, format: .percent.precision(.fractionLength(0))).monospacedDigit().foregroundStyle(.secondary) }
                 Slider(value: $model.opacity, in: 0.25...1).accessibilityLabel("Window opacity")
-                Text("A softer window leaves your work in view.").font(.caption).foregroundStyle(.secondary)
+                Text("Keeps lyrics crisp while the glass fades. The island stays black to blend with the camera.").font(.caption).foregroundStyle(.secondary)
             }
             VStack(alignment: .leading, spacing: 7) {
                 HStack { Text("Lyric size"); Spacer(); Text("\(Int(model.fontSize)) pt").foregroundStyle(.secondary) }
                 Slider(value: $model.fontSize, in: 18...34, step: 1).accessibilityLabel("Lyric size")
             }
             Toggle("Always on top", isOn: $model.alwaysOnTop)
-            Toggle("Notch mode", isOn: $model.notchMode)
+            Toggle("Dynamic Island", isOn: $model.notchMode)
             Toggle("Click through lyrics", isOn: $model.clickThrough)
             Text("When click through is on, use the menu bar to change settings or restore interaction.").font(.caption).foregroundStyle(.secondary)
             Divider()
@@ -32,6 +32,6 @@ struct PreferencesView: View {
                 Spacer()
                 Button("Refresh lyrics") { model.retry() }.disabled(model.snapshot.track == nil)
             }.font(.caption)
-        }.font(.system(size: 12)).tint(.mint)
+        }.font(.system(size: 12)).tint(.primary)
     }
 }
