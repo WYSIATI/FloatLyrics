@@ -13,6 +13,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     let model = AppModel()
     private var floating: LyricsPanel!
     private var notch: LyricsPanel!
+    private var island: IslandPresentation!
     private var statusItem: NSStatusItem!
     private var preferences: NSWindow?
     private var subscriptions = Set<AnyCancellable>()
@@ -24,12 +25,20 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         floating.delegate = self
         floating.contentView = NSHostingView(rootView: FloatingView(model: model, hide: { [weak self] in self?.hide() }))
         restoreFloatingPosition()
-        notch = makePanel(size: NSSize(width: 510, height: 116))
+        notch = makePanel(size: NSSize(width: 580, height: 220))
+        notch.hasShadow = false
+        notch.isMovable = false
+        notch.acceptsMouseMovedEvents = true
+        notch.becomesKeyOnlyIfNeeded = true
+        let display = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? NSScreen.main ?? NSScreen.screens[0]
+        island = IslandPresentation(geometry: NotchGeometry(screen: display))
+        notch.contentView = NSHostingView(rootView: NotchView(model: model, presentation: island))
+        island.track(panel: notch, app: model)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.button?.image = NSImage(systemSymbolName: "quote.bubble", accessibilityDescription: "FloatLyrics")
         statusItem.button?.toolTip = "FloatLyrics · lyrics beside your work"
         rebuildMenu()
-        model.$opacity.sink { [weak self] value in self?.floating.alphaValue = value; self?.notch.alphaValue = value }.store(in: &subscriptions)
+        model.$opacity.sink { [weak self] value in self?.floating.alphaValue = value }.store(in: &subscriptions)
         model.$alwaysOnTop.sink { [weak self] value in
             self?.floating.level = value ? .floating : .normal
             DispatchQueue.main.async { self?.rebuildMenu() }
@@ -84,13 +93,11 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
 
     private func positionNotch() {
         guard let screen = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? floating.screen ?? NSScreen.main else { return }
-        let inset = screen.safeAreaInsets.top
-        // A physical camera cutout cannot display pixels. The lyric strip hangs just below it.
-        let height: CGFloat = 84
-        notch.level = NSWindow.Level(rawValue: NSWindow.Level.statusBar.rawValue + 1)
-        notch.contentView = NSHostingView(rootView: NotchView(model: model, hasNotch: inset > 0))
-        let top = inset > 0 ? screen.frame.maxY - inset : screen.visibleFrame.maxY - 8
-        notch.setFrame(NSRect(x: screen.frame.midX - 255, y: top - height, width: 510, height: height), display: true)
+        island.geometry = NotchGeometry(screen: screen)
+        island.close()
+        notch.alphaValue = 1
+        notch.level = NSWindow.Level(rawValue: NSWindow.Level.mainMenu.rawValue + 3)
+        notch.setFrame(island.geometry.windowFrame, display: true)
     }
 
     @objc private func screenChanged() { restoreFloatingPosition(); if model.notchMode { positionNotch() } }
