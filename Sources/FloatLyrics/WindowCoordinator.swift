@@ -122,8 +122,6 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     private func hide() { hidden = true; updatePresentation(); rebuildMenu() }
     @objc private func toggleVisibility() { hidden.toggle(); updatePresentation(); rebuildMenu() }
     @objc private func toggleNotch() { model.notchMode.toggle() }
-    @objc private func toggleTop() { model.alwaysOnTop.toggle() }
-    @objc private func toggleClickThrough() { model.clickThrough.toggle() }
     @objc private func chooseSource(_ sender: NSMenuItem) { if let raw = sender.representedObject as? String, let source = PlayerSource(rawValue: raw) { model.source = source } }
     @objc private func retry() { model.retry() }
     @objc private func openPlayer() { model.openPlayer() }
@@ -135,31 +133,41 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
             window.styleMask.insert(.closable)
             window.isMovableByWindowBackground = true
             window.title = "FloatLyrics Settings"; window.isReleasedWhenClosed = false
-            window.contentView = NSHostingView(rootView: PreferencesView(model: model, dismiss: { [weak self] in self?.preferences?.orderOut(nil) }))
             window.center(); preferences = window
         }
+        // Each opening starts at the small Settings index; details stay one level deeper.
+        preferences?.contentView = NSHostingView(rootView: PreferencesView(model: model,
+            dismiss: { [weak self] in self?.preferences?.orderOut(nil) },
+            resize: { [weak self] height in self?.resizePreferences(height: height) }))
+        resizePreferences(height: PreferencesView.size.height)
         preferences?.level = .floating
         preferences?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 
+    private func resizePreferences(height: CGFloat) {
+        guard let window = preferences else { return }
+        var frame = window.frame
+        frame.origin.y += frame.height - height
+        frame.size.height = height
+        window.setFrame(frame, display: true)
+    }
+
     private func rebuildMenu() {
         guard statusItem != nil else { return }
         let menu = NSMenu()
-        let title = NSMenuItem(title: "FloatLyrics", action: nil, keyEquivalent: "")
-        title.isEnabled = false; menu.addItem(title)
-        menu.addItem(.separator())
         add(hidden ? "Show Lyrics" : "Hide Lyrics", action: #selector(toggleVisibility), key: "l", menu: menu)
         add("Dynamic Island", action: #selector(toggleNotch), key: "n", checked: model.notchMode, menu: menu)
-        add("Always on Top", action: #selector(toggleTop), checked: model.alwaysOnTop, menu: menu)
-        add("Click Through Lyrics", action: #selector(toggleClickThrough), checked: model.clickThrough, menu: menu)
-        menu.addItem(.separator())
+        let playerMenu = NSMenu()
         for source in PlayerSource.allCases {
-            let item = add(source.name, action: #selector(chooseSource(_:)), checked: source == model.source, menu: menu)
+            let item = add(source.name, action: #selector(chooseSource(_:)), checked: source == model.source, menu: playerMenu)
             item.representedObject = source.rawValue
         }
-        add("Open Music App", action: #selector(openPlayer), menu: menu)
-        add("Reconnect / Refresh Lyrics", action: #selector(retry), menu: menu)
+        playerMenu.addItem(.separator())
+        add("Open \(model.source.name)", action: #selector(openPlayer), menu: playerMenu)
+        add("Reconnect / Refresh Lyrics", action: #selector(retry), menu: playerMenu)
+        let playerItem = NSMenuItem(title: "Music Player", action: nil, keyEquivalent: "")
+        playerItem.submenu = playerMenu; menu.addItem(playerItem)
         menu.addItem(.separator())
         add("Settings…", action: #selector(showPreferences), key: ",", menu: menu)
         add("Quit FloatLyrics", action: #selector(quit), key: "q", menu: menu)

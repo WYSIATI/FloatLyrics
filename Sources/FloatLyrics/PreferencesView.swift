@@ -3,16 +3,41 @@ import SwiftUI
 import LyricsCore
 
 private enum AppearanceTarget: String, CaseIterable { case window = "Window", island = "Island" }
+private enum SettingsPage {
+    case root, music, appearance, details, behavior
+    var title: String {
+        switch self {
+        case .root: "Settings"
+        case .music: "Music player"
+        case .appearance: "Appearance"
+        case .details: "More options"
+        case .behavior: "Behavior & timing"
+        }
+    }
+    var height: CGFloat {
+        switch self {
+        case .root: 270
+        case .music: 310
+        case .appearance: 350
+        case .details: 370
+        case .behavior: 360
+        }
+    }
+}
 
 struct PreferencesView: View {
-    static let size = CGSize(width: 366, height: 590)
+    static let size = CGSize(width: 350, height: SettingsPage.root.height)
     @ObservedObject var model: AppModel
     let dismiss: () -> Void
+    let resize: (CGFloat) -> Void
+    @State private var page: SettingsPage = .root
     @State private var target: AppearanceTarget
     @State private var hexDraft: String
-    init(model: AppModel, dismiss: @escaping () -> Void) {
+
+    init(model: AppModel, dismiss: @escaping () -> Void, resize: @escaping (CGFloat) -> Void) {
         self.model = model
         self.dismiss = dismiss
+        self.resize = resize
         _target = State(initialValue: model.notchMode ? .island : .window)
         _hexDraft = State(initialValue: model.notchMode ? model.appearance.islandCustomHex : model.appearance.windowCustomHex)
     }
@@ -36,113 +61,164 @@ struct PreferencesView: View {
             }
         })
     }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 8) {
-                Image(systemName: "slider.horizontal.3").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
-                Text("Appearance").font(.system(size: 14, weight: .medium))
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 5) {
+                if page != .root { IconButton(symbol: "chevron.left", label: "Back", action: goBack).keyboardShortcut(.cancelAction) }
+                Text(page == .details ? "\(target.rawValue) options" : page.title).font(.system(size: 14, weight: .medium))
                 Spacer()
-                Button("Reset") { resetTarget() }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(.secondary).help("Reset this view's appearance")
-                IconButton(symbol: "xmark", label: "Close appearance", action: dismiss)
-            }
-            GlassSegmentedControl(options: AppearanceTarget.allCases.map { ($0, $0.rawValue) }, selection: $target,
-                                  palette: model.appearance.palette)
-            AppearancePreview(model: model, island: isIsland)
-            ScrollView {
-                VStack(alignment: .leading, spacing: 19) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack { sectionLabel(isIsland ? "Lyric background" : "Glass opacity"); Spacer(); Text(opacity.wrappedValue, format: .percent.precision(.fractionLength(0))).monospacedDigit().foregroundStyle(.secondary) }
-                        Slider(value: opacity, in: 0.15...1).accessibilityLabel(isIsland ? "Island opacity" : "Window opacity")
-                        Text(isIsland ? "Only the lyric area fades. The camera cap stays seamless." : "Your lyrics stay crisp as the background fades.")
-                            .font(.system(size: 10)).foregroundStyle(.secondary)
-                    }
-                    VStack(alignment: .leading, spacing: 9) {
-                        sectionLabel("Lyric color")
-                        HStack(spacing: 9) {
-                            let options: [LyricInk] = isIsland ? [.automatic, .white, .silver, .charcoal] : [.automatic, .graphite, .charcoal, .silver]
-                            ForEach(options, id: \.self) { color in swatch(color) }
-                            Spacer(minLength: 0)
-                        }
-                        HStack {
-                            Text(ink.wrappedValue.name).foregroundStyle(.secondary)
-                            Spacer()
-                            if lowContrast { Button("Use automatic") { ink.wrappedValue = .automatic }.buttonStyle(.plain).foregroundStyle(model.accentColor) }
-                        }.font(.system(size: 10))
-                        HStack(spacing: 10) {
-                            ColorPicker("Custom", selection: customColor, supportsOpacity: false)
-                                .help("Choose a custom lyric color").accessibilityLabel("Custom lyric color")
-                            Spacer()
-                            HStack(spacing: 3) {
-                                Text("#").foregroundStyle(.tertiary)
-                                TextField("RRGGBB", text: hexInput).textFieldStyle(.plain).font(.system(size: 11, design: .monospaced))
-                                    .frame(width: 58).accessibilityLabel("Custom color hex")
-                                    .onSubmit { hexDraft = customHex.wrappedValue }
-                            }.padding(.horizontal, 8).padding(.vertical, 6).background(.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 6))
-                        }.font(.system(size: 11))
-                        if lowContrast { Text("This color may be hard to read. Automatic adapts to the background.").font(.system(size: 10)).foregroundStyle(.secondary) }
-                    }
-                    if !isIsland { palettePicker }
-                    if isIsland {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack { sectionLabel("Island width"); Spacer(); Text("\(Int(model.appearance.islandWidth)) pt").monospacedDigit().foregroundStyle(.secondary) }
-                            Slider(value: $model.appearance.islandWidth, in: 280...400, step: 10).accessibilityLabel("Island width")
-                            Toggle("Expand on hover", isOn: $model.appearance.expandOnHover).toggleStyle(.switch).controlSize(.small)
-                            Text("Click to expand. It tucks away when you return to work.").font(.system(size: 10)).foregroundStyle(.secondary)
-                        }
-                    } else {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack { sectionLabel("Lyric size"); Spacer(); Text("\(Int(model.fontSize)) pt").foregroundStyle(.secondary) }
-                            Slider(value: $model.fontSize, in: 18...34, step: 1).accessibilityLabel("Lyric size")
-                        }
-                    }
-                    Divider()
-                    VStack(spacing: 12) {
-                        Toggle("Always on top", isOn: $model.alwaysOnTop)
-                        Toggle("Dynamic Island", isOn: $model.notchMode)
-                        Toggle("Click through lyrics", isOn: $model.clickThrough)
-                    }.toggleStyle(.switch).controlSize(.small)
-                    Text("Use the menu bar to restore interaction when click through is on.").font(.system(size: 10)).foregroundStyle(.secondary)
-                    Divider()
-                    HStack {
-                        sectionLabel("Lyric timing")
-                        Spacer()
-                        Button { model.timingAdjustment = max(-5, model.timingAdjustment - 0.25) } label: { Image(systemName: "minus") }.accessibilityLabel("Show lyrics later")
-                        Text(String(format: "%+.2fs", model.timingAdjustment)).monospacedDigit().frame(width: 55)
-                        Button { model.timingAdjustment = min(5, model.timingAdjustment + 0.25) } label: { Image(systemName: "plus") }.accessibilityLabel("Show lyrics earlier")
-                    }.controlSize(.small)
-                    Text("+ shows lyrics earlier. Resets for each song.").font(.system(size: 10)).foregroundStyle(.secondary)
-                    HStack {
-                        Link("Lyrics by LRCLIB", destination: URL(string: "https://lrclib.net")!)
-                        Spacer()
-                        Button("Refresh lyrics") { model.retry() }.disabled(model.snapshot.track == nil)
-                    }.font(.system(size: 10))
-                }.padding(.vertical, 2).padding(.trailing, 4)
-            }.frame(height: 315)
-            Text("Changes apply immediately and are saved.").font(.system(size: 10)).foregroundStyle(.tertiary)
-        }.font(.system(size: 12)).padding(22).frame(width: Self.size.width, height: Self.size.height)
-            .modifier(GlassCardStyle(opacity: model.opacity, palette: model.appearance.palette))
-            .onExitCommand(perform: dismiss)
-            .onChange(of: target) { _, _ in hexDraft = customHex.wrappedValue }
-    }
-    private func sectionLabel(_ text: String) -> some View { Text(text).font(.system(size: 11, weight: .medium)) }
-    private var palettePicker: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            sectionLabel("Material")
-            HStack(spacing: 7) {
-                ForEach(SurfacePalette.allCases, id: \.self) { palette in
-                    Button { model.appearance.palette = palette } label: {
-                        VStack(spacing: 5) {
-                            RoundedRectangle(cornerRadius: 8).fill(palette.surface.color)
-                                .overlay { LiquidAccent(palette: palette).padding(6) }.frame(height: 31)
-                            Text(palette.name).font(.system(size: 9, weight: .medium)).foregroundStyle(.primary)
-                        }.padding(5).frame(maxWidth: .infinity)
-                            .background(model.appearance.palette == palette ? model.accentColor.opacity(0.08) : .clear, in: RoundedRectangle(cornerRadius: 11))
-                            .overlay { RoundedRectangle(cornerRadius: 11).strokeBorder(model.appearance.palette == palette ? model.accentColor.opacity(0.5) : .primary.opacity(0.06), lineWidth: 1) }
-                    }.buttonStyle(.plain).accessibilityLabel("\(palette.name) material").accessibilityAddTraits(model.appearance.palette == palette ? [.isSelected] : [])
+                if page == .root {
+                    IconButton(symbol: "xmark", label: "Close settings", action: dismiss).keyboardShortcut(.cancelAction)
+                } else {
+                    IconButton(symbol: "xmark", label: "Close settings", action: dismiss)
                 }
             }
+            pageContent
+            Spacer(minLength: 0)
+        }.font(.system(size: 12)).padding(22).frame(width: Self.size.width, height: page.height)
+            .modifier(GlassCardStyle(opacity: model.opacity, palette: model.appearance.palette))
+            .onChange(of: page) { _, value in resize(value.height) }
+            .onChange(of: target) { _, _ in hexDraft = customHex.wrappedValue }
+    }
+
+    @ViewBuilder private var pageContent: some View {
+        switch page {
+        case .root:
+            VStack(spacing: 0) {
+                navigationRow("Music player", value: model.source.name) { page = .music }
+                Divider().padding(.horizontal, 14)
+                navigationRow("Appearance") { page = .appearance }
+                Divider().padding(.horizontal, 14)
+                navigationRow("Behavior & timing") { page = .behavior }
+            }.background(.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 16))
+        case .music:
+            musicSettings
+        case .appearance:
+            appearanceSettings
+        case .details:
+            appearanceDetails
+        case .behavior:
+            behaviorSettings
         }
     }
+
+    private var musicSettings: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            GlassSegmentedControl(options: PlayerSource.allCases.map { ($0, $0.name) }, selection: $model.source,
+                                  palette: model.appearance.palette, accessibilityPrefix: "Use ")
+            Text(model.connectionMessage ?? (model.snapshot.track == nil ? "Play a song in \(model.source.name) to see its lyrics." : "Connected to \(model.source.name)."))
+                .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            HStack {
+                Button(model.denied ? "Open System Settings" : "Open \(model.source.name)") {
+                    model.denied ? model.openAutomationSettings() : model.openPlayer()
+                }
+                Spacer()
+                Button("Reconnect") { model.retry() }
+            }.buttonStyle(.bordered).controlSize(.small)
+            Divider()
+            HStack {
+                Link("Lyrics by LRCLIB", destination: URL(string: "https://lrclib.net")!)
+                Spacer()
+                Button("Refresh lyrics") { model.retry() }.buttonStyle(.plain).disabled(model.snapshot.track == nil)
+            }.font(.system(size: 10)).foregroundStyle(.secondary)
+        }
+    }
+
+    private var appearanceSettings: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            GlassSegmentedControl(options: AppearanceTarget.allCases.map { ($0, $0.rawValue) }, selection: $target,
+                                  palette: model.appearance.palette)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack { sectionLabel("Background opacity"); Spacer(); Text(opacity.wrappedValue, format: .percent.precision(.fractionLength(0))).monospacedDigit().foregroundStyle(.secondary) }
+                Slider(value: opacity, in: 0.15...1).accessibilityLabel(isIsland ? "Island opacity" : "Window opacity")
+            }
+            VStack(alignment: .leading, spacing: 10) {
+                HStack { sectionLabel("Lyric color"); Spacer(); Text(ink.wrappedValue.name).font(.system(size: 10)).foregroundStyle(.secondary) }
+                HStack(spacing: 10) {
+                    let options: [LyricInk] = isIsland ? [.automatic, .white, .silver, .charcoal] : [.automatic, .graphite, .charcoal, .silver]
+                    ForEach(options, id: \.self) { color in swatch(color) }
+                    Spacer()
+                    if lowContrast {
+                        Button("Use automatic") { ink.wrappedValue = .automatic }.font(.system(size: 10)).buttonStyle(.plain)
+                    }
+                }
+            }
+            navigationRow("More options") { page = .details }
+                .background(.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 12))
+        }
+    }
+
+    private var appearanceDetails: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 10) {
+                sectionLabel("Custom lyric color")
+                HStack(spacing: 10) {
+                    ColorPicker("Color", selection: customColor, supportsOpacity: false).labelsHidden()
+                        .accessibilityLabel("Custom lyric color")
+                    HStack(spacing: 3) {
+                        Text("#").foregroundStyle(.tertiary)
+                        TextField("RRGGBB", text: hexInput).textFieldStyle(.plain).font(.system(size: 11, design: .monospaced))
+                            .accessibilityLabel("Custom color hex").onSubmit { hexDraft = customHex.wrappedValue }
+                    }.padding(8).background(.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 6))
+                }
+                if lowContrast { Text("Automatic gives this background better contrast.").font(.system(size: 10)).foregroundStyle(.secondary) }
+            }
+            if isIsland {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack { sectionLabel("Island width"); Spacer(); Text("\(Int(model.appearance.islandWidth)) pt").monospacedDigit().foregroundStyle(.secondary) }
+                    Slider(value: $model.appearance.islandWidth, in: 280...400, step: 10).accessibilityLabel("Island width")
+                }
+                Toggle("Expand on hover", isOn: $model.appearance.expandOnHover).toggleStyle(.switch).controlSize(.small)
+                Text("Click to expand. The island tucks away when you return to work.").font(.system(size: 10)).foregroundStyle(.secondary)
+            } else {
+                VStack(alignment: .leading, spacing: 10) {
+                    sectionLabel("Material")
+                    GlassSegmentedControl(options: SurfacePalette.allCases.map { ($0, $0.name) }, selection: $model.appearance.palette,
+                                          palette: model.appearance.palette, accessibilityPrefix: "Use material ")
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack { sectionLabel("Lyric size"); Spacer(); Text("\(Int(model.fontSize)) pt").foregroundStyle(.secondary) }
+                    Slider(value: $model.fontSize, in: 18...34, step: 1).accessibilityLabel("Lyric size")
+                }
+            }
+            Button("Reset \(target.rawValue.lowercased()) appearance") { resetTarget() }
+                .font(.system(size: 10)).buttonStyle(.plain).foregroundStyle(.secondary)
+        }
+    }
+
+    private var behaviorSettings: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            VStack(spacing: 14) {
+                Toggle("Always on top", isOn: $model.alwaysOnTop)
+                Toggle("Dynamic Island", isOn: $model.notchMode)
+                Toggle("Click through lyrics", isOn: $model.clickThrough)
+            }.toggleStyle(.switch).controlSize(.small)
+            Text("Open Settings from the menu bar to turn click through off.").font(.system(size: 10)).foregroundStyle(.secondary)
+            Divider()
+            HStack {
+                sectionLabel("Lyric timing")
+                Spacer()
+                Button { model.timingAdjustment = max(-5, model.timingAdjustment - 0.25) } label: { Image(systemName: "minus") }.accessibilityLabel("Show lyrics later")
+                Text(String(format: "%+.2fs", model.timingAdjustment)).monospacedDigit().frame(width: 55)
+                Button { model.timingAdjustment = min(5, model.timingAdjustment + 0.25) } label: { Image(systemName: "plus") }.accessibilityLabel("Show lyrics earlier")
+            }.controlSize(.small)
+            Text("+ shows lyrics earlier. Resets for each song.").font(.system(size: 10)).foregroundStyle(.secondary)
+        }
+    }
+
+    private func navigationRow(_ title: String, value: String? = nil, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Text(title)
+                Spacer()
+                if let value { Text(value).font(.system(size: 11)).foregroundStyle(.secondary) }
+                Image(systemName: "chevron.right").font(.system(size: 9, weight: .medium)).foregroundStyle(.tertiary)
+            }.padding(.horizontal, 14).frame(height: 51).contentShape(Rectangle())
+        }.buttonStyle(.plain)
+    }
+    private func sectionLabel(_ text: String) -> some View { Text(text).font(.system(size: 11, weight: .medium)) }
+    private func goBack() { page = page == .details ? .appearance : .root }
     private func swatch(_ value: LyricInk) -> some View {
         Button { ink.wrappedValue = value } label: {
             ZStack {

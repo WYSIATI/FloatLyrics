@@ -8,7 +8,7 @@ struct FloatLyricsApp: App {
         Settings { EmptyView() }
             .commands {
                 CommandGroup(replacing: .appSettings) {
-                    Button("Appearance…") { NotificationCenter.default.post(name: .init("FloatLyrics.showAppearance"), object: nil) }
+                    Button("Settings…") { NotificationCenter.default.post(name: .init("FloatLyrics.showAppearance"), object: nil) }
                         .keyboardShortcut(",", modifiers: .command)
                 }
             }

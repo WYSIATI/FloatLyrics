@@ -2,7 +2,7 @@ import SwiftUI
 import LyricsCore
 
 struct FloatingView: View {
-    static let size = CGSize(width: 440, height: 304)
+    static let size = CGSize(width: 400, height: 224)
     @ObservedObject var model: AppModel
     let hide: () -> Void
     let showPreferences: () -> Void
@@ -10,45 +10,38 @@ struct FloatingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 6) {
-                Image(systemName: "quote.opening").font(.system(size: 11, weight: .semibold))
-                Text("FloatLyrics").font(.system(size: 11, weight: .medium)).tracking(0.2)
-                Spacer()
-                IconButton(symbol: "macbook", label: "Move to Dynamic Island") { model.notchMode = true }
-                IconButton(symbol: "slider.horizontal.3", label: "Appearance and timing", action: showPreferences)
-                IconButton(symbol: "xmark", label: "Hide lyrics (reopen from menu bar)", action: hide)
-            }.foregroundStyle(.secondary).padding(.horizontal, 18).padding(.top, 12)
-
-            HStack(spacing: 11) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 11).fill(model.accentColor.opacity(0.08))
-                    Image(systemName: "waveform").font(.system(size: 16, weight: .medium)).foregroundStyle(model.accentColor)
-                }.frame(width: 38, height: 38)
+            HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(model.snapshot.track?.title ?? "Nothing playing yet").font(.system(size: 13, weight: .semibold)).lineLimit(1)
-                    Text(model.snapshot.track?.artist ?? "Choose a player below").font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
-                }
-                Spacer(minLength: 4)
-                PlaybackPulse(active: model.snapshot.isPlaying).accessibilityValue("\(Int(model.snapshot.position)) seconds")
-            }.padding(.horizontal, 27).padding(.top, 14)
+                    Text(model.snapshot.track?.title ?? "FloatLyrics").font(.system(size: 12, weight: .medium)).lineLimit(1)
+                    Text(model.snapshot.track?.artist ?? model.source.name).font(.system(size: 10)).foregroundStyle(.tertiary).lineLimit(1)
+                }.frame(maxWidth: .infinity, alignment: .leading)
+                optionsMenu
+            }.foregroundStyle(.secondary).padding(.horizontal, 24).padding(.top, 19)
 
             lyricContent.frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            HStack(spacing: 12) {
-                sourcePicker
-                Spacer(minLength: 0)
-                Text(model.demo ? "PREVIEW" : model.loading ? "FINDING LYRICS" : model.lyrics?.isSynced == true ? "SYNCED" : "LRCLIB")
-                    .font(.system(size: 8, weight: .medium)).tracking(1.3).foregroundStyle(.secondary)
-            }.padding(.horizontal, 24).padding(.bottom, 19)
+            Spacer().frame(height: 18)
         }
         .frame(width: Self.size.width, height: Self.size.height)
         .modifier(GlassCardStyle(opacity: model.opacity, palette: model.appearance.palette))
     }
 
-    private var sourcePicker: some View {
-        GlassSegmentedControl(options: PlayerSource.allCases.map { ($0, $0.name) }, selection: $model.source,
-                              palette: model.appearance.palette, accessibilityPrefix: "Use ")
-            .frame(width: 186)
+    private var optionsMenu: some View {
+        Menu {
+            Menu("Music Player") {
+                Picker("Music Player", selection: $model.source) {
+                    ForEach(PlayerSource.allCases, id: \.self) { Text($0.name).tag($0) }
+                }.pickerStyle(.inline)
+            }
+            Button("Move to Dynamic Island") { model.notchMode = true }
+            Button("Settings…", action: showPreferences)
+            Divider()
+            Button("Hide Lyrics", action: hide)
+        } label: {
+            Image(systemName: "ellipsis").font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.secondary).frame(width: 28, height: 28).contentShape(Circle())
+        }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+            .help("Lyrics options").accessibilityLabel("Lyrics options")
     }
 
     @ViewBuilder private var lyricContent: some View {
@@ -78,21 +71,20 @@ struct FloatingView: View {
             TimelineView(.periodic(from: .now, by: 0.1)) { context in
                 let index = model.lyrics?.activeIndex(at: model.snapshot.position(at: context.date), adjustment: model.timingAdjustment)
                 let current = model.line(at: context.date)
-                VStack(spacing: 12) {
-                    Text(adjacentLine(index: index, delta: -1)).font(.system(size: 13)).foregroundStyle(model.lyricColor.opacity(0.28)).lineLimit(1)
+                VStack(spacing: 14) {
                     Text(current).font(.system(size: model.fontSize, weight: .medium))
                         .multilineTextAlignment(.center).lineLimit(3).minimumScaleFactor(0.65)
                         .foregroundStyle(model.lyricColor).frame(maxWidth: .infinity, minHeight: 58)
                         .contentTransition(.opacity)
                         .animation(reduceMotion ? nil : .easeOut(duration: 0.22), value: current)
-                    Text(adjacentLine(index: index, delta: 1)).font(.system(size: 13)).foregroundStyle(model.lyricColor.opacity(0.4)).lineLimit(1)
+                    Text(nextLine(index: index)).font(.system(size: 12)).foregroundStyle(model.lyricColor.opacity(0.35)).lineLimit(1)
                 }.padding(.horizontal, 30)
             }
         }
     }
-    private func adjacentLine(index: Int?, delta: Int) -> String {
+    private func nextLine(index: Int?) -> String {
         guard let lyrics = model.lyrics, lyrics.isSynced else { return " " }
-        let target = index.map { $0 + delta } ?? (delta > 0 ? 0 : -1)
+        let target = index.map { $0 + 1 } ?? 0
         return lyrics.lines.indices.contains(target) ? lyrics.lines[target].text : " "
     }
 }

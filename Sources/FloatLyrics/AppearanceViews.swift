@@ -40,31 +40,3 @@ struct LiquidAccent: View {
             .overlay { Capsule().strokeBorder(.white.opacity(palette.isDark ? 0.12 : 0.65), lineWidth: 0.65) }
     }
 }
-
-struct AppearancePreview: View {
-    @ObservedObject var model: AppModel
-    var island: Bool
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.035))
-            HStack(spacing: 5) {
-                ForEach(0..<18) { i in Rectangle().fill(Color.primary.opacity(i % 3 == 0 ? 0.075 : 0.025)).frame(width: 7) }
-            }.padding(.vertical, 12).mask(RoundedRectangle(cornerRadius: 16))
-            if island {
-                VStack(spacing: 0) {
-                    RoundedRectangle(cornerRadius: 4).fill(.black).frame(width: 95, height: 10)
-                    Text("Keep a melody beside you")
-                        .font(.system(size: 13, weight: .medium)).foregroundStyle(model.islandLyricColor)
-                        .frame(width: min(280, model.appearance.islandWidth * 0.72), height: 30)
-                        .background(.black.opacity(model.appearance.islandOpacity), in: UnevenRoundedRectangle(bottomLeadingRadius: 10, bottomTrailingRadius: 10))
-                }
-            } else {
-                Text("Keep a melody beside you").font(.system(size: 17, weight: .medium))
-                    .foregroundStyle(model.lyricColor).frame(maxWidth: .infinity).padding(.vertical, 20)
-                    .background(model.appearance.palette.surface.color.opacity(model.opacity), in: RoundedRectangle(cornerRadius: 16))
-                    .overlay { RoundedRectangle(cornerRadius: 16).strokeBorder(.white.opacity(0.5), lineWidth: 0.7) }
-                    .padding(.horizontal, 16)
-            }
-        }.frame(height: 88).accessibilityLabel("Live appearance preview")
-    }
-}

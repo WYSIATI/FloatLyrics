@@ -133,18 +133,3 @@ struct IconButton: View {
             .help(label).accessibilityLabel(label)
     }
 }
-
-struct PlaybackPulse: View {
-    var active: Bool
-    var color: Color = .primary
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    var body: some View {
-        TimelineView(.animation(minimumInterval: 0.2, paused: !active || reduceMotion)) { context in
-            HStack(alignment: .center, spacing: 2) {
-                ForEach(0..<4) { index in
-                    Capsule().fill(color.opacity(0.7)).frame(width: 2, height: active ? 5 + 9 * abs(sin(context.date.timeIntervalSince1970 * 2.8 + Double(index))) : 4)
-                }
-            }.frame(width: 18, height: 18)
-        }.accessibilityLabel(active ? "Playing" : "Paused")
-    }
-}
