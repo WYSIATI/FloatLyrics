@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-image="${1:-$PWD/dist/FloatLyrics-1.0.0.dmg}"
+version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Resources/Info.plist)"
+image="${1:-$PWD/dist/FloatLyrics-$version.dmg}"
 mount="$(mktemp -d "${TMPDIR:-/tmp}/floatlyrics-verify.XXXXXX")"
 cleanup() {
     hdiutil detach "$mount" -quiet || true
