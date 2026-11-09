@@ -14,7 +14,7 @@ extension AppModel {
 
 /// Broad, flowing reflections rather than an embossed chrome border. Motion is hover-only.
 struct LiquidAccent: View {
-    var palette: SurfacePalette = .glacier
+    var palette: SurfacePalette = .glass
     var energized = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {

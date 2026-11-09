@@ -5,9 +5,7 @@ struct FloatingView: View {
     static let size = CGSize(width: 440, height: 304)
     @ObservedObject var model: AppModel
     let hide: () -> Void
-    @State private var settings = false
-    @State private var hoveredSource: PlayerSource?
-    @Namespace private var selection
+    let showPreferences: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -17,8 +15,7 @@ struct FloatingView: View {
                 Text("FloatLyrics").font(.system(size: 11, weight: .medium)).tracking(0.2)
                 Spacer()
                 IconButton(symbol: "macbook", label: "Move to Dynamic Island") { model.notchMode = true }
-                IconButton(symbol: "slider.horizontal.3", label: "Appearance and timing") { settings.toggle() }
-                    .popover(isPresented: $settings, arrowEdge: .bottom) { PreferencesView(model: model).padding(22).frame(width: 366).preferredColorScheme(.light) }
+                IconButton(symbol: "slider.horizontal.3", label: "Appearance and timing", action: showPreferences)
                 IconButton(symbol: "xmark", label: "Hide lyrics (reopen from menu bar)", action: hide)
             }.foregroundStyle(.secondary).padding(.horizontal, 18).padding(.top, 12)
 
@@ -45,31 +42,13 @@ struct FloatingView: View {
             }.padding(.horizontal, 24).padding(.bottom, 19)
         }
         .frame(width: Self.size.width, height: Self.size.height)
-        .background { NativeGlass(opacity: model.opacity, palette: model.appearance.palette) }
-        .overlay { SurfaceRim() }
-        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-        .environment(\.colorScheme, model.appearance.palette.isDark ? .dark : .light)
-        .tint(model.accentColor)
+        .modifier(GlassCardStyle(opacity: model.opacity, palette: model.appearance.palette))
     }
 
     private var sourcePicker: some View {
-        HStack(spacing: 1) {
-            ForEach(PlayerSource.allCases) { source in
-                Button { model.source = source } label: {
-                    Text(source.name).font(.system(size: 10, weight: model.source == source ? .semibold : .regular))
-                        .foregroundStyle(.primary.opacity(model.source == source ? 0.85 : 0.45))
-                        .frame(width: source == .spotify ? 77 : 96, height: 28)
-                        .background {
-                            if model.source == source { LiquidAccent(palette: model.appearance.palette, energized: hoveredSource == source).matchedGeometryEffect(id: "player", in: selection) }
-                        }.contentShape(Capsule())
-                }.buttonStyle(.plain).accessibilityLabel("Use \(source.name)")
-                    .onHover { hoveredSource = $0 ? source : nil }
-                    .accessibilityAddTraits(model.source == source ? [.isSelected] : [])
-            }
-        }.padding(3)
-            .background(.primary.opacity(0.035), in: Capsule())
-            .overlay { Capsule().strokeBorder(.primary.opacity(0.04), lineWidth: 0.65).allowsHitTesting(false) }
-            .animation(reduceMotion ? nil : .spring(response: 0.42, dampingFraction: 0.76), value: model.source)
+        GlassSegmentedControl(options: PlayerSource.allCases.map { ($0, $0.name) }, selection: $model.source,
+                              palette: model.appearance.palette, accessibilityPrefix: "Use ")
+            .frame(width: 186)
     }
 
     @ViewBuilder private var lyricContent: some View {

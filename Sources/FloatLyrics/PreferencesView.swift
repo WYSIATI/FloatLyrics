@@ -5,11 +5,14 @@ import LyricsCore
 private enum AppearanceTarget: String, CaseIterable { case window = "Window", island = "Island" }
 
 struct PreferencesView: View {
+    static let size = CGSize(width: 366, height: 590)
     @ObservedObject var model: AppModel
+    let dismiss: () -> Void
     @State private var target: AppearanceTarget
     @State private var hexDraft: String
-    init(model: AppModel) {
+    init(model: AppModel, dismiss: @escaping () -> Void) {
         self.model = model
+        self.dismiss = dismiss
         _target = State(initialValue: model.notchMode ? .island : .window)
         _hexDraft = State(initialValue: model.notchMode ? model.appearance.islandCustomHex : model.appearance.windowCustomHex)
     }
@@ -35,12 +38,15 @@ struct PreferencesView: View {
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("Appearance").font(.system(size: 17, weight: .semibold))
+            HStack(spacing: 8) {
+                Image(systemName: "slider.horizontal.3").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
+                Text("Appearance").font(.system(size: 14, weight: .medium))
                 Spacer()
                 Button("Reset") { resetTarget() }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(.secondary).help("Reset this view's appearance")
+                IconButton(symbol: "xmark", label: "Close appearance", action: dismiss)
             }
-            Picker("Customize", selection: $target) { ForEach(AppearanceTarget.allCases, id: \.self) { Text($0.rawValue).tag($0) } }.pickerStyle(.segmented)
+            GlassSegmentedControl(options: AppearanceTarget.allCases.map { ($0, $0.rawValue) }, selection: $target,
+                                  palette: model.appearance.palette)
             AppearancePreview(model: model, island: isIsland)
             ScrollView {
                 VStack(alignment: .leading, spacing: 19) {
@@ -53,7 +59,7 @@ struct PreferencesView: View {
                     VStack(alignment: .leading, spacing: 9) {
                         sectionLabel("Lyric color")
                         HStack(spacing: 9) {
-                            let options: [LyricInk] = isIsland ? [.automatic, .white, .sky, .violet] : [.automatic, .graphite, .blue, .violet]
+                            let options: [LyricInk] = isIsland ? [.automatic, .white, .silver, .charcoal] : [.automatic, .graphite, .charcoal, .silver]
                             ForEach(options, id: \.self) { color in swatch(color) }
                             Spacer(minLength: 0)
                         }
@@ -113,7 +119,9 @@ struct PreferencesView: View {
                 }.padding(.vertical, 2).padding(.trailing, 4)
             }.frame(height: 315)
             Text("Changes apply immediately and are saved.").font(.system(size: 10)).foregroundStyle(.tertiary)
-        }.font(.system(size: 12)).tint(model.accentColor)
+        }.font(.system(size: 12)).padding(22).frame(width: Self.size.width, height: Self.size.height)
+            .modifier(GlassCardStyle(opacity: model.opacity, palette: model.appearance.palette))
+            .onExitCommand(perform: dismiss)
             .onChange(of: target) { _, _ in hexDraft = customHex.wrappedValue }
     }
     private func sectionLabel(_ text: String) -> some View { Text(text).font(.system(size: 11, weight: .medium)) }
@@ -151,11 +159,11 @@ struct PreferencesView: View {
     }
     private func resetTarget() {
         if isIsland {
-            model.appearance.islandInk = .automatic; model.appearance.islandCustomHex = "C2D8FF"
+            model.appearance.islandInk = .automatic; model.appearance.islandCustomHex = "F4F4F4"
             model.appearance.islandOpacity = 0.9; model.appearance.islandWidth = 320; model.appearance.expandOnHover = false
         } else {
-            model.appearance.palette = .glacier; model.appearance.windowInk = .automatic
-            model.appearance.windowCustomHex = "345ECC"; model.opacity = 0.70; model.fontSize = 26
+            model.appearance.palette = .glass; model.appearance.windowInk = .automatic
+            model.appearance.windowCustomHex = "1F1F1F"; model.opacity = 0.70; model.fontSize = 26
         }
         hexDraft = customHex.wrappedValue
     }

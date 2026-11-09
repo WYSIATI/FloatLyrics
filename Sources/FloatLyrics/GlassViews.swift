@@ -6,7 +6,7 @@ import LyricsCore
 struct NativeGlass: NSViewRepresentable {
     var opacity: Double
     var radius: CGFloat = 30
-    var palette: SurfacePalette = .glacier
+    var palette: SurfacePalette = .glass
     func makeNSView(context: Context) -> NSView {
         let backdrop = NSVisualEffectView()
         backdrop.material = .hudWindow
@@ -69,6 +69,51 @@ struct SurfaceRim: View {
                 .init(color: .white.opacity(0.2), location: 1)
             ], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 0.65)
             .allowsHitTesting(false)
+    }
+}
+
+/// Shared by the lyric window and Appearance, including material, edge and control tint.
+struct GlassCardStyle: ViewModifier {
+    var opacity: Double
+    var palette: SurfacePalette
+    func body(content: Content) -> some View {
+        content
+            .background { NativeGlass(opacity: opacity, palette: palette) }
+            .overlay { SurfaceRim() }
+            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+            .environment(\.colorScheme, palette.isDark ? .dark : .light)
+            .tint(palette.accent.color)
+    }
+}
+
+struct GlassSegmentedControl<Selection: Hashable>: View {
+    let options: [(Selection, String)]
+    @Binding var selection: Selection
+    var palette: SurfacePalette
+    var accessibilityPrefix = ""
+    @Namespace private var highlight
+    @State private var hovered: Int?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    var body: some View {
+        HStack(spacing: 1) {
+            ForEach(options.indices, id: \.self) { index in
+                let option = options[index]
+                Button { selection = option.0 } label: {
+                    Text(option.1).font(.system(size: 11, weight: selection == option.0 ? .medium : .regular))
+                        .foregroundStyle(.primary.opacity(selection == option.0 ? 0.9 : 0.5))
+                        .lineLimit(1).frame(maxWidth: .infinity).frame(height: 29)
+                        .background {
+                            if selection == option.0 {
+                                LiquidAccent(palette: palette, energized: hovered == index).matchedGeometryEffect(id: "selection", in: highlight)
+                            }
+                        }.contentShape(Capsule())
+                }.buttonStyle(.plain).onHover { hovered = $0 ? index : nil }
+                    .accessibilityLabel(accessibilityPrefix + option.1)
+                    .accessibilityAddTraits(selection == option.0 ? [.isSelected] : [])
+            }
+        }.padding(3).background(.primary.opacity(0.035), in: Capsule())
+            .overlay { Capsule().strokeBorder(.primary.opacity(0.06), lineWidth: 0.65).allowsHitTesting(false) }
+            .animation(reduceMotion ? nil : .spring(response: 0.36, dampingFraction: 0.85), value: selection)
     }
 }
 

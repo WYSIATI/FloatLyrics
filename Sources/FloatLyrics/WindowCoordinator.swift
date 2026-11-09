@@ -27,7 +27,8 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         floating = makePanel(size: FloatingView.size)
         floating.isMovableByWindowBackground = true
         floating.delegate = self
-        floating.contentView = NSHostingView(rootView: FloatingView(model: model, hide: { [weak self] in self?.hide() }))
+        floating.contentView = NSHostingView(rootView: FloatingView(model: model,
+            hide: { [weak self] in self?.hide() }, showPreferences: { [weak self] in self?.showPreferences() }))
         restoreFloatingPosition()
         notch = makePanel(size: NSSize(width: 580, height: 220))
         notch.hasShadow = false
@@ -130,9 +131,11 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
 
     @objc private func showPreferences() {
         if preferences == nil {
-            let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 366, height: 600), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let window = makePanel(size: PreferencesView.size)
+            window.styleMask.insert(.closable)
+            window.isMovableByWindowBackground = true
             window.title = "FloatLyrics Settings"; window.isReleasedWhenClosed = false
-            window.contentView = NSHostingView(rootView: PreferencesView(model: model).padding(22).frame(width: 366).preferredColorScheme(.light))
+            window.contentView = NSHostingView(rootView: PreferencesView(model: model, dismiss: { [weak self] in self?.preferences?.orderOut(nil) }))
             window.center(); preferences = window
         }
         preferences?.level = .floating
