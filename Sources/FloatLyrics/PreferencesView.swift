@@ -16,7 +16,7 @@ private enum SettingsPage {
     }
     var height: CGFloat {
         switch self {
-        case .root: 270
+        case .root: 300
         case .music: 310
         case .appearance: 350
         case .details: 370
@@ -66,7 +66,15 @@ struct PreferencesView: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 5) {
                 if page != .root { IconButton(symbol: "chevron.left", label: "Back", action: goBack).keyboardShortcut(.cancelAction) }
-                Text(page == .details ? "\(target.rawValue) options" : page.title).font(.system(size: 14, weight: .medium))
+                if page == .root {
+                    BrandMark().fill(.primary).frame(width: 26, height: 26).padding(.trailing, 7).accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Float Lyrics").font(.system(size: 14, weight: .semibold))
+                        Text("Settings").font(.system(size: 10)).foregroundStyle(.secondary)
+                    }
+                } else {
+                    Text(page == .details ? "\(target.rawValue) options" : page.title).font(.system(size: 14, weight: .medium))
+                }
                 Spacer()
                 if page == .root {
                     IconButton(symbol: "xmark", label: "Close settings", action: dismiss).keyboardShortcut(.cancelAction)
@@ -76,6 +84,13 @@ struct PreferencesView: View {
             }
             pageContent
             Spacer(minLength: 0)
+            if page == .root {
+                HStack {
+                    Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")")
+                    Spacer()
+                    Link("Help & source ↗", destination: URL(string: "https://github.com/WYSIATI/FloatLyrics#install")!)
+                }.font(.system(size: 10)).foregroundStyle(.secondary)
+            }
         }.font(.system(size: 12)).padding(22).frame(width: Self.size.width, height: page.height)
             .modifier(GlassCardStyle(opacity: model.opacity, palette: model.appearance.palette))
             .onChange(of: page) { _, value in resize(value.height) }
@@ -86,11 +101,11 @@ struct PreferencesView: View {
         switch page {
         case .root:
             VStack(spacing: 0) {
-                navigationRow("Music player", value: model.source.name) { page = .music }
+                navigationRow("Music player", symbol: "music.note", value: model.source.name) { page = .music }
                 Divider().padding(.horizontal, 14)
-                navigationRow("Appearance") { page = .appearance }
+                navigationRow("Appearance", symbol: "circle.lefthalf.filled") { page = .appearance }
                 Divider().padding(.horizontal, 14)
-                navigationRow("Behavior & timing") { page = .behavior }
+                navigationRow("Behavior & timing", symbol: "slider.horizontal.3") { page = .behavior }
             }.background(.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 16))
         case .music:
             musicSettings
@@ -207,9 +222,12 @@ struct PreferencesView: View {
         }
     }
 
-    private func navigationRow(_ title: String, value: String? = nil, action: @escaping () -> Void) -> some View {
+    private func navigationRow(_ title: String, symbol: String? = nil, value: String? = nil, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 10) {
+                if let symbol {
+                    Image(systemName: symbol).font(.system(size: 12, weight: .medium)).foregroundStyle(.secondary).frame(width: 18)
+                }
                 Text(title)
                 Spacer()
                 if let value { Text(value).font(.system(size: 11)).foregroundStyle(.secondary) }

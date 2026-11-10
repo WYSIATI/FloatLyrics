@@ -30,7 +30,11 @@ func load(_ name: String) -> CGImage {
     }
     return cg
 }
-let icon = load("app-icon.png")
+let iconURL = root.appendingPathComponent("docs/brand/app-icon-v2.png")
+guard let iconImage = NSImage(contentsOf: iconURL),
+      let icon = iconImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+    fatalError("Missing brand icon: \(iconURL.path)")
+}
 let graphicsOnly = args.contains("--graphics-only")
 let footageDirectory = URL(fileURLWithPath: argument("--footage") ?? "build/launch-footage")
 final class RealFootage {

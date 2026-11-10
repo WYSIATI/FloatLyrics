@@ -1,15 +1,29 @@
-# Float Lyrics
+<p align="center">
+  <img src="docs/brand/app-icon-v2.png" width="104" height="104" alt="Float Lyrics app icon: an F with a lifted lyric line">
+</p>
 
-**Keep working. Keep the words close.**
+<h1 align="center">Float Lyrics</h1>
 
-A small, native macOS lyrics companion for Spotify and Apple Music. The current
-line floats beside your work, or tucks into your Mac's notch.
+<p align="center"><strong>Keep the words close.</strong><br>
+Live lyrics for Spotify and Apple Music, quietly beside your work.</p>
 
-[**Download for macOS →**](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg)
-· [All releases](https://github.com/WYSIATI/FloatLyrics/releases)
-· [Launch film & quick walkthrough](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics-launch.mp4)
+<p align="center">
+  <a href="https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg"><strong>Download for macOS →</strong></a>
+  &nbsp;·&nbsp; <a href="https://github.com/WYSIATI/FloatLyrics/releases">Releases</a>
+  &nbsp;·&nbsp; <a href="https://github.com/WYSIATI/FloatLyrics/releases/download/v1.4.0/Float-Lyrics-launch.mp4">Watch the walkthrough</a>
+</p>
 
-![Float Lyrics with original sample lyrics](docs/images/floatlyrics-window.jpg)
+<p align="center"><sub>macOS 14+ &nbsp;·&nbsp; Apple Silicon & Intel &nbsp;·&nbsp; Free & open source</sub></p>
+
+![Float Lyrics — Keep the words close. Live lyrics for Spotify and Apple Music in a floating window or your Mac’s notch.](docs/images/social-preview-v2.png)
+
+Your song keeps playing. The current line follows along in a small floating
+window, or tucks into your Mac's notch. Stay with your work and catch the words
+with a glance.
+
+| Beside your work | In your notch | Your own rhythm |
+| --- | --- | --- |
+| A small window that stays on top without taking focus. | A single lyric line at the top of your screen. Click for more. | Separate opacity and text colors for the window and island. |
 
 ## Install
 
@@ -30,7 +44,7 @@ initial launch attempt, macOS may require **System Settings → Privacy & Securi
 includes [SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/SHA256SUMS.txt).
 You can also build from source.
 
-## Quiet by default
+## A small companion
 
 - **A glance, then back to work.** The 400 × 224 point window shows the song,
   current line, next line and one menu. It stays on top without taking focus.
@@ -39,7 +53,7 @@ You can also build from source.
   it shrinks when you return to work. No-notch displays use a top-edge island.
 - **Your player, in time.** Local Spotify and Apple Music playback drive free
   LRCLIB lookups, with pause/seek updates, cached lyrics and retry states.
-- **Adjust only when you want to.** Settings starts with three choices.
+- **Make it comfortable.** Settings starts with three choices.
   Appearance holds opacity and neutral text colors; More options holds custom
   colors, material, type size and island layout.
 
@@ -47,6 +61,20 @@ Open Settings from **•••**, the menu bar, or **⌘,**. Window and Island h
 opacity and text preferences. Only the background fades; lyrics stay crisp.
 Always-on-top, click through and lyric timing live under Behavior & timing.
 The menu bar restores access when lyrics are hidden or click through is enabled.
+
+<details>
+<summary><strong>See the interface</strong></summary>
+
+Actual app captures with original demo text. The social card above is a
+composed brand illustration based on the app, rather than an unedited capture.
+
+![The floating lyric window](docs/images/floatlyrics-window-v2.png)
+
+![Compact notch mode](docs/images/floatlyrics-notch-v2.png)
+
+![Settings: music player, appearance, behavior and timing](docs/images/floatlyrics-settings-v2.png)
+
+</details>
 
 ## Privacy and limitations
 
@@ -79,7 +107,7 @@ bash scripts/package-dmg.sh
 bash scripts/verify-dmg.sh
 ```
 
-For original-lyrics visual previews, launch the executable with `--demo`.
+For visual previews with original product-demo text, launch the executable with `--demo`.
 `--demo-position 15` starts at a chosen sample time. Preview preferences are
 separate from listening preferences. `--diagnostics` prints opt-in playback
 diagnostics.

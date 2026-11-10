@@ -8,13 +8,14 @@ struct FloatingView: View {
     let showPreferences: () -> Void
     let quit: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var optionsHovered = false
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(model.snapshot.track?.title ?? "Float Lyrics").font(.system(size: 12, weight: .medium)).lineLimit(1)
-                    Text(model.snapshot.track?.artist ?? model.source.name).font(.system(size: 10)).foregroundStyle(.tertiary).lineLimit(1)
+                    Text(model.snapshot.track?.artist ?? model.source.name).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 optionsMenu
             }.foregroundStyle(.secondary).padding(.horizontal, 24).padding(.top, 19)
@@ -43,16 +44,20 @@ struct FloatingView: View {
                 .keyboardShortcut("q", modifiers: .command)
         } label: {
             Image(systemName: "ellipsis").font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.secondary).frame(width: 28, height: 28).contentShape(Circle())
+                .foregroundStyle(.secondary).frame(width: 28, height: 28)
+                .background(.primary.opacity(optionsHovered ? 0.06 : 0), in: Circle()).contentShape(Circle())
         }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+            .onHover { optionsHovered = $0 }
             .help("Lyrics options").accessibilityLabel("Lyrics options")
     }
 
     @ViewBuilder private var lyricContent: some View {
-        if let message = model.connectionMessage, model.snapshot.track == nil {
-            VStack(spacing: 10) {
-                Text(model.denied ? "Connect your music" : "Play something you love.").font(.system(size: 21, weight: .medium))
-                Text(message).font(.system(size: 11)).foregroundStyle(.secondary).multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+        if model.snapshot.track == nil {
+            VStack(spacing: 9) {
+                BrandMark().fill(model.lyricColor.opacity(0.55)).frame(width: 21, height: 21).accessibilityHidden(true)
+                Text(model.denied ? "Connect your music" : "Play something you love.").font(.system(size: 20, weight: .medium))
+                Text(model.connectionMessage ?? "Play a song in \(model.source.name). The words will follow.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary).multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
                 HStack {
                     Button(model.denied ? "Open Settings" : "Open \(model.source.name)") { model.denied ? model.openAutomationSettings() : model.openPlayer() }
                     if model.denied { Button("Try again") { model.retry() } }
@@ -81,7 +86,7 @@ struct FloatingView: View {
                         .foregroundStyle(model.lyricColor).frame(maxWidth: .infinity, minHeight: 58)
                         .contentTransition(.opacity)
                         .animation(reduceMotion ? nil : .easeOut(duration: 0.22), value: current)
-                    Text(nextLine(index: index)).font(.system(size: 12)).foregroundStyle(model.lyricColor.opacity(0.35)).lineLimit(1)
+                    Text(nextLine(index: index)).font(.system(size: 12)).foregroundStyle(model.lyricColor.opacity(0.46)).lineLimit(1)
                 }.padding(.horizontal, 30)
             }
         }

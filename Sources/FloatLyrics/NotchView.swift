@@ -65,7 +65,7 @@ struct NotchView: View {
     private var cameraRow: some View {
         HStack(spacing: 0) {
             HStack(spacing: 6) {
-                Image(systemName: "music.note").font(.system(size: 10, weight: .medium)).foregroundStyle(.white.opacity(0.65))
+                BrandMark().fill(.white.opacity(0.65)).frame(width: 10, height: 10).accessibilityHidden(true)
                 if expanded { Text("Lyrics").font(.system(size: 9, weight: .medium)).foregroundStyle(.white.opacity(0.45)) }
             }.frame(maxWidth: .infinity)
             Color.clear.frame(width: geometry.cameraWidth, height: geometry.cameraHeight)

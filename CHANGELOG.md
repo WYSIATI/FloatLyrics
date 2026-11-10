@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.1 · A little lift
+
+- New lifted-line F identity, with a vector-drawn Mac icon and matching menu-bar,
+  notch, settings and first-use marks.
+- Clearer secondary lyrics and artist text, a more useful waiting state, and a
+  compact settings header with version and help access.
+- Refreshed GitHub presentation and a matching social preview.
+
 ## 1.4.0 · Float Lyrics
 
 - Renamed the app, menu-bar labels, Automation message, installer volume and app

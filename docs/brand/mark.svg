@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#1F1F1F" role="img" aria-labelledby="title">
+  <title id="title">Float Lyrics — a lifted lyric line forming an F</title>
+  <rect x="8" width="92" height="20" rx="10"/>
+  <path d="M10 36H66Q76 36 76 46Q76 56 66 56H20V90Q20 100 10 100Q0 100 0 90V46Q0 36 10 36Z"/>
+</svg>

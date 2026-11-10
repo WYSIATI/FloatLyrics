@@ -43,7 +43,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
             quit: { [weak self] in self?.quit() }))
         island.track(panel: notch, app: model)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusItem.button?.image = NSImage(systemSymbolName: "quote.bubble", accessibilityDescription: "Float Lyrics")
+        statusItem.button?.image = BrandMark.menuBarImage
         statusItem.button?.toolTip = "Float Lyrics · lyrics beside your work"
         rebuildMenu()
         // The native glass background changes opacity; lyrics retain full contrast.

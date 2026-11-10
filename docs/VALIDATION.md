@@ -1,5 +1,26 @@
 # Validation · 2026-11-09
 
+## 1.4.1 identity and presentation · 2026-11-10
+
+- The lifted-line F is rendered from vector paths for the Mac icon, menu-bar
+  template, notch, settings and connection state. All ten ICNS input sizes are
+  generated individually; SVG and transparent PNG exports are included.
+- Native app captures verified the floating window, compact notch and branded
+  settings root with version/help access. Light and Ink settings appearances and
+  appearance back navigation were inspected. Public captures use isolated demo
+  preferences and original product-demo text.
+- The social card was generated using the repository-aware
+  `morluto/generate-social-preview` workflow, inspected at full size and at
+  640 × 320, normalized to 1280 × 640 with its helper, and saved in GitHub's
+  repository social-preview setting. It is a composed illustration based on the
+  app; the separate interface screenshots are native captures.
+- The universal 1.4.1 build and compressed installer passed checksum verification,
+  read-only mounted contents, arm64/x86_64 architecture and strict app-signature
+  checks. Existing signing and platform-validation limitations below still apply.
+- All 27 existing tests passed against the final source.
+
+## Earlier validation
+
 - Xcode 26.6 / Swift 6.3.3; deployment target macOS 14.
 - Universal release build compiles for arm64 and x86_64.
 - 27 automated tests pass: lyrics/timing/network behavior, both player dictionaries, camera-aware island bounds, independent appearance persistence, malformed/older preferences, custom hex validation, automatic-color contrast, legacy accent migration, grayscale-only shipped presets/materials, empty-record fallback and malformed service responses.
