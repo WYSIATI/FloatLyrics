@@ -24,6 +24,28 @@ with a glance.
 | --- | --- | --- |
 | A small window that stays on top without taking focus. | A single lyric line at the top of your screen. Click for more. | Separate opacity and text colors for the window and island. |
 
+## Screenshots
+
+Native app captures with original demo text. Click an image for full resolution.
+
+**Floating window** — the current lyric, song details and the options menu.
+
+<a href="docs/screenshots/floating-window.png"><img src="docs/screenshots/floating-window.png" width="640" alt="Float Lyrics floating window showing Desktop lyrics, the demo artist and Make the lyrics feel like yours, with the options menu at the top right."></a>
+
+**Dynamic Island** — a compact line at the screen edge; click to expand for song
+details and the controls to return to the window or collapse the island.
+
+<a href="docs/screenshots/island-compact.png"><img src="docs/screenshots/island-compact.png" width="640" alt="Compact Dynamic Island showing a single white demo lyric beneath the camera area."></a>
+
+<a href="docs/screenshots/island-expanded.png"><img src="docs/screenshots/island-expanded.png" width="640" alt="Expanded Dynamic Island showing the demo song, current lyric, Spotify status, return-to-window button, collapse button and options menu."></a>
+
+| Settings | Appearance |
+| --- | --- |
+| <a href="docs/screenshots/settings.png"><img src="docs/screenshots/settings.png" width="350" alt="Float Lyrics 1.4.2 Settings with Music player, Appearance, and Behavior and timing."></a> | <a href="docs/screenshots/appearance.png"><img src="docs/screenshots/appearance.png" width="350" alt="Appearance settings with separate Window and Island tabs, background opacity at 70 percent, lyric color swatches and More options."></a> |
+
+The social card above is a composed brand illustration. These screenshots are
+captures of the app itself. [Capture notes and refresh instructions](docs/screenshots/README.md).
+
 ## Install
 
 1. Download the DMG and drag **Float Lyrics** to **Applications**.
@@ -69,20 +91,6 @@ The menu bar restores access when lyrics are hidden or click through is enabled.
 To quit, choose **••• → Quit Float Lyrics** in the floating window. In notch
 mode, click the island to expand it, then choose **••• → Quit Float Lyrics**.
 The menu-bar menu also includes Quit.
-
-<details>
-<summary><strong>See the interface</strong></summary>
-
-Actual app captures with original demo text. The social card above is a
-composed brand illustration based on the app, rather than an unedited capture.
-
-![The floating lyric window](docs/images/floatlyrics-window-v2.png)
-
-![Compact notch mode](docs/images/floatlyrics-notch-v2.png)
-
-![Settings: music player, appearance, behavior and timing](docs/images/floatlyrics-settings-v2.png)
-
-</details>
 
 ## Privacy and limitations
 
