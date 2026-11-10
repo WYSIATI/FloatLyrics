@@ -80,6 +80,13 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     }
 
     private func restoreFloatingPosition() {
+        if model.visualPreview,
+           let screen = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? NSScreen.main {
+            let area = screen.visibleFrame
+            floating.setFrameOrigin(NSPoint(x: area.maxX - FloatingView.size.width - 36,
+                                            y: area.minY + 70))
+            return
+        }
         let screen = NSScreen.main ?? NSScreen.screens.first
         guard let area = screen?.visibleFrame else { return }
         var saved = UserDefaults.standard.string(forKey: "floatingFrame").map(NSRectFromString)
