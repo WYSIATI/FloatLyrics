@@ -82,6 +82,20 @@ if graphicsOnly {
     islandFootage = try await RealFootage("island", minimumDuration: 12)
     settingsFootage = try await RealFootage("settings", minimumDuration: 15)
 }
+// Usage instructions are burned into the movie, so they remain visible on X with sound off.
+let walkthrough: [(start: Double, end: Double, title: String, detail: String)] = [
+    (0, 4, "Your music, a little closer.", "Live lyrics beside your work."),
+    (4, 8, "1. Choose your player", "••• → Music Player → Spotify or Apple Music"),
+    (8, 12, "2. Play a song", "Play in the desktop app. Allow Automation if macOS asks."),
+    (12, 15, "Keep working. Lyrics follow.", "Drag the lyric window wherever you like."),
+    (15, 20, "3. Move to your notch", "••• → Move to Dynamic Island"),
+    (20, 24, "Click for a closer look", "Click the island to expand. Move away to tuck it back."),
+    (24, 27, "Back to the window?", "Expand the island, then click the window arrow."),
+    (27, 32, "4. Make it comfortable", "••• → Settings → Appearance"),
+    (32, 36, "Fade the background", "Choose Window or Island, then adjust opacity. Lyrics stay crisp."),
+    (36, 39, "Choose your lyric color", "Select a swatch. More options has custom colors."),
+    (39, 42, "Return to your work", "Your changes save automatically. Keep listening.")
+]
 func clamp(_ x: Double) -> Double { min(1, max(0, x)) }
 func ease(_ x: Double) -> Double { let v = clamp(x); return 1 - pow(1 - v, 3) }
 func smooth(_ x: Double) -> Double { let v = clamp(x); return v * v * (3 - 2 * v) }
@@ -158,23 +172,22 @@ func render(_ c: CGContext, t: Double) {
     grid(c, time: t)
     if t < 42 {
         badge(c)
-        let title: String
         let source: RealFootage?
         let localTime: Double
         if t < 15 {
-            title = "Lyrics beside your work."
             source = floatingFootage; localTime = t
         } else if t < 27 {
-            title = "A line. Right in your notch."
             source = islandFootage; localTime = t - 15
         } else {
-            title = t < 39 ? "Make it yours." : "Work. Listen. Sing."
             source = settingsFootage; localTime = t - 27
         }
-        text(c, title, x: 84, y: 126, w: 1752, size: 65)
+        if let instruction = walkthrough.first(where: { $0.start <= t && t < $0.end }) {
+            text(c, instruction.title, x: 84, y: 116, w: 1752, size: 59)
+            text(c, instruction.detail, x: 88, y: 196, w: 1744, size: 28, weight: .regular, color: muted)
+        }
         if let source {
             let frame = source.frame(at: localTime)
-            let area = CGRect(x: 80, y: 242, width: 1760, height: 774)
+            let area = CGRect(x: 80, y: 264, width: 1760, height: 752)
             let scale = min(area.width / Double(frame.width), area.height / Double(frame.height))
             let rect = CGRect(x: area.midX - Double(frame.width) * scale / 2,
                               y: area.midY - Double(frame.height) * scale / 2,
@@ -203,6 +216,8 @@ func render(_ c: CGContext, t: Double) {
         c.restoreGState()
         reveal(c, "github.com/WYSIATI/FloatLyrics", x: 180, y: 767, w: 1560, size: 30,
                time: s, delay: 0.6, align: .center, weight: .medium)
+        reveal(c, "Download → Applications → Open", x: 200, y: 855, w: 1520, size: 25,
+               time: s, delay: 0.75, color: muted, align: .center, weight: .regular)
         reveal(c, "macOS 14+  ·  Liquid Glass on macOS 26+", x: 200, y: 927, w: 1520, size: 23,
                time: s, delay: 0.8, color: muted, align: .center, weight: .regular)
     }
@@ -247,7 +262,7 @@ if let value = argument("--frame"), let time = Double(value) {
     for index in 0..<count {
         while !input.isReadyForMoreMediaData {
             if writer.status == .failed { fatalError(writer.error!.localizedDescription) }
-            Thread.sleep(forTimeInterval: 0.002)
+            try await Task.sleep(for: .milliseconds(2))
         }
         try autoreleasepool {
             var buffer: CVPixelBuffer?
@@ -267,9 +282,7 @@ if let value = argument("--frame"), let time = Double(value) {
         if index % (Int(fps)*4) == 0 { print("Rendered \(index/Int(fps)) / \(Int(duration)) seconds"); fflush(stdout) }
     }
     input.markAsFinished()
-    let semaphore = DispatchSemaphore(value: 0)
-    writer.finishWriting { semaphore.signal() }
-    semaphore.wait()
+    await writer.finishWriting()
     guard writer.status == .completed else { fatalError(writer.error?.localizedDescription ?? "Movie incomplete") }
     print("Rendered \(count) frames → \(output)")
 }

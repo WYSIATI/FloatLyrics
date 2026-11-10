@@ -3,22 +3,56 @@
 Float Lyrics. Your music, a little closer.
 
 2
-00:00:04,000 --> 00:00:15,000
-Lyrics beside your work.
+00:00:04,000 --> 00:00:08,000
+1. Choose your player.
+••• → Music Player → Spotify or Apple Music.
 
 3
-00:00:15,000 --> 00:00:27,000
-A line. Right in your notch.
+00:00:08,000 --> 00:00:12,000
+2. Play a song in the desktop app.
+Allow Automation if macOS asks.
 
 4
-00:00:27,000 --> 00:00:39,000
-Make it yours.
+00:00:12,000 --> 00:00:15,000
+Keep working. Lyrics follow automatically.
+Drag the lyric window wherever you like.
 
 5
-00:00:39,000 --> 00:00:42,000
-Work. Listen. Sing.
+00:00:15,000 --> 00:00:20,000
+3. Move to your notch.
+••• → Move to Dynamic Island.
 
 6
+00:00:20,000 --> 00:00:24,000
+Click the island to expand.
+Move away to tuck it back.
+
+7
+00:00:24,000 --> 00:00:27,000
+Back to the window?
+Expand the island, then click the window arrow.
+
+8
+00:00:27,000 --> 00:00:32,000
+4. Make it comfortable.
+••• → Settings → Appearance.
+
+9
+00:00:32,000 --> 00:00:36,000
+Choose Window or Island and adjust opacity.
+Only the background fades; lyrics stay crisp.
+
+10
+00:00:36,000 --> 00:00:39,000
+Choose a lyric-color swatch.
+More options has custom colors.
+
+11
+00:00:39,000 --> 00:00:42,000
+Return to your work.
+Your changes save automatically.
+
+12
 00:00:42,000 --> 00:00:48,000
 Float Lyrics. Free. Open source. Made for Mac.
-github.com/WYSIATI/FloatLyrics
+Download → Applications → Open.
