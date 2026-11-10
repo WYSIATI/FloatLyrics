@@ -27,6 +27,23 @@
   architecture and matching-volume-logo checks.
 - The versioned 1.4.2 DMG and both stable aliases have SHA-256
   `6851fb8ec1bf00e0c271dc023b6da4702c67b5529e6f8efdf92a08531ec71df9`.
+- Published GitHub release `v1.4.2` as latest. The published README's versioned
+  link and both `releases/latest` compatibility links were downloaded without
+  authentication. All three public files match the checksum above. The actual
+  downloaded DMG, with quarantine applied, passed the full installer verifier,
+  including mounted artwork, stapled tickets and macOS distribution checks.
+- GitHub Actions run `42779414800` passed for release commit `74e0d95`.
+- The local Applications folder still contained the ad-hoc-signed 1.4.1 app.
+  It was backed up and replaced with the verified public 1.4.2 download; the
+  installed app passes strict signature, stapled-ticket, Gatekeeper and
+  `syspolicy_check distribution` checks. A launched process matches the installed
+  release executable. Automated accessibility inspection timed out, so no new
+  visual or playback verification is claimed here.
+- An old 1.4.1 installer was also still mounted from Downloads without a custom
+  volume icon. It was replaced by the 1.4.2 installer, whose volume artwork
+  matches the installed app. The local Downloads DMG received its Finder icon;
+  public HTTP downloads still have the file-metadata limitation documented in
+  the release guide.
 
 ## 1.4.1 identity and presentation · 2026-11-10
 
