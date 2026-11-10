@@ -6,6 +6,9 @@ Your music, a little closer.
 3. Choose Spotify or Apple Music, open that desktop app, and play a song.
 4. Allow the macOS Automation prompt so Float Lyrics can read the track and position.
 
+Updating from FloatLyrics: quit the old app and move FloatLyrics.app out of
+Applications before installing Float Lyrics.app. Saved preferences are retained.
+
 The floating window shows the song, current lyric and next line. Drag it to
 place it. Open the three-dot menu for the music player, Dynamic Island,
 Settings or Hide. The window stays on top by default.

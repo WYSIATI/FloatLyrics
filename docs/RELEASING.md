@@ -5,7 +5,8 @@
 3. Run `bash scripts/verify-dmg.sh` and check live Spotify playback, the lyric
    window, compact/expanded island, Settings navigation and a recovery state.
 4. Commit the release with a GitHub privacy email and no coauthor trailer.
-5. Tag the tested commit. Upload `dist/FloatLyrics.dmg` and
+5. Tag the tested commit. Upload `dist/Float-Lyrics.dmg`, the compatibility alias
+   `dist/FloatLyrics.dmg`, and
    `dist/SHA256SUMS.txt` to that release. Keep the repository public so anonymous
    users can download through the README's stable latest-release link.
    If including launch media, run `bash marketing/build.sh`, add the media files

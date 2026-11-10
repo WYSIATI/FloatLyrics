@@ -17,6 +17,10 @@ line floats beside your work, or tucks into your Mac's notch.
 2. Open it. Choose **Music Player → Spotify** or **Apple Music** from **•••**.
 3. Play a song in that desktop app and allow macOS Automation when asked.
 
+Updating from the previous name? Quit **FloatLyrics**, move the old
+**FloatLyrics.app** out of Applications, and install **Float Lyrics.app**.
+Your saved preferences are retained.
+
 Requires **macOS 14+**, with a universal Apple Silicon/Intel build. Native Liquid
 Glass is available on **macOS 26+**; earlier systems use a translucent material.
 
