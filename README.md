@@ -7,7 +7,7 @@ line floats beside your work, or tucks into your Mac's notch.
 
 [**Download for macOS →**](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg)
 · [All releases](https://github.com/WYSIATI/FloatLyrics/releases)
-· [Previous launch film](https://github.com/WYSIATI/FloatLyrics/releases/download/v1.3.1/FloatLyrics-launch.mp4)
+· [Launch film & quick walkthrough](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics-launch.mp4)
 
 ![Float Lyrics with original sample lyrics](docs/images/floatlyrics-window.jpg)
 

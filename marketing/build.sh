@@ -22,8 +22,10 @@ ffmpeg -hide_banner -loglevel warning -y \
   -movflags +faststart -metadata title='Float Lyrics — Your music, a little closer' \
   -metadata comment='Real macOS screen recordings, original titles and original synthesized music. MIT source.' \
   dist/Float-Lyrics-launch.mp4
-build/launch-render --footage "$footage" --frame 7 --output dist/Float-Lyrics-launch-poster.png
+build/launch-render --footage "$footage" --frame 44 --output dist/Float-Lyrics-launch-poster.png
 cp marketing/launch.srt dist/Float-Lyrics-launch.srt
 # Preserve old public launch-film links.
 cp dist/Float-Lyrics-launch.mp4 dist/FloatLyrics-launch.mp4
+cp dist/Float-Lyrics-launch-poster.png dist/FloatLyrics-launch-poster.png
+cp dist/Float-Lyrics-launch.srt dist/FloatLyrics-launch.srt
 printf 'Created dist/Float-Lyrics-launch.mp4\n'

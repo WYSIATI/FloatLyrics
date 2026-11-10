@@ -15,7 +15,7 @@ Allow Automation if macOS asks.
 4
 00:00:12,000 --> 00:00:15,000
 Keep working. Lyrics follow automatically.
-Drag the lyric window wherever you like.
+Live lyrics stay beside your work automatically.
 
 5
 00:00:15,000 --> 00:00:20,000
@@ -24,8 +24,8 @@ Drag the lyric window wherever you like.
 
 6
 00:00:20,000 --> 00:00:24,000
-Click the island to expand.
-Move away to tuck it back.
+One line at a time.
+Click the island to expand its controls.
 
 7
 00:00:24,000 --> 00:00:27,000
