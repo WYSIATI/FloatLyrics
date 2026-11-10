@@ -29,7 +29,18 @@ if [[ -n "${NOTARY_PROFILE:-}" ]]; then
     xcrun notarytool submit "$output" --keychain-profile "$NOTARY_PROFILE" --wait
     xcrun stapler staple "$output"
 fi
-hdiutil verify "$output"
+for attempt in 1 2 3; do
+    if verification="$(hdiutil verify "$output" 2>&1)"; then
+        printf '%s\n' "$verification"
+        break
+    fi
+    printf '%s\n' "$verification" >&2
+    # Fresh images can briefly be held by macOS background scanning on hosted runners.
+    if [[ "$verification" != *"Resource temporarily unavailable"* && "$verification" != *"Resource busy"* ]] || [[ "$attempt" == 3 ]]; then
+        exit 1
+    fi
+    sleep "$attempt"
+done
 (
     cd dist
     shasum -a 256 "Float-Lyrics-$version.dmg" > "Float-Lyrics-$version.dmg.sha256"
