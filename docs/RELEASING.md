@@ -7,15 +7,18 @@
 3. Check live Spotify playback, the lyric
    window, compact/expanded island, Settings navigation and a recovery state.
 4. Commit the release with a GitHub privacy email and no coauthor trailer.
-5. Tag the tested commit. Upload the versioned DMG and its `.sha256` file,
-   `dist/Float-Lyrics.dmg`, the compatibility alias `dist/FloatLyrics.dmg`, and
-   `dist/SHA256SUMS.txt` to that release. Publish it as the latest release. Keep
-   the repository public so anonymous users can download through the README's
-   versioned link and the compatibility latest-release links.
+5. Tag the tested commit. Upload the versioned DMG and `.dmg.zip` archive,
+   their `.sha256` files, `dist/Float-Lyrics.dmg.zip`, `dist/Float-Lyrics.dmg`,
+   the compatibility alias `dist/FloatLyrics.dmg`, and `dist/SHA256SUMS.txt`.
+   Publish it as the latest release. Keep the repository public so anonymous
+   users can download through the README's versioned ZIP link and the
+   compatibility latest-release links.
    If including launch media, run `bash marketing/build.sh`, add the media files
    to `SHA256SUMS.txt`, and upload the MP4, poster and optional captions too.
-6. Download through the published README link without authentication, compare
-   its checksum and run the installer verifier against that downloaded copy.
+6. Download through the published README link without authentication and verify
+   the ZIP checksum. Extract it using macOS's archive utility or `ditto -x -k`,
+   confirm the extracted DMG's Finder custom-icon flag/resource fork survived,
+   and run the installer verifier against that extracted copy.
    Also download both compatibility filenames through `releases/latest` and
    verify they match the same notarized version. Local verification alone does
    not update or validate the public download.
@@ -120,3 +123,11 @@ inside the disk image and survives downloads. The local DMG file also receives
 the same Finder icon before signing. That file-level Finder icon is extended
 metadata, which browsers and hosting services may discard; the mounted volume
 and app still retain their logos.
+
+The README therefore downloads a `.dmg.zip` archive. `scripts/archive-dmg.sh`
+uses `ditto --sequesterRsrc` to put the DMG's FinderInfo and resource fork inside
+the ZIP as AppleDouble metadata. It extracts the archive and checks both icon
+attributes plus byte-for-byte DMG identity before producing a checksum. macOS
+restores this metadata when expanding the downloaded ZIP. This keeps the DMG
+file's logo without altering its signed/notarized bytes. Direct `.dmg` assets
+remain available with the HTTP file-icon limitation above.

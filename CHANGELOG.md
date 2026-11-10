@@ -6,6 +6,8 @@
   with stapled verification tickets for the app and DMG.
 - Use the app's lifted-line F logo for the mounted installer volume and the
   locally generated DMG's Finder icon.
+- Provide a ZIP download that preserves the DMG file's Finder logo after
+  extraction with macOS's built-in archive utility.
 - Require Developer ID signing, accepted Apple notarization, stapled tickets
   and Gatekeeper checks before generating release download aliases.
 - Keep explicitly requested unnotarized test installers in `dist/preview/`.

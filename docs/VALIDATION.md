@@ -2,6 +2,16 @@
 
 ## 1.4.2 installer packaging · 2026-11-10
 
+- The recommended download is now a metadata-preserving `.dmg.zip` archive.
+  Local creation/extraction verified the DMG bytes, complete FinderInfo and
+  icon resource fork are unchanged, with the custom-icon flag still enabled.
+  This addresses the DMG file's logo; direct HTTP DMG downloads lose that
+  file-level metadata even though their mounted volume keeps its artwork.
+- The ZIP was uploaded to GitHub `v1.4.2`, downloaded without authentication,
+  marked with browser quarantine and expanded through Finder using Archive
+  Utility. The extracted DMG visibly has the F logo. Its SHA-256 matches the
+  notarized original, its icon resource fork matches byte-for-byte, and its
+  Finder custom-icon flag is enabled. The README now links to this ZIP.
 - All 27 existing Swift tests passed on the release Mac.
 - The universal preview installer passed checksum, mounted-content, both-
   architecture and strict app-signature checks. Its `.VolumeIcon.icns` matches
