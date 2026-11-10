@@ -1,4 +1,4 @@
-# Launch export verification
+# Previous 1.3.1 launch export verification
 
 The final 1.3.1 launch export was checked locally on 2026-11-09:
 
