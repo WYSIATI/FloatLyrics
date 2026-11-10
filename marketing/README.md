@@ -1,5 +1,8 @@
 # Float Lyrics launch film
 
+Retired experiment. The video, poster and captions have been withdrawn from
+GitHub Releases. These production sources are retained for reference.
+
 The revised edit uses real macOS screen recordings of Float Lyrics with live
 desktop-player playback, plus held native captures of its menus and island
 controls. Product scenes are decoded from reviewed clips. The renderer does not

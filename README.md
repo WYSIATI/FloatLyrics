@@ -10,7 +10,6 @@ Live lyrics for Spotify and Apple Music, quietly beside your work.</p>
 <p align="center">
   <a href="https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg"><strong>Download for macOS →</strong></a>
   &nbsp;·&nbsp; <a href="https://github.com/WYSIATI/FloatLyrics/releases">Releases</a>
-  &nbsp;·&nbsp; <a href="https://github.com/WYSIATI/FloatLyrics/releases/download/v1.4.0/Float-Lyrics-launch.mp4">Watch the walkthrough</a>
 </p>
 
 <p align="center"><sub>macOS 14+ &nbsp;·&nbsp; Apple Silicon & Intel &nbsp;·&nbsp; Free & open source</sub></p>
