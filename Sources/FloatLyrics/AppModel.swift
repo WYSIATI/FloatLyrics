@@ -27,6 +27,7 @@ final class AppModel: NSObject, ObservableObject {
     @Published private(set) var connectionMessage: String?
     @Published private(set) var denied = false
     let demo: Bool
+    let visualPreview: Bool
     private let defaults: UserDefaults
     private let bridge = PlaybackBridge()
     private let client: LRCLibClient
@@ -38,8 +39,9 @@ final class AppModel: NSObject, ObservableObject {
     override init() {
         let arguments = ProcessInfo.processInfo.arguments
         demo = arguments.contains("--demo")
+        visualPreview = demo || arguments.contains("--recording-preview")
         // Visual previews must not overwrite the listener's real preferences.
-        defaults = demo ? UserDefaults(suiteName: "app.floatlyrics.preview")! : .standard
+        defaults = visualPreview ? UserDefaults(suiteName: "app.floatlyrics.preview")! : .standard
         let defaults = self.defaults
         source = PlayerSource(rawValue: defaults.string(forKey: "source") ?? "") ?? .spotify
         appearance = .restore(defaults.data(forKey: "appearance.v1"))

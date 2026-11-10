@@ -7,7 +7,7 @@ line floats beside your work, or tucks into your Mac's notch.
 
 [**Download for macOS →**](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg)
 · [All releases](https://github.com/WYSIATI/FloatLyrics/releases)
-· [Launch film](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics-launch.mp4)
+· [Previous launch film](https://github.com/WYSIATI/FloatLyrics/releases/download/v1.3.1/FloatLyrics-launch.mp4)
 
 ![Float Lyrics with original sample lyrics](docs/images/floatlyrics-window.jpg)
 
@@ -79,6 +79,9 @@ For original-lyrics visual previews, launch the executable with `--demo`.
 `--demo-position 15` starts at a chosen sample time. Preview preferences are
 separate from listening preferences. `--diagnostics` prints opt-in playback
 diagnostics.
+
+`--recording-preview` uses real desktop-player playback with isolated appearance
+preferences for screen recording; it does not substitute sample lyrics.
 
 [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) ·
 [Release/signing instructions](docs/RELEASING.md) · [Changelog](CHANGELOG.md)

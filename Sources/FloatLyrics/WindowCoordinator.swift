@@ -116,7 +116,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     @objc private func appearanceRequested(_ notification: Notification) { showPreferences() }
 
     func windowDidMove(_ notification: Notification) {
-        guard !model.demo else { return }
+        guard !model.visualPreview else { return }
         UserDefaults.standard.set(NSStringFromRect(floating.frame), forKey: "floatingFrame")
     }
 
