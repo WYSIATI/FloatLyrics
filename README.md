@@ -43,6 +43,11 @@ initial launch attempt, macOS may require **System Settings → Privacy & Securi
 includes [SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/SHA256SUMS.txt).
 You can also build from source.
 
+If you see “Apple could not verify Float Lyrics is free of malware,” dismiss
+the warning, open **System Settings → Privacy & Security → Open Anyway**, then
+confirm **Open**. This is needed for the current unnotarized preview; it does
+not mean Apple has approved the app. See [Apple's instructions](https://support.apple.com/en-us/102445).
+
 ## A small companion
 
 - **A glance, then back to work.** The 400 × 224 point window shows the song,
@@ -105,10 +110,13 @@ swift test
 ARCHITECTURE=native bash scripts/build-app.sh
 open "build/Float Lyrics.app"
 
-# Universal installer, stable download alias and checksums:
-bash scripts/package-dmg.sh
-bash scripts/verify-dmg.sh
+# Universal test installer with matching logo (not notarized):
+DISTRIBUTION=preview bash scripts/package-dmg.sh
+DISTRIBUTION=preview bash scripts/verify-dmg.sh
 ```
+
+Preview installers go in `dist/preview/`. Release packaging requires Developer
+ID signing and Apple notarization; see [the setup guide](docs/RELEASING.md).
 
 For visual previews with original product-demo text, launch the executable with `--demo`.
 `--demo-position 15` starts at a chosen sample time. Preview preferences are

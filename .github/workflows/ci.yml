@@ -7,8 +7,7 @@ on:
       - 'Sources/**'
       - 'Tests/**'
       - 'Resources/**'
-      - 'scripts/*.sh'
-      - 'scripts/make-icon.swift'
+      - 'scripts/**'
       - 'Package.swift'
       - '.github/workflows/**'
       - 'LICENSE'
@@ -34,9 +33,10 @@ jobs:
       - name: Test playback, lyrics and appearance
         run: swift test
       - name: Package universal public preview
+        env:
+          DISTRIBUTION: preview
         run: bash scripts/package-dmg.sh
-      - name: Verify installer and checksum
+      - name: Verify checksums
+        working-directory: dist/preview
         run: |
-          bash scripts/verify-dmg.sh
-          cd dist
           shasum -a 256 -c SHA256SUMS.txt

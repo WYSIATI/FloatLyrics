@@ -22,6 +22,7 @@ chmod +x "$app/Contents/MacOS/FloatLyrics"
 
 identity="${SIGNING_IDENTITY:--}"
 sign_args=(--force --options runtime --entitlements Resources/FloatLyrics.entitlements --sign "$identity")
+if [[ -n "${SIGNING_KEYCHAIN:-}" ]]; then sign_args+=(--keychain "$SIGNING_KEYCHAIN"); fi
 if [[ "$identity" != "-" ]]; then sign_args+=(--timestamp); fi
 codesign "${sign_args[@]}" "$app"
 codesign --verify --deep --strict "$app"

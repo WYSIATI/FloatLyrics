@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.2 · Installer identity and verification
+
+- Use the app's lifted-line F logo for the mounted installer volume and the
+  locally generated DMG's Finder icon.
+- Require Developer ID signing, accepted Apple notarization, stapled tickets
+  and Gatekeeper checks before generating release download aliases.
+- Keep explicitly requested unnotarized test installers in `dist/preview/`.
+  Include launch recovery instructions only in preview installers.
+
 ## 1.4.1 · A little lift
 
 - Quit directly from the floating window's options menu or the expanded island's

@@ -1,0 +1,9 @@
+
+PUBLIC PREVIEW — NOT NOTARIZED
+
+Apple has not verified this preview. If you trust the copy downloaded from the
+official Float Lyrics GitHub release, open it once, dismiss the warning, then
+go to System Settings > Privacy & Security > Open Anyway. Confirm Open when
+macOS asks. The app can then be opened normally.
+
+Apple's instructions: https://support.apple.com/en-us/102445

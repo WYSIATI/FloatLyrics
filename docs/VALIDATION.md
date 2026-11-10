@@ -1,4 +1,19 @@
-# Validation · 2026-11-09
+# Validation
+
+## 1.4.2 installer packaging · 2026-11-10
+
+- All 27 existing Swift tests passed on the release Mac.
+- The universal preview installer passed checksum, mounted-content, both-
+  architecture and strict app-signature checks. Its `.VolumeIcon.icns` matches
+  the app icon byte-for-byte and the mounted volume has its custom-icon flag.
+- The generated DMG and local aliases have Finder custom-icon metadata. A
+  second copy made without extended metadata still passed mounted-volume logo
+  verification, checking the logo survives a data-only download.
+- Release packaging rejects missing signing/notarization configuration and a
+  reused ad-hoc-signed app. Stubbed notary responses confirmed that `Invalid`
+  and `In Progress` stop before stapling, while `Accepted` staples and validates.
+- Apple notarization and Gatekeeper acceptance have not yet been exercised:
+  Developer ID Application signing and notarization credential setup is pending.
 
 ## 1.4.1 identity and presentation · 2026-11-10
 
