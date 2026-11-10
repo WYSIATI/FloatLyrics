@@ -96,5 +96,5 @@ cp -p "$output" "$output_dir/Float-Lyrics.dmg"
 cp -p "$output" "$output_dir/FloatLyrics.dmg"
 (
     cd "$output_dir"
-    shasum -a 256 Float-Lyrics.dmg FloatLyrics.dmg > SHA256SUMS.txt
+    shasum -a 256 "Float-Lyrics-$version$suffix.dmg" Float-Lyrics.dmg FloatLyrics.dmg > SHA256SUMS.txt
 )

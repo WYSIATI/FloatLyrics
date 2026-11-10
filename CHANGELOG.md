@@ -2,6 +2,8 @@
 
 ## 1.4.2 · Installer identity and verification
 
+- The public installer is signed by Mini Motion AI LLC and notarized by Apple,
+  with stapled verification tickets for the app and DMG.
 - Use the app's lifted-line F logo for the mounted installer volume and the
   locally generated DMG's Finder icon.
 - Require Developer ID signing, accepted Apple notarization, stapled tickets

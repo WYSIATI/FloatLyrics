@@ -8,7 +8,7 @@
 Live lyrics for Spotify and Apple Music, quietly beside your work.</p>
 
 <p align="center">
-  <a href="https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg"><strong>Download for macOS →</strong></a>
+  <a href="https://github.com/WYSIATI/FloatLyrics/releases/download/v1.4.2/Float-Lyrics-1.4.2.dmg"><strong>Download for macOS →</strong></a>
   &nbsp;·&nbsp; <a href="https://github.com/WYSIATI/FloatLyrics/releases">Releases</a>
 </p>
 
@@ -59,16 +59,18 @@ Your saved preferences are retained.
 Requires **macOS 14+**, with a universal Apple Silicon/Intel build. Native Liquid
 Glass is available on **macOS 26+**; earlier systems use a translucent material.
 
-**Public preview:** the download is ad-hoc signed and **not notarized**. After an
-initial launch attempt, macOS may require **System Settings → Privacy & Security
-→ Open Anyway**. Download only from this repository's Releases page. The release
-includes [SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/SHA256SUMS.txt).
+**Signed and notarized:** Float Lyrics **1.4.2** is signed by **Mini Motion AI
+LLC**, notarized by Apple, and includes stapled verification tickets for both
+the app and installer. The mounted installer uses the same lifted-line F logo
+as the app. Download only from this repository's Releases page and compare the
+[SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/download/v1.4.2/SHA256SUMS.txt).
 You can also build from source.
 
-If you see “Apple could not verify Float Lyrics is free of malware,” dismiss
-the warning, open **System Settings → Privacy & Security → Open Anyway**, then
-confirm **Open**. This is needed for the current unnotarized preview; it does
-not mean Apple has approved the app. See [Apple's instructions](https://support.apple.com/en-us/102445).
+To replace an older preview that macOS blocked, quit Float Lyrics, download
+**Float-Lyrics-1.4.2.dmg** using the link above, and drag **Float Lyrics** into
+**Applications**, choosing **Replace**. Eject the installer and open the app
+from **Applications**. The older unnotarized downloads are still available in
+past releases; use **1.4.2 or later** for Apple-verified installation.
 
 ## A small companion
 

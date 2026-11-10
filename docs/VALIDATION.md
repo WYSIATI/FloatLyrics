@@ -12,8 +12,21 @@
 - Release packaging rejects missing signing/notarization configuration and a
   reused ad-hoc-signed app. Stubbed notary responses confirmed that `Invalid`
   and `In Progress` stop before stapling, while `Accepted` staples and validates.
-- Apple notarization and Gatekeeper acceptance have not yet been exercised:
-  Developer ID Application signing and notarization credential setup is pending.
+- A Developer ID Application certificate for Mini Motion AI LLC was issued and
+  installed. The universal app is signed with hardened runtime, the Automation
+  entitlement and an Apple secure timestamp; strict signature verification
+  passed for both architectures outside the restricted workspace.
+- Apple accepted the app submission
+  `7eefba2d-3782-4723-8880-19f87fc737f9` and DMG submission
+  `8ea20585-296d-4909-9707-0fa5ef94965c`. Both notarization tickets were stapled
+  and validated. The DMG passes Gatekeeper with `Notarized Developer ID`, and
+  its mounted app passes `syspolicy_check distribution`.
+- The final 1.4.2 versioned installer and both stable aliases pass SHA-256
+  verification and have identical contents. A data-only copy with download
+  quarantine applied also passed DMG/app policy, stapled-ticket, both-
+  architecture and matching-volume-logo checks.
+- The versioned 1.4.2 DMG and both stable aliases have SHA-256
+  `6851fb8ec1bf00e0c271dc023b6da4702c67b5529e6f8efdf92a08531ec71df9`.
 
 ## 1.4.1 identity and presentation · 2026-11-10
 
