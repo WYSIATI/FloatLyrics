@@ -2,6 +2,8 @@
 
 ## 1.4.1 · A little lift
 
+- Quit directly from the floating window's options menu or the expanded island's
+  options menu. The island stays open while its menu is in use.
 - New lifted-line F identity, with a vector-drawn Mac icon and matching menu-bar,
   notch, settings and first-use marks.
 - Clearer secondary lyrics and artist text, a more useful waiting state, and a

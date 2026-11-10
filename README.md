@@ -62,6 +62,10 @@ opacity and text preferences. Only the background fades; lyrics stay crisp.
 Always-on-top, click through and lyric timing live under Behavior & timing.
 The menu bar restores access when lyrics are hidden or click through is enabled.
 
+To quit, choose **••• → Quit Float Lyrics** in the floating window. In notch
+mode, click the island to expand it, then choose **••• → Quit Float Lyrics**.
+The menu-bar menu also includes Quit.
+
 <details>
 <summary><strong>See the interface</strong></summary>
 
