@@ -3,6 +3,7 @@ import SwiftUI
 struct NotchView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var presentation: IslandPresentation
+    let quit: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var expanded: Bool { presentation.expanded }
     private var geometry: NotchGeometry { presentation.geometry }
@@ -74,6 +75,14 @@ struct NotchView: View {
                         .buttonStyle(.plain).help("Return to floating window").accessibilityLabel("Return to floating window")
                     Button { presentation.close() } label: { Image(systemName: "chevron.up").font(.system(size: 10, weight: .medium)) }
                         .buttonStyle(.plain).help("Collapse island").accessibilityLabel("Collapse island")
+                    Menu {
+                        Button("Quit Float Lyrics", action: quit)
+                            .keyboardShortcut("q", modifiers: .command)
+                    } label: {
+                        Image(systemName: "ellipsis").font(.system(size: 11, weight: .medium))
+                            .frame(width: 22, height: 22).contentShape(Circle())
+                    }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                        .help("Island options").accessibilityLabel("Island options")
                 } else {
                     Circle().fill(model.islandLyricColor.opacity(model.snapshot.isPlaying ? 0.7 : 0.3)).frame(width: 3, height: 3)
                         .accessibilityLabel(model.snapshot.isPlaying ? "Playing" : "Paused")

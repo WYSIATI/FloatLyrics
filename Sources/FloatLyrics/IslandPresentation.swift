@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import Combine
 
 @MainActor
 final class IslandPresentation: ObservableObject {
@@ -11,6 +12,8 @@ final class IslandPresentation: ObservableObject {
     private weak var app: AppModel?
     private var pinned = false
     private var requiresPointerExit = false
+    private var menusOpen = 0
+    private var menuSubscriptions = Set<AnyCancellable>()
 
     init(geometry: NotchGeometry) { self.geometry = geometry }
     func track(panel: NSPanel, app: AppModel) {
@@ -20,6 +23,14 @@ final class IslandPresentation: ObservableObject {
             MainActor.assumeIsolated { self?.updatePointer() }
         }
         RunLoop.main.add(tracking!, forMode: .common)
+        NotificationCenter.default.publisher(for: NSMenu.didBeginTrackingNotification)
+            .sink { [weak self] _ in
+                self?.menusOpen += 1
+                self?.collapse?.cancel(); self?.collapse = nil
+            }.store(in: &menuSubscriptions)
+        NotificationCenter.default.publisher(for: NSMenu.didEndTrackingNotification)
+            .sink { [weak self] _ in self?.menusOpen = max(0, (self?.menusOpen ?? 0) - 1) }
+            .store(in: &menuSubscriptions)
     }
     func open() { collapse?.cancel(); collapse = nil; expanded = true }
     func pin() { pinned = true; requiresPointerExit = false; open() }
@@ -33,6 +44,8 @@ final class IslandPresentation: ObservableObject {
             .path(in: CGRect(origin: .zero, size: frame.size)).contains(local)
         panel.ignoresMouseEvents = app.clickThrough || !inside
         guard !app.clickThrough else { close(); return }
+        // A menu extends beyond the island. Keep its controls available until it closes.
+        guard menusOpen == 0 else { return }
         if !inside { requiresPointerExit = false }
         if inside { collapse?.cancel(); collapse = nil }
         if inside, !requiresPointerExit, app.appearance.expandOnHover { open() }

@@ -28,7 +28,8 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         floating.isMovableByWindowBackground = true
         floating.delegate = self
         floating.contentView = NSHostingView(rootView: FloatingView(model: model,
-            hide: { [weak self] in self?.hide() }, showPreferences: { [weak self] in self?.showPreferences() }))
+            hide: { [weak self] in self?.hide() }, showPreferences: { [weak self] in self?.showPreferences() },
+            quit: { [weak self] in self?.quit() }))
         restoreFloatingPosition()
         notch = makePanel(size: NSSize(width: 580, height: 220))
         notch.hasShadow = false
@@ -38,7 +39,8 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         notch.becomesKeyOnlyIfNeeded = true
         let display = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? NSScreen.main ?? NSScreen.screens[0]
         island = IslandPresentation(geometry: NotchGeometry(screen: display, preferredWidth: model.appearance.islandWidth))
-        notch.contentView = NSHostingView(rootView: NotchView(model: model, presentation: island))
+        notch.contentView = NSHostingView(rootView: NotchView(model: model, presentation: island,
+            quit: { [weak self] in self?.quit() }))
         island.track(panel: notch, app: model)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.button?.image = NSImage(systemSymbolName: "quote.bubble", accessibilityDescription: "Float Lyrics")

@@ -6,6 +6,7 @@ struct FloatingView: View {
     @ObservedObject var model: AppModel
     let hide: () -> Void
     let showPreferences: () -> Void
+    let quit: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -37,6 +38,9 @@ struct FloatingView: View {
             Button("Settings…", action: showPreferences)
             Divider()
             Button("Hide Lyrics", action: hide)
+            Divider()
+            Button("Quit Float Lyrics", action: quit)
+                .keyboardShortcut("q", modifiers: .command)
         } label: {
             Image(systemName: "ellipsis").font(.system(size: 14, weight: .medium))
                 .foregroundStyle(.secondary).frame(width: 28, height: 28).contentShape(Circle())
