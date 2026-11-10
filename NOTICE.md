@@ -1,7 +1,7 @@
 # Credits and rights
 
 - Playback metadata comes from the user's installed Spotify or Apple Music app.
-  FloatLyrics is independent of, and not endorsed by, Spotify or Apple.
+  Float Lyrics is independent of, and not endorsed by, Spotify or Apple.
 - Lyrics are fetched from [LRCLIB](https://lrclib.net). Lyrics remain the property
   of their respective rights holders; the MIT license covers this project's
   code and original assets, not third-party lyrics or trademarks.

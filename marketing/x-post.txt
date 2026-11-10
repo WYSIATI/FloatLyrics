@@ -1,4 +1,4 @@
-I made FloatLyrics because I kept losing the next line while working.
+I made Float Lyrics because I kept losing the next line while working.
 
 Live lyrics for Spotify + Apple Music, floating beside your work or tucked into your Mac’s notch.
 

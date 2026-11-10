@@ -59,7 +59,7 @@ final class AppModel: NSObject, ObservableObject {
             let position = arguments.firstIndex(of: "--demo-position").flatMap { index in
                 arguments.indices.contains(index + 1) ? Double(arguments[index + 1]) : nil
             } ?? 8
-            snapshot = PlaybackSnapshot(track: Track(id: "demo", title: "A little room to sing", artist: "FloatLyrics · Preview", album: "Original demo", duration: 180), isPlaying: true, position: min(39, max(0, position.isFinite ? position : 8)))
+            snapshot = PlaybackSnapshot(track: Track(id: "demo", title: "A little room to sing", artist: "Float Lyrics · Preview", album: "Original demo", duration: 180), isPlaying: true, position: min(39, max(0, position.isFinite ? position : 8)))
             lyrics = Lyrics(lines: [
                 .init(time: 0, text: "Let the day move softly"), .init(time: 7, text: "There's a little room to sing"),
                 .init(time: 15, text: "Keep a melody beside you"), .init(time: 23, text: "See what a moment can bring"),
@@ -115,7 +115,7 @@ final class AppModel: NSObject, ObservableObject {
             resetPlayback()
             if let failure = error as? PlaybackError, failure.permissionDenied {
                 denied = true
-                connectionMessage = "Allow FloatLyrics to read \(source.name) in System Settings → Privacy & Security → Automation."
+                connectionMessage = "Allow Float Lyrics to read \(source.name) in System Settings → Privacy & Security → Automation."
             } else { connectionMessage = "Playback connection interrupted. Reconnecting to \(source.name)…" }
         }
     }

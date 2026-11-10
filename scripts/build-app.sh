@@ -10,7 +10,7 @@ if [[ "$architecture" == "universal" ]]; then
 fi
 swift build "${swift_args[@]}"
 binary_dir="$(swift build "${swift_args[@]}" --show-bin-path)"
-app="$PWD/build/FloatLyrics.app"
+app="$PWD/build/Float Lyrics.app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$binary_dir/FloatLyrics" "$app/Contents/MacOS/FloatLyrics"
 cp Resources/Info.plist "$app/Contents/Info.plist"

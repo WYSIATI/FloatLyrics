@@ -41,8 +41,8 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         notch.contentView = NSHostingView(rootView: NotchView(model: model, presentation: island))
         island.track(panel: notch, app: model)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusItem.button?.image = NSImage(systemSymbolName: "quote.bubble", accessibilityDescription: "FloatLyrics")
-        statusItem.button?.toolTip = "FloatLyrics · lyrics beside your work"
+        statusItem.button?.image = NSImage(systemSymbolName: "quote.bubble", accessibilityDescription: "Float Lyrics")
+        statusItem.button?.toolTip = "Float Lyrics · lyrics beside your work"
         rebuildMenu()
         // The native glass background changes opacity; lyrics retain full contrast.
         floating.alphaValue = 1
@@ -75,7 +75,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
         panel.animationBehavior = .utilityWindow
         panel.isFloatingPanel = true
-        panel.title = "FloatLyrics"
+        panel.title = "Float Lyrics"
         return panel
     }
 
@@ -133,7 +133,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
             let window = makePanel(size: PreferencesView.size)
             window.styleMask.insert(.closable)
             window.isMovableByWindowBackground = true
-            window.title = "FloatLyrics Settings"; window.isReleasedWhenClosed = false
+            window.title = "Float Lyrics Settings"; window.isReleasedWhenClosed = false
             window.center(); preferences = window
         }
         // Each opening starts at the small Settings index; details stay one level deeper.
@@ -171,7 +171,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         playerItem.submenu = playerMenu; menu.addItem(playerItem)
         menu.addItem(.separator())
         add("Settings…", action: #selector(showPreferences), key: ",", menu: menu)
-        add("Quit FloatLyrics", action: #selector(quit), key: "q", menu: menu)
+        add("Quit Float Lyrics", action: #selector(quit), key: "q", menu: menu)
         statusItem.menu = menu
     }
 

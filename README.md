@@ -1,19 +1,19 @@
-# FloatLyrics
+# Float Lyrics
 
 **Keep working. Keep the words close.**
 
 A small, native macOS lyrics companion for Spotify and Apple Music. The current
 line floats beside your work, or tucks into your Mac's notch.
 
-[**Download for macOS →**](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/FloatLyrics.dmg)
+[**Download for macOS →**](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg)
 · [All releases](https://github.com/WYSIATI/FloatLyrics/releases)
-· [Launch film](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/FloatLyrics-launch.mp4)
+· [Launch film](https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics-launch.mp4)
 
-![FloatLyrics with original sample lyrics](docs/images/floatlyrics-window.jpg)
+![Float Lyrics with original sample lyrics](docs/images/floatlyrics-window.jpg)
 
 ## Install
 
-1. Download the DMG and drag **FloatLyrics** to **Applications**.
+1. Download the DMG and drag **Float Lyrics** to **Applications**.
 2. Open it. Choose **Music Player → Spotify** or **Apple Music** from **•••**.
 3. Play a song in that desktop app and allow macOS Automation when asked.
 
@@ -68,7 +68,7 @@ runtime dependencies.
 ```sh
 swift test
 ARCHITECTURE=native bash scripts/build-app.sh
-open build/FloatLyrics.app
+open "build/Float Lyrics.app"
 
 # Universal installer, stable download alias and checksums:
 bash scripts/package-dmg.sh
@@ -92,5 +92,5 @@ by [Vibe Notch](https://github.com/farouqaldori/vibe-notch). Motion studies by
 informed earlier explorations; no reference media is bundled.
 
 [MIT license](LICENSE). Third-party lyrics and trademarks retain their owners'
-rights. FloatLyrics is independent of Apple, Spotify, Manus and Cue.
+rights. Float Lyrics is independent of Apple, Spotify, Manus and Cue.
 [Full notices](NOTICE.md).

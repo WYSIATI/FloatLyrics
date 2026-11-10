@@ -8,7 +8,7 @@ an issue. Include the app version, macOS version, reproduction steps and impact.
 The current release is maintained on a best-effort basis. Fixes are delivered
 in the latest release rather than backported to older versions.
 
-FloatLyrics reads track metadata and playback position from the selected local
+Float Lyrics reads track metadata and playback position from the selected local
 Spotify or Apple Music app using macOS Automation. It sends the current track's
 title, artist, album and duration to LRCLIB over HTTPS. It has no account login,
 analytics, event taps or Accessibility permission requirement. Lyrics and

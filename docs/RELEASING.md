@@ -1,4 +1,4 @@
-# Releasing FloatLyrics
+# Releasing Float Lyrics
 
 1. Update the version/build number in `Resources/Info.plist` and the changelog.
 2. Run `swift test`, then `bash scripts/package-dmg.sh`.

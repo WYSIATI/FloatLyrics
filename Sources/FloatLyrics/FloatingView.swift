@@ -12,7 +12,7 @@ struct FloatingView: View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(model.snapshot.track?.title ?? "FloatLyrics").font(.system(size: 12, weight: .medium)).lineLimit(1)
+                    Text(model.snapshot.track?.title ?? "Float Lyrics").font(.system(size: 12, weight: .medium)).lineLimit(1)
                     Text(model.snapshot.track?.artist ?? model.source.name).font(.system(size: 10)).foregroundStyle(.tertiary).lineLimit(1)
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 optionsMenu

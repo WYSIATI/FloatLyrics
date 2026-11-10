@@ -1,10 +1,10 @@
-FLOATLYRICS
+FLOAT LYRICS
 Your music, a little closer.
 
-1. Drag FloatLyrics into Applications.
+1. Drag Float Lyrics into Applications.
 2. Open FloatLyrics. Look for the quotation bubble in your menu bar.
 3. Choose Spotify or Apple Music, open that desktop app, and play a song.
-4. Allow the macOS Automation prompt so FloatLyrics can read the track and position.
+4. Allow the macOS Automation prompt so Float Lyrics can read the track and position.
 
 The floating window shows the song, current lyric and next line. Drag it to
 place it. Open the three-dot menu for the music player, Dynamic Island,
@@ -31,7 +31,7 @@ Lyrics by LRCLIB. Some recordings have unsynced lyrics or no lyrics available.
 Browser music players and playback on other devices are not supported.
 
 This public preview is ad-hoc signed and is not notarized. To open a preview
-downloaded from the official FloatLyrics GitHub release, use System
+downloaded from the official Float Lyrics GitHub release, use System
 Settings > Privacy & Security > Open Anyway after the initial launch attempt.
 Compare the release's SHA-256 checksum before installing. Source is available
 under the MIT license at https://github.com/WYSIATI/FloatLyrics.
