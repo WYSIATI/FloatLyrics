@@ -46,6 +46,12 @@ details and the controls to return to the window or collapse the island.
 The social card above is a composed brand illustration. These screenshots are
 captures of the app itself. [Capture notes and refresh instructions](docs/screenshots/README.md).
 
+**Shortcut settings in 1.5.1** — an opaque background with accepted combinations,
+recording instructions and clear conflict feedback. Rendered from the actual
+SwiftUI/AppKit Settings view during validation.
+
+<a href="docs/screenshots/settings-shortcuts.png"><img src="docs/screenshots/settings-shortcuts.png" width="350" alt="Float Lyrics 1.5.1 solid Settings panel with the shortcut recorder, Control Shift H and Command Shift H examples, cancellation and clearing instructions."></a>
+
 ## Install
 
 1. Download and open **Float-Lyrics.dmg**.
@@ -66,11 +72,11 @@ settings are kept.
 Requires **macOS 14+**, with a universal Apple Silicon/Intel build. Native Liquid
 Glass is available on **macOS 26+**; earlier systems use a translucent material.
 
-**Signed and notarized:** Float Lyrics **1.5.0** is signed by **Mini Motion AI
+**Signed and notarized:** Float Lyrics **1.5.1** is signed by **Mini Motion AI
 LLC**, notarized by Apple, and includes stapled verification tickets for both
 the app and installer. The mounted installer uses the same lifted-line F logo
 as the app. Download only from this repository's Releases page and compare the
-[SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/download/v1.5.0/SHA256SUMS.txt).
+[SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/download/v1.5.1/SHA256SUMS.txt).
 You can also build from source.
 
 To replace an older preview that macOS blocked, quit Float Lyrics, download
@@ -95,6 +101,7 @@ Apple-verified installation.
 
 Open Settings from **•••**, the menu bar, or **⌘,**. Window and Island have separate
 opacity and text preferences. Only the background fades; lyrics stay crisp.
+Settings has its own solid background and stays readable at any lyric opacity.
 Always-on-top, click through and lyric timing live under Behavior & timing.
 The menu bar restores access when lyrics are hidden or click through is enabled.
 
@@ -113,6 +120,9 @@ Supported examples include **Control + Shift + H**, **Control + Option + H**, an
 macOS or app-menu conflicts show a warning. A combination can have a supported
 form and still be intercepted by another app; if no key appears while recording,
 try a different combination.
+Hold the modifiers, then press the letter once. **Escape** cancels recording;
+**Delete** or **×** clears the saved shortcut. Conflicts identify the app-menu
+action or direct you to macOS Keyboard Shortcuts settings.
 
 To quit, choose **••• → Quit Float Lyrics** in the floating window. In notch
 mode, click the island to expand it, then choose **••• → Quit Float Lyrics**.

@@ -1,5 +1,40 @@
 # Validation
 
+## 1.5.1 shortcut recording and solid Settings · 2026-11-12
+
+- All 56 Swift tests pass. Six new tests exercise Command + Shift + H through
+  the actual Settings window's key-equivalent route, the native Control-key
+  recording callback, Delete clearing, Escape cancellation, re-recording an
+  existing shortcut, and distinct format/system/app-menu validation messages.
+  GitHub Actions [run 43147049646](https://github.com/WYSIATI/FloatLyrics/actions/runs/43147049646)
+  passed for source commit `d501eba`.
+- Settings now owns an activating `NSWindow`, separate from the non-activating
+  lyric panels. Its native KeyboardShortcuts recorder captures Command key
+  equivalents before app-menu handling. Menu conflicts identify the action;
+  macOS conflicts explain where to change the system shortcut. Accepted
+  combinations and recording/cancellation/clearing instructions appear beside
+  the field. Maccy's native recorder interaction and Rectangle's validation
+  distinctions informed the implementation; no third-party source was copied.
+- Settings uses an opaque palette surface, independent of lyric opacity.
+  Rendering the real SwiftUI/AppKit Behavior page with lyric opacity at 15%
+  confirms interior alpha above 0.99. The native view render in
+  `docs/screenshots/settings-shortcuts.png` was inspected for readable controls,
+  complete instructions and clipping. It is not an on-screen capture.
+- The universal 1.5.1/build 11 app is signed by Mini Motion AI LLC with Developer
+  ID, hardened runtime and the existing Automation entitlement. Apple accepted
+  app submission `9b83d20f-9a84-4d65-ad01-4ead8fd3048e` and DMG submission
+  `8bbc11b2-15ab-4454-879a-5928946d39fa`. Both tickets were stapled and validated.
+  The DMG passes Gatekeeper as `Notarized Developer ID`; a read-only mount
+  verifies app identity, both architectures, signature, recorder resources and
+  license, volume artwork and `syspolicy_check distribution` readiness.
+- The versioned DMG and both download aliases have SHA-256
+  `5f0252bb6a46631cd691e6ddf8f147e418c30d08bf2eaf6578afbdc10d64d6f8`.
+  Release assets contain three DMGs and two checksum files, with no installer ZIP.
+- These tests dispatch events only within their own application. Physical
+  keyboard delivery and use while another app has focus remain unverified in
+  this session because desktop interaction tools are unavailable. No new Intel
+  hardware or older-macOS runtime verification is claimed.
+
 ## Shortcut examples and reference review · 2026-11-12
 
 - Native recorder tests accept both Control + Shift + H and Command + Shift + H
