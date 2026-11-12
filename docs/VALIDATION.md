@@ -30,6 +30,14 @@
 - The versioned DMG and both download aliases have SHA-256
   `5f0252bb6a46631cd691e6ddf8f147e418c30d08bf2eaf6578afbdc10d64d6f8`.
   Release assets contain three DMGs and two checksum files, with no installer ZIP.
+- Published `v1.5.1` as the latest GitHub release after matching all five
+  uploaded assets to local sizes and SHA-256 digests. Anonymous downloads of
+  the versioned DMG and both `releases/latest` aliases match the checksum above;
+  the public checksum manifest validates all three. With browser quarantine
+  applied, the downloaded installer passes the full release verifier, including
+  notarization tickets, Gatekeeper, mounted content and app distribution policy.
+  The real update client reports 1.5.1 as up to date and offers the versioned
+  1.5.1 DMG to 1.5.0 installations.
 - These tests dispatch events only within their own application. Physical
   keyboard delivery and use while another app has focus remain unverified in
   this session because desktop interaction tools are unavailable. No new Intel
