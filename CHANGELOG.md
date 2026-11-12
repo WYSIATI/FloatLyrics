@@ -1,9 +1,15 @@
 # Changelog
 
-## Unreleased
+## 1.5.1 · Clear Settings and reliable shortcut recording · 2026-11-12
 
 ### Fixed
 
+- Give Settings its own activating window and capture Command shortcuts before
+  menu handling, including Command + Shift + H.
+- Use a solid Settings background, independent of lyric opacity, so controls
+  remain readable while adjusting a translucent lyric window.
+- Name conflicting app-menu actions and explain how to change macOS shortcuts.
+  Keep native recording, Escape to cancel, and Delete or × to clear.
 - Explain the shortcut recorder's modifier requirement beside the recording
   field. Letter shortcuts need Command, Control or Option; Shift can be added.
   Shift plus a letter alone is rejected by the recorder.

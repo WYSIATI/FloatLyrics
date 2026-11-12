@@ -153,20 +153,18 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
 
     @objc private func showPreferences() {
         if preferences == nil {
-            let window = makePanel(size: PreferencesView.size)
-            window.styleMask.insert(.closable)
-            window.isMovableByWindowBackground = true
-            window.title = "Float Lyrics Settings"; window.isReleasedWhenClosed = false
+            let window = SettingsWindow(size: PreferencesView.size)
             window.center(); preferences = window
         }
         // Each opening starts at the small Settings index; details stay one level deeper.
         preferences?.contentView = NSHostingView(rootView: PreferencesView(model: model, updates: updates,
             dismiss: { [weak self] in self?.preferences?.orderOut(nil) },
-            resize: { [weak self] height in self?.resizePreferences(height: height) }))
+            resize: { [weak self] height in self?.resizePreferences(height: height) },
+            shortcutMenus: { [weak self] in [NSApp.mainMenu, self?.statusItem?.menu].compactMap { $0 } }))
         resizePreferences(height: PreferencesView.size.height)
-        preferences?.level = .floating
-        preferences?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+        preferences?.makeKeyAndOrderFront(nil)
+        logger.debug("Opened activating Settings window")
     }
 
     private func resizePreferences(height: CGFloat) {

@@ -86,6 +86,19 @@ struct GlassCardStyle: ViewModifier {
     }
 }
 
+/// Settings stays readable even when the lyric window is nearly transparent.
+struct SettingsSurfaceStyle: ViewModifier {
+    var palette: SurfacePalette
+    func body(content: Content) -> some View {
+        content
+            .background(palette.surface.color, in: RoundedRectangle(cornerRadius: 30, style: .continuous))
+            .overlay { SurfaceRim() }
+            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+            .environment(\.colorScheme, palette.isDark ? .dark : .light)
+            .tint(palette.accent.color)
+    }
+}
+
 struct GlassSegmentedControl<Selection: Hashable>: View {
     let options: [(Selection, String)]
     @Binding var selection: Selection

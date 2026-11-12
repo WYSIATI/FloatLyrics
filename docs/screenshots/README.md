@@ -5,6 +5,11 @@ Native, window-only captures of Float Lyrics 1.4.2 on macOS 26.5.2, taken on
 These show the actual SwiftUI/AppKit interface with the app's original `--demo`
 text. They contain no third-party song lyrics or surrounding desktop content.
 
+The additional 1.5.1 shortcut-settings image is rendered directly from the real
+SwiftUI/AppKit view by `SettingsRecorderTests`, using isolated demo preferences
+with lyric opacity at 15%. It verifies that Settings itself remains solid; it
+is a view render, not an on-screen capture or a mockup.
+
 | File | Pixels | View |
 | --- | --- | --- |
 | [floating-window.png](floating-window.png) | 800 × 448 | Floating lyric window |
@@ -12,6 +17,7 @@ text. They contain no third-party song lyrics or surrounding desktop content.
 | [island-expanded.png](island-expanded.png) | 920 × 292 | Expanded island and its controls |
 | [settings.png](settings.png) | 700 × 600 | Settings index |
 | [appearance.png](appearance.png) | 700 × 700 | Window appearance controls |
+| [settings-shortcuts.png](settings-shortcuts.png) | 700 × 1080 | 1.5.1 solid Settings and shortcut instructions (view render) |
 
 PNG exports retain the display's native 2× dimensions. The capture tool returns
 JPEG images; these were decoded and saved as PNGs without further lossy
@@ -45,3 +51,13 @@ lyric color. Glass backgrounds can vary with the desktop behind the app.
 
 The main [README](../../README.md#screenshots) links to the full-resolution
 files. Keep its image descriptions and this table current when replacing them.
+
+To regenerate the 1.5.1 view render:
+
+```sh
+FLOATLYRICS_SETTINGS_SNAPSHOT_DIR="$PWD/build/settings-snapshots" \
+swift test --filter SettingsRecorderTests.testSettingsSurfaceStaysOpaqueAtMinimumLyricOpacity
+```
+
+Inspect the PNG before copying it into this directory. The test also checks
+that the rendered background's alpha stays above 99% at the minimum lyric opacity.

@@ -1,10 +1,9 @@
 import AppKit
 import SwiftUI
-import KeyboardShortcuts
 import LyricsCore
 
 private enum AppearanceTarget: String, CaseIterable { case window = "Window", island = "Island" }
-private enum SettingsPage {
+enum SettingsPage {
     case root, music, appearance, details, behavior
     var title: String {
         switch self {
@@ -32,15 +31,19 @@ struct PreferencesView: View {
     @ObservedObject var updates: UpdateChecker
     let dismiss: () -> Void
     let resize: (CGFloat) -> Void
+    let shortcutMenus: () -> [NSMenu]
     @State private var page: SettingsPage = .root
     @State private var target: AppearanceTarget
     @State private var hexDraft: String
 
-    init(model: AppModel, updates: UpdateChecker, dismiss: @escaping () -> Void, resize: @escaping (CGFloat) -> Void) {
+    init(model: AppModel, updates: UpdateChecker, dismiss: @escaping () -> Void, resize: @escaping (CGFloat) -> Void,
+         shortcutMenus: @escaping () -> [NSMenu] = { NSApp.mainMenu.map { [$0] } ?? [] }, initialPage: SettingsPage = .root) {
         self.model = model
         self.updates = updates
         self.dismiss = dismiss
         self.resize = resize
+        self.shortcutMenus = shortcutMenus
+        _page = State(initialValue: initialPage)
         _target = State(initialValue: model.notchMode ? .island : .window)
         _hexDraft = State(initialValue: model.notchMode ? model.appearance.islandCustomHex : model.appearance.windowCustomHex)
     }
@@ -99,7 +102,7 @@ struct PreferencesView: View {
                 }.font(.system(size: 10)).foregroundStyle(.secondary)
             }
         }.font(.system(size: 12)).padding(22).frame(width: Self.size.width, height: page.height)
-            .modifier(GlassCardStyle(opacity: model.opacity, palette: model.appearance.palette))
+            .modifier(SettingsSurfaceStyle(palette: model.appearance.palette))
             .onChange(of: page) { _, value in resize(value.height) }
             .onChange(of: target) { _, _ in hexDraft = customHex.wrappedValue }
     }
@@ -219,12 +222,18 @@ struct PreferencesView: View {
             Text("Open Settings from the menu bar to turn click through off.").font(.system(size: 10)).foregroundStyle(.secondary)
             Divider()
             VStack(alignment: .leading, spacing: 8) {
-                KeyboardShortcuts.Recorder("Show / hide lyrics", shortcut: $model.windowShortcut)
+                HStack {
+                    sectionLabel("Show / hide lyrics")
+                    Spacer()
+                    ShortcutRecorder(shortcut: $model.windowShortcut, menus: shortcutMenus)
+                        .frame(width: 130, height: 24)
+                        .help("Click to record. Escape cancels; Delete or the clear button removes the shortcut.")
+                }
                 Text("With letters or numbers, include ⌘ Command, ⌃ Control or ⌥ Option. You can add ⇧ Shift.")
                     .font(.system(size: 10)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 Text("Examples: ⌃⇧H · ⌃⌥H · ⇧⌘H")
                     .font(.system(size: 11, weight: .medium)).accessibilityLabel("Examples: Control Shift H, Control Option H, Command Shift H")
-                Text("A letter by itself, or Shift + a letter, won't record. macOS and app-menu conflicts show a warning. If no key appears, another app may be intercepting it. Clear the field to disable the shortcut.")
+                Text("Click the field, hold your modifiers, then press a key. Escape cancels. Delete or × clears the shortcut. Letters alone and Shift + a letter are not accepted. Conflicts explain which macOS or app-menu shortcut is in use.")
                     .font(.system(size: 10)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
             Divider()
