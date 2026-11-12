@@ -11,7 +11,7 @@ final class ReleaseUpdateTests: XCTestCase {
         }
     }
 
-    func testAvailableReleasePrefersVersionedZIPAndUsesOnlyRepositoryURLs() async throws {
+    func testAvailableReleaseSelectsVersionedDMGAndUsesOnlyRepositoryURLs() async throws {
         let transport = UpdateTransportStub(data: try release(assets: [
             asset("Float-Lyrics-1.5.0.dmg"), asset("Float-Lyrics.dmg.zip"), asset("Float-Lyrics-1.5.0.dmg.zip")
         ]))
@@ -20,7 +20,7 @@ final class ReleaseUpdateTests: XCTestCase {
             return XCTFail("Expected an update")
         }
         XCTAssertEqual(update.version.description, "1.5.0")
-        XCTAssertEqual(update.downloadURL?.absoluteString, "https://github.com/WYSIATI/FloatLyrics/releases/download/v1.5.0/Float-Lyrics-1.5.0.dmg.zip")
+        XCTAssertEqual(update.downloadURL?.absoluteString, "https://github.com/WYSIATI/FloatLyrics/releases/download/v1.5.0/Float-Lyrics-1.5.0.dmg")
         XCTAssertEqual(update.releaseURL.absoluteString, "https://github.com/WYSIATI/FloatLyrics/releases/tag/v1.5.0")
         let recordedRequest = await transport.request
         let request = try XCTUnwrap(recordedRequest)
@@ -32,19 +32,20 @@ final class ReleaseUpdateTests: XCTestCase {
         XCTAssertEqual(request.timeoutInterval, 15)
     }
 
-    func testFallsBackToDMGWhenArchiveIsNotUploaded() async throws {
+    func testFallsBackToStableDMGWhenVersionedInstallerIsNotUploaded() async throws {
         let transport = UpdateTransportStub(data: try release(assets: [
-            asset("Float-Lyrics-1.5.0.dmg.zip", state: "new"), asset("Float-Lyrics-1.5.0.dmg")
+            asset("Float-Lyrics-1.5.0.dmg", state: "new"), asset("Float-Lyrics.dmg"), asset("Float-Lyrics-1.5.0.dmg.zip")
         ]))
         guard case .available(let update) = try await ReleaseUpdateClient(transport: { await transport.get($0) }).check(currentVersion: "1.4.2") else {
             return XCTFail("Expected an update")
         }
-        XCTAssertEqual(update.downloadURL?.lastPathComponent, "Float-Lyrics-1.5.0.dmg")
+        XCTAssertEqual(update.downloadURL?.lastPathComponent, "Float-Lyrics.dmg")
     }
 
     func testMissingCompatibleInstallerOffersReleasePageWithoutFabricatedDownload() async throws {
         let transport = UpdateTransportStub(data: try release(assets: [
-            asset("Float-Lyrics-1.5.0.dmg.zip", size: 0), asset("OtherApp.dmg"), asset("Float-Lyrics-1.4.2.dmg")
+            asset("Float-Lyrics-1.5.0.dmg", size: 0), asset("OtherApp.dmg"), asset("Float-Lyrics-1.4.2.dmg"),
+            asset("Float-Lyrics-1.5.0.dmg.zip")
         ]))
         guard case .available(let update) = try await ReleaseUpdateClient(transport: { await transport.get($0) }).check(currentVersion: "1.4.2") else {
             return XCTFail("Expected an update")

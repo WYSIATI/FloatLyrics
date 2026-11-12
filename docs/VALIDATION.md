@@ -1,5 +1,24 @@
 # Validation
 
+## Direct DMG downloads · 2026-11-12
+
+- The primary README download now uses the latest release's `Float-Lyrics.dmg`
+  alias. Installation is three steps with no archive extraction. Release notes
+  and maintainer instructions use the same direct-DMG workflow.
+- All 48 Swift tests pass. Update tests verify versioned-DMG selection, fallback
+  to an uploaded DMG alias, and ignoring ZIPs even when they are the only usable
+  archive. The dialog offers a DMG download with manual replacement instructions.
+- The real update client successfully queried GitHub and selected
+  `Float-Lyrics-1.4.2.dmg` from the current public release. Original public release
+  assets were downloaded and verified against their published checksums before
+  changing the release's download instructions and checksum manifest.
+- The regenerated universal 1.5.0 preview passes strict app-signature, DMG
+  checksum and read-only mounted-content checks. All three DMG output checksums
+  pass. Packaging removes the current version's obsolete ZIP/checksum and ZIP
+  alias, and no longer generates or lists installer archives. The retired
+  archive helper was removed. Internal notarization uploads still use Apple's
+  accepted archive format.
+
 ## Unreleased manual update checks · 2026-11-12
 
 - All 48 Swift tests pass. Thirteen new tests cover numeric version ordering,

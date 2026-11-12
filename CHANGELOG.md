@@ -18,6 +18,9 @@
 
 ### Changed
 
+- Download and open a DMG directly from the GitHub page or **Check for Updates…**.
+  Remove installer ZIPs and the extraction step; release packaging now produces
+  DMGs and their checksums.
 - The floating window's options menu now labels its hide action **Hide Window**.
   Hiding keeps the menu-bar icon available, with **Show Window** switching back
   to **Hide Window** when restored. Visibility changes preserve the selected

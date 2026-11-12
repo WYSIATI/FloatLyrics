@@ -78,8 +78,7 @@ public struct ReleaseUpdateClient: Sendable {
             return version == current ? .upToDate : .newerThanPublicRelease(latest: version)
         }
 
-        let candidates = ["Float-Lyrics-\(version).dmg.zip", "Float-Lyrics.dmg.zip",
-                          "Float-Lyrics-\(version).dmg", "Float-Lyrics.dmg", "FloatLyrics.dmg"]
+        let candidates = ["Float-Lyrics-\(version).dmg", "Float-Lyrics.dmg", "FloatLyrics.dmg"]
         let installer = candidates.first { name in
             release.assets.contains { $0.name == name && $0.state == "uploaded" && $0.size > 0 }
         }

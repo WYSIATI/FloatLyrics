@@ -53,11 +53,11 @@ final class UpdateCheckerTests: XCTestCase {
 
     func testUpdateDialogDescribesManualInstallationAndShowsReleaseNotes() async throws {
         let client = ReleaseUpdateClient(transport: { _ in
-            (Data(#"{"tag_name":"v1.6.0","draft":false,"prerelease":false,"assets":[{"name":"Float-Lyrics-1.6.0.dmg.zip","state":"uploaded","size":100}]}"#.utf8), 200)
+            (Data(#"{"tag_name":"v1.6.0","draft":false,"prerelease":false,"assets":[{"name":"Float-Lyrics-1.6.0.dmg","state":"uploaded","size":100}]}"#.utf8), 200)
         })
         let notice = UpdateNotice.result(try await client.check(currentVersion: "1.5.0"), currentVersion: "1.5.0")
         XCTAssertEqual(notice.actionTitle, "Download Update…")
-        XCTAssertEqual(notice.actionURL?.lastPathComponent, "Float-Lyrics-1.6.0.dmg.zip")
+        XCTAssertEqual(notice.actionURL?.lastPathComponent, "Float-Lyrics-1.6.0.dmg")
         XCTAssertNotNil(notice.releaseURL)
         XCTAssertTrue(notice.message.contains("replace the app in Applications"))
     }

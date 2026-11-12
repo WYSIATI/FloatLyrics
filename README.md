@@ -8,7 +8,7 @@
 Live lyrics for Spotify and Apple Music, quietly beside your work.</p>
 
 <p align="center">
-  <a href="https://github.com/WYSIATI/FloatLyrics/releases/download/v1.4.2/Float-Lyrics-1.4.2.dmg.zip"><strong>Download for macOS →</strong></a>
+  <a href="https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg"><strong>Download for macOS →</strong></a>
   &nbsp;·&nbsp; <a href="https://github.com/WYSIATI/FloatLyrics/releases">Releases</a>
 </p>
 
@@ -48,14 +48,10 @@ captures of the app itself. [Capture notes and refresh instructions](docs/screen
 
 ## Install
 
-1. Download the ZIP and open it to extract **Float-Lyrics-1.4.2.dmg**.
-2. Open that DMG and drag **Float Lyrics** to **Applications**.
-3. Open the app. Choose **Music Player → Spotify** or **Apple Music** from **•••**.
-4. Play a song in that desktop app and allow macOS Automation when asked.
-
-The ZIP preserves the DMG file's logo when opened with macOS's built-in archive
-utility. A [direct DMG download](https://github.com/WYSIATI/FloatLyrics/releases/download/v1.4.2/Float-Lyrics-1.4.2.dmg)
-is also available; its file icon can use macOS's standard disk-image artwork.
+1. Download and open **Float-Lyrics.dmg**.
+2. Drag **Float Lyrics** to **Applications**, then open the app.
+3. Choose **Music Player → Spotify** or **Apple Music** from **•••**, play a song
+   in that desktop app, and allow macOS Automation when asked.
 
 Updating from the previous name? Quit **FloatLyrics**, move the old
 **FloatLyrics.app** out of Applications, and install **Float Lyrics.app**.
@@ -78,7 +74,7 @@ as the app. Download only from this repository's Releases page and compare the
 You can also build from source.
 
 To replace an older preview that macOS blocked, quit Float Lyrics, download
-**Float-Lyrics-1.4.2.dmg.zip** using the link above, extract and open its DMG,
+the DMG using the link above, open it,
 and drag **Float Lyrics** into **Applications**, choosing **Replace**. Eject the
 installer and open the app from **Applications**. The older unnotarized
 downloads are still available in past releases; use **1.4.2 or later** for

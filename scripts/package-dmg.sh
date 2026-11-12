@@ -94,10 +94,9 @@ printf 'Packaged %s\n' "$output"
 cp -p "$output" "$output_dir/Float-Lyrics.dmg"
 # Keep existing public download links working.
 cp -p "$output" "$output_dir/FloatLyrics.dmg"
-bash scripts/archive-dmg.sh "$output"
-cp -p "$output.zip" "$output_dir/Float-Lyrics.dmg.zip"
+# Remove obsolete installer archives when reusing an output directory.
+rm -f "$output.zip" "$output.zip.sha256" "$output_dir/Float-Lyrics.dmg.zip" "$output_dir/Float-Lyrics.dmg.zip.sha256"
 (
     cd "$output_dir"
-    shasum -a 256 "Float-Lyrics-$version$suffix.dmg" Float-Lyrics.dmg FloatLyrics.dmg \
-        "Float-Lyrics-$version$suffix.dmg.zip" Float-Lyrics.dmg.zip > SHA256SUMS.txt
+    shasum -a 256 "Float-Lyrics-$version$suffix.dmg" Float-Lyrics.dmg FloatLyrics.dmg > SHA256SUMS.txt
 )
