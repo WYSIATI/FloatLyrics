@@ -16,6 +16,15 @@
 - The versioned installer and both DMG aliases have SHA-256
   `db5c7e57e1a4460f1dc1cd23ee48c7b0d92a9e5db1d29e013ec6bea3ed38ec2f`.
   Only DMGs and their checksum files are prepared for upload.
+- Published GitHub `v1.5.0` as the latest release after verifying all five
+  uploaded assets against local sizes and SHA-256 digests. Anonymous downloads
+  of the versioned DMG and both `releases/latest` aliases match the checksum
+  above. The public checksum file and README also point to 1.5.0.
+- With browser quarantine applied, the downloaded DMG passes the full release
+  verifier, including Apple tickets, Gatekeeper, both architectures, app
+  signature, resources, mounted artwork and `syspolicy_check distribution`.
+  The real update client now reports 1.5.0 as up to date and selects the new
+  versioned DMG for older versions.
 - The interactive checks documented below remain unperformed in this session
   because the computer-use tool is unavailable. No new physical shortcut,
   visual-layout, Apple Music subscription, Intel-hardware or older-macOS runtime
