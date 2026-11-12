@@ -21,7 +21,7 @@ private enum SettingsPage {
         case .music: 310
         case .appearance: 350
         case .details: 370
-        case .behavior: 460
+        case .behavior: 540
         }
     }
 }
@@ -220,7 +220,11 @@ struct PreferencesView: View {
             Divider()
             VStack(alignment: .leading, spacing: 8) {
                 KeyboardShortcuts.Recorder("Show / hide lyrics", shortcut: $model.windowShortcut)
-                Text("With letters, include ⌘ Command, ⌃ Control or ⌥ Option. ⇧ Shift alone isn't supported. Works in any app; clear to disable.")
+                Text("With letters or numbers, include ⌘ Command, ⌃ Control or ⌥ Option. You can add ⇧ Shift.")
+                    .font(.system(size: 10)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                Text("Examples: ⌃⇧H · ⌃⌥H · ⇧⌘H")
+                    .font(.system(size: 11, weight: .medium)).accessibilityLabel("Examples: Control Shift H, Control Option H, Command Shift H")
+                Text("A letter by itself, or Shift + a letter, won't record. macOS and app-menu conflicts show a warning. If no key appears, another app may be intercepting it. Clear the field to disable the shortcut.")
                     .font(.system(size: 10)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
             Divider()

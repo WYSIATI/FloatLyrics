@@ -5,6 +5,26 @@ import XCTest
 
 @MainActor
 final class ShortcutRecorderTests: XCTestCase {
+    func testControlShiftAndCommandShiftFormatsCaptureInNativeRecorder() async throws {
+        for modifiers: NSEvent.ModifierFlags in [[.control, .shift], [.command, .shift]] {
+            _ = NSApplication.shared
+            let window = RecorderTestPanel(contentRect: NSRect(x: 0, y: 0, width: 350, height: 180),
+                styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+            window.isReleasedWhenClosed = false
+            defer { window.orderOut(nil); window.close() }
+            var captured: KeyboardShortcuts.Shortcut?
+            let recorder = KeyboardShortcuts.RecorderCocoa(shortcut: nil) { captured = $0 }
+            recorder.conflictPolicy = .allowAll
+            window.contentView?.addSubview(recorder)
+            await Task.yield()
+            XCTAssertTrue(window.makeFirstResponder(recorder))
+            await Task.yield()
+            let shortcut = KeyboardShortcuts.Shortcut(.h, modifiers: modifiers)
+            try send(shortcut, characters: "H", to: window)
+            XCTAssertEqual(captured, shortcut)
+        }
+    }
+
     func testRecorderRejectsShiftLetterThenRecordsSupportedCombination() async throws {
         _ = NSApplication.shared
         let window = RecorderTestPanel(contentRect: NSRect(x: 0, y: 0, width: 350, height: 180),

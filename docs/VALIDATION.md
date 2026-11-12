@@ -1,5 +1,24 @@
 # Validation
 
+## Shortcut examples and reference review · 2026-11-12
+
+- Native recorder tests accept both Control + Shift + H and Command + Shift + H
+  when conflict checks are isolated from the test environment. A separate local
+  diagnostic found neither combination in macOS's symbolic shortcuts and
+  successfully probed exclusive registration, immediately unregistering each.
+  This does not establish which app or event path affected the user's recording
+  attempt; the physical Command + Shift + H symptom remains unconfirmed.
+- Settings now lists supported combinations and distinguishes format rules
+  from conflicts or missing input. The behavior page grows to 540 points to
+  accommodate the examples and explanation. This UI guidance is unreleased.
+- Reference review: [Maccy's General settings](https://github.com/p0deje/Maccy/blob/master/Maccy/Settings/GeneralSettingsPane.swift)
+  use the same KeyboardShortcuts recorder with help and accessibility labels.
+  [Rectangle's MASShortcut validator](https://github.com/rxhanson/MASShortcut/blob/master/Framework/Model/MASShortcutValidator.m)
+  separates modifier validation from menu/system conflicts and supplies
+  explanations. These inform the guidance; no third-party code is copied.
+- All 50 Swift tests pass. No physical keyboard or screenshot verification is
+  claimed for the added guidance; the computer-use tool remains unavailable.
+
 ## Shortcut modifier guidance · 2026-11-12
 
 - Reproduced the reported combination, Shift + H, against the actual

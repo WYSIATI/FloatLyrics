@@ -107,8 +107,12 @@ timing → Show / hide lyrics**, click **Record Shortcut**, and press your prefe
 combination. The shortcut is saved across launches; use its clear button to
 disable it. No global shortcut is assigned until you choose one. In island mode,
 the same shortcut hides and restores the island.
-For a letter shortcut, include **Command**, **Control** or **Option**; for example,
-**Control + Option + H**. You can add Shift, but **Shift + H** alone is not supported.
+For a letter or number shortcut, include **Command**, **Control** or **Option**.
+Supported examples include **Control + Shift + H**, **Control + Option + H**, and
+**Command + Shift + H**. A letter alone or **Shift + H** alone is not supported.
+macOS or app-menu conflicts show a warning. A combination can have a supported
+form and still be intercepted by another app; if no key appears while recording,
+try a different combination.
 
 To quit, choose **••• → Quit Float Lyrics** in the floating window. In notch
 mode, click the island to expand it, then choose **••• → Quit Float Lyrics**.

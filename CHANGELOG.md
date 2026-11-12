@@ -7,6 +7,9 @@
 - Explain the shortcut recorder's modifier requirement beside the recording
   field. Letter shortcuts need Command, Control or Option; Shift can be added.
   Shift plus a letter alone is rejected by the recorder.
+- Show supported Control/Shift, Control/Option and Command/Shift examples and
+  explain the difference between an unsupported combination and a shortcut
+  conflict. Keep Command + Shift + H supported.
 
 ## 1.5.0 · Window shortcuts and manual updates · 2026-11-12
 
