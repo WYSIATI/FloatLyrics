@@ -1,5 +1,26 @@
 # Validation
 
+## 1.5.0 signed release · 2026-11-12
+
+- All 48 Swift tests pass against the release source. GitHub Actions run
+  `43141932839` also passed for source commit `febd281`; the release preparation
+  changes only documentation and the changelog.
+- The universal app is signed by Mini Motion AI LLC with Developer ID,
+  hardened runtime and the existing Automation entitlement. Apple accepted app
+  submission `222e559c-3ea5-417e-afb7-d6013382bb59` and DMG submission
+  `2d08e6d7-d5d7-4396-837e-2f246ab2962d`. Both tickets were stapled and validated.
+- The 1.5.0 DMG passes Gatekeeper as `Notarized Developer ID`. A read-only mount
+  verifies version 1.5.0/build 10, both executable architectures, app signature,
+  recorder resources and license, matching volume artwork and app distribution
+  policy. `syspolicy_check distribution` reports the app ready for distribution.
+- The versioned installer and both DMG aliases have SHA-256
+  `db5c7e57e1a4460f1dc1cd23ee48c7b0d92a9e5db1d29e013ec6bea3ed38ec2f`.
+  Only DMGs and their checksum files are prepared for upload.
+- The interactive checks documented below remain unperformed in this session
+  because the computer-use tool is unavailable. No new physical shortcut,
+  visual-layout, Apple Music subscription, Intel-hardware or older-macOS runtime
+  verification is claimed for this release.
+
 ## Direct DMG downloads · 2026-11-12
 
 - The primary README download now uses the latest release's `Float-Lyrics.dmg`

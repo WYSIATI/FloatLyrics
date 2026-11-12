@@ -66,16 +66,16 @@ settings are kept.
 Requires **macOS 14+**, with a universal Apple Silicon/Intel build. Native Liquid
 Glass is available on **macOS 26+**; earlier systems use a translucent material.
 
-**Signed and notarized:** Float Lyrics **1.4.2** is signed by **Mini Motion AI
+**Signed and notarized:** Float Lyrics **1.5.0** is signed by **Mini Motion AI
 LLC**, notarized by Apple, and includes stapled verification tickets for both
 the app and installer. The mounted installer uses the same lifted-line F logo
 as the app. Download only from this repository's Releases page and compare the
-[SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/download/v1.4.2/SHA256SUMS.txt).
+[SHA-256 checksums](https://github.com/WYSIATI/FloatLyrics/releases/download/v1.5.0/SHA256SUMS.txt).
 You can also build from source.
 
 To replace an older preview that macOS blocked, quit Float Lyrics, download
-the DMG using the link above, open it,
-and drag **Float Lyrics** into **Applications**, choosing **Replace**. Eject the
+the DMG using the link above, open it, and drag **Float Lyrics** into
+**Applications**, choosing **Replace**. Eject the
 installer and open the app from **Applications**. The older unnotarized
 downloads are still available in past releases; use **1.4.2 or later** for
 Apple-verified installation.

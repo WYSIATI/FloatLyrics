@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.5.0 · Window shortcuts and manual updates · 2026-11-12
 
 ### Added
 
