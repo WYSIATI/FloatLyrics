@@ -1,5 +1,18 @@
 # Validation
 
+## Shortcut modifier guidance · 2026-11-12
+
+- Reproduced the reported combination, Shift + H, against the actual
+  KeyboardShortcuts recorder hosted in an AppKit panel. The recorder rejects
+  Shift plus a letter, remains ready to record, and then captures Control +
+  Option + H successfully. The existing modifier policy is retained.
+- Added the Command/Control/Option requirement beside the recording field and
+  a concrete example in the README. This guidance is pending the next app
+  release; supported combinations already work in 1.5.0.
+- All 49 Swift tests pass, including the new native-control regression test.
+  The test dispatches events only within its own application; it does not
+  exercise physical key delivery or control other applications.
+
 ## 1.5.0 signed release · 2026-11-12
 
 - All 48 Swift tests pass against the release source. GitHub Actions run

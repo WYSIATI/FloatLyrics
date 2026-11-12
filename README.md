@@ -107,6 +107,8 @@ timing → Show / hide lyrics**, click **Record Shortcut**, and press your prefe
 combination. The shortcut is saved across launches; use its clear button to
 disable it. No global shortcut is assigned until you choose one. In island mode,
 the same shortcut hides and restores the island.
+For a letter shortcut, include **Command**, **Control** or **Option**; for example,
+**Control + Option + H**. You can add Shift, but **Shift + H** alone is not supported.
 
 To quit, choose **••• → Quit Float Lyrics** in the floating window. In notch
 mode, click the island to expand it, then choose **••• → Quit Float Lyrics**.

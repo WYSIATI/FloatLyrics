@@ -220,7 +220,7 @@ struct PreferencesView: View {
             Divider()
             VStack(alignment: .leading, spacing: 8) {
                 KeyboardShortcuts.Recorder("Show / hide lyrics", shortcut: $model.windowShortcut)
-                Text("Works in any app. Hide keeps the menu-bar icon and your current display mode. Clear the shortcut to disable it.")
+                Text("With letters, include ⌘ Command, ⌃ Control or ⌥ Option. ⇧ Shift alone isn't supported. Works in any app; clear to disable.")
                     .font(.system(size: 10)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
             Divider()

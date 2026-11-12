@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Explain the shortcut recorder's modifier requirement beside the recording
+  field. Letter shortcuts need Command, Control or Option; Shift can be added.
+  Shift plus a letter alone is rejected by the recorder.
+
 ## 1.5.0 · Window shortcuts and manual updates · 2026-11-12
 
 ### Added
