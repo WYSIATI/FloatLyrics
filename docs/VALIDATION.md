@@ -1,5 +1,41 @@
 # Validation
 
+## Unreleased manual update checks · 2026-11-12
+
+- All 48 Swift tests pass. Thirteen new tests cover numeric version ordering,
+  rejecting draft/prerelease/malformed releases, archive and DMG selection,
+  safe repository URLs, missing installers, HTTP and connection failures,
+  duplicate clicks, retry, dialog actions and avoiding downgrade offers.
+- The real `ReleaseUpdateClient` contacted GitHub's public latest-release API
+  successfully using its configured API version. It found public version 1.4.2,
+  selected `Float-Lyrics-1.4.2.dmg.zip`, constructed the matching release-notes
+  URL, and correctly identified local version 1.5.0 as newer. This verified
+  release discovery and link selection, not downloading or installing an update.
+- Source builds now report version 1.5.0, build 10. The universal arm64/x86_64
+  app passes strict code-signature checks. Its local preview DMG passes checksum
+  and read-only mounted checks, including both architectures, resource bundles,
+  licenses and volume artwork; its ZIP preserves DMG bytes and Finder metadata.
+  The preview is ad-hoc signed. No 1.5.0 public release or notarization is claimed.
+- Update requests occur only after an explicit user action, use an ephemeral
+  cookie-free session and send no playback data or preferences. Native logs use
+  subsystem `app.floatlyrics.desktop`, category `Updates`.
+- Menu/Settings clicks, dialog appearance, browser handoff and updated Settings
+  screenshots remain pending because the computer-use tool is unavailable.
+
+Manual acceptance checklist:
+
+1. Choose **Check for Updates…** from the menu bar and from the Settings footer.
+   Confirm both disable further checks while a request or its result is active,
+   then allow another check after dismissing the dialog.
+2. Verify equal/current and newer-local-build messages. With an older build,
+   check **Download Update…**, **Release Notes…**, and **Later**/Escape. The
+   download should open the official installer in the default browser.
+3. Repeat while lyrics are hidden and in island mode. Confirm the menu-bar
+   icon stays accessible and checking for updates preserves the display mode.
+4. Disconnect temporarily and verify a readable failure, the **Open Releases…**
+   fallback, and a successful retry. Inspect the 326-point Settings root and
+   capture an original-demo screenshot before public release.
+
 ## Unreleased window visibility and shortcuts · 2026-11-12
 
 - All 35 Swift tests pass. Eight new regression tests cover floating-window and

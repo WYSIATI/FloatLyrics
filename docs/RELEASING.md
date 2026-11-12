@@ -6,6 +6,10 @@
    Packaging verifies the completed installer before updating download aliases.
 3. Check live Spotify playback, the lyric
    window, compact/expanded island, Settings navigation and a recovery state.
+   Choose **Check for Updates…** from both Settings and the menu bar. Confirm
+   the app compares against the installed version and offers the published
+   versioned installer, preferring `.dmg.zip`. Keep release tags in `vX.Y.Z`
+   format and mark test previews as prereleases so update checks skip them.
 4. Commit the release with a GitHub privacy email and no coauthor trailer.
 5. Tag the tested commit. Upload the versioned DMG and `.dmg.zip` archive,
    their `.sha256` files, `dist/Float-Lyrics.dmg.zip`, `dist/Float-Lyrics.dmg`,

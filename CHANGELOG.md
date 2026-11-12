@@ -4,6 +4,12 @@
 
 ### Added
 
+- **Check for Updates…** in the menu bar and Settings. Check the latest public
+  GitHub release on demand, then open its installer or release notes. The app
+  explains how to replace the installed copy while keeping saved settings.
+- Clear feedback for an up-to-date app, a local build newer than the public
+  release, connection failures and GitHub rate limits. Repeated clicks share
+  the in-progress check; local builds never offer an older release as an update.
 - A configurable global shortcut in **Settings → Behavior & timing → Show / hide
   lyrics**. Record a combination to toggle lyrics from any app; clear it to
   disable the shortcut. No combination is assigned by default.

@@ -17,6 +17,7 @@ private final class LyricsPanel: NSPanel {
 @MainActor
 final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
     let model = AppModel()
+    private let updates = UpdateChecker()
     private var floating: LyricsPanel!
     private var notch: LyricsPanel!
     private var island: IslandPresentation!
@@ -67,6 +68,9 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
         }.store(in: &subscriptions)
         model.$windowShortcut.removeDuplicates().sink { [weak self] shortcut in
             self?.registerShortcut(shortcut)
+            DispatchQueue.main.async { self?.rebuildMenu() }
+        }.store(in: &subscriptions)
+        updates.$isChecking.dropFirst().sink { [weak self] _ in
             DispatchQueue.main.async { self?.rebuildMenu() }
         }.store(in: &subscriptions)
         model.$source.dropFirst().sink { [weak self] _ in DispatchQueue.main.async { self?.rebuildMenu() } }.store(in: &subscriptions)
@@ -145,6 +149,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
     @objc private func retry() { model.retry() }
     @objc private func openPlayer() { model.openPlayer() }
     @objc private func quit() { NSApp.terminate(nil) }
+    @objc private func checkForUpdates() { updates.checkForUpdates() }
 
     @objc private func showPreferences() {
         if preferences == nil {
@@ -155,7 +160,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
             window.center(); preferences = window
         }
         // Each opening starts at the small Settings index; details stay one level deeper.
-        preferences?.contentView = NSHostingView(rootView: PreferencesView(model: model,
+        preferences?.contentView = NSHostingView(rootView: PreferencesView(model: model, updates: updates,
             dismiss: { [weak self] in self?.preferences?.orderOut(nil) },
             resize: { [weak self] height in self?.resizePreferences(height: height) }))
         resizePreferences(height: PreferencesView.size.height)
@@ -209,6 +214,9 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
         playerItem.submenu = playerMenu; menu.addItem(playerItem)
         menu.addItem(.separator())
         add("Settings…", action: #selector(showPreferences), key: ",", menu: menu)
+        let update = add(updates.isChecking ? "Checking for Updates…" : "Check for Updates…", action: #selector(checkForUpdates), menu: menu)
+        update.isEnabled = !updates.isChecking
+        menu.autoenablesItems = false
         add("Quit Float Lyrics", action: #selector(quit), key: "q", menu: menu)
         statusItem.menu = menu
     }

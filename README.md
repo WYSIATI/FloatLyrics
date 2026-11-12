@@ -61,6 +61,12 @@ Updating from the previous name? Quit **FloatLyrics**, move the old
 **FloatLyrics.app** out of Applications, and install **Float Lyrics.app**.
 Your saved preferences are retained.
 
+For future updates, choose **Check for Updates…** from the menu-bar menu or
+Settings. The app checks the latest public GitHub release and offers its
+installer and release notes. Download opens your browser; quit Float Lyrics,
+open the downloaded installer, and replace the copy in Applications. Your
+settings are kept.
+
 Requires **macOS 14+**, with a universal Apple Silicon/Intel build. Native Liquid
 Glass is available on **macOS 26+**; earlier systems use a translucent material.
 
@@ -116,6 +122,8 @@ No account, analytics, event taps or Accessibility permission is required.
 macOS Automation reads the selected player's track and position. Only the
 current track's **title, artist, album and duration** are sent to
 [LRCLIB](https://lrclib.net/docs) over HTTPS. Lyrics are cached locally.
+Clicking **Check for Updates…** also contacts GitHub over HTTPS to read the
+latest public release. Update checks send no playback metadata or preferences.
 
 Some recordings have no lyrics or only untimed lyrics, which are explicitly
 shown as unsynced. Browser players, Spotify Connect playback on another device
@@ -154,6 +162,7 @@ diagnostics.
 Visibility and shortcut configuration emit native debug logs under subsystem
 `app.floatlyrics.desktop`, category `WindowPresentation`, viewable in Console.
 These messages contain display state only, without song details or key combinations.
+Manual update checks use category `Updates` for request, completion and error logs.
 
 `--recording-preview` uses real desktop-player playback with isolated appearance
 preferences for screen recording; it does not substitute sample lyrics.

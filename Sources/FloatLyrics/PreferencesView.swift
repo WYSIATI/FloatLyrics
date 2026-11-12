@@ -17,7 +17,7 @@ private enum SettingsPage {
     }
     var height: CGFloat {
         switch self {
-        case .root: 300
+        case .root: 326
         case .music: 310
         case .appearance: 350
         case .details: 370
@@ -29,14 +29,16 @@ private enum SettingsPage {
 struct PreferencesView: View {
     static let size = CGSize(width: 350, height: SettingsPage.root.height)
     @ObservedObject var model: AppModel
+    @ObservedObject var updates: UpdateChecker
     let dismiss: () -> Void
     let resize: (CGFloat) -> Void
     @State private var page: SettingsPage = .root
     @State private var target: AppearanceTarget
     @State private var hexDraft: String
 
-    init(model: AppModel, dismiss: @escaping () -> Void, resize: @escaping (CGFloat) -> Void) {
+    init(model: AppModel, updates: UpdateChecker, dismiss: @escaping () -> Void, resize: @escaping (CGFloat) -> Void) {
         self.model = model
+        self.updates = updates
         self.dismiss = dismiss
         self.resize = resize
         _target = State(initialValue: model.notchMode ? .island : .window)
@@ -86,9 +88,13 @@ struct PreferencesView: View {
             pageContent
             Spacer(minLength: 0)
             if page == .root {
-                HStack {
-                    Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")")
-                    Spacer()
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")")
+                        Spacer()
+                        Button(updates.isChecking ? "Checking…" : "Check for Updates…") { updates.checkForUpdates() }
+                            .buttonStyle(.plain).disabled(updates.isChecking)
+                    }
                     Link("Help & source ↗", destination: URL(string: "https://github.com/WYSIATI/FloatLyrics#install")!)
                 }.font(.system(size: 10)).foregroundStyle(.secondary)
             }
