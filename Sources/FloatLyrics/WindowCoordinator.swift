@@ -1,7 +1,9 @@
 import AppKit
 import SwiftUI
 import Combine
+import KeyboardShortcuts
 import LyricsCore
+import OSLog
 
 private final class LyricsPanel: NSPanel {
     var anchorsToScreenTop = false
@@ -13,7 +15,7 @@ private final class LyricsPanel: NSPanel {
 }
 
 @MainActor
-final class WindowCoordinator: NSObject, NSWindowDelegate {
+final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
     let model = AppModel()
     private var floating: LyricsPanel!
     private var notch: LyricsPanel!
@@ -21,14 +23,17 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     private var statusItem: NSStatusItem!
     private var preferences: NSWindow?
     private var subscriptions = Set<AnyCancellable>()
-    private var hidden = false
+    private var shortcutTask: Task<Void, Never>?
+    private let logger = Logger(subsystem: "app.floatlyrics.desktop", category: "WindowPresentation")
+
+    deinit { shortcutTask?.cancel() }
 
     func start() {
         floating = makePanel(size: FloatingView.size)
         floating.isMovableByWindowBackground = true
         floating.delegate = self
         floating.contentView = NSHostingView(rootView: FloatingView(model: model,
-            hide: { [weak self] in self?.hide() }, showPreferences: { [weak self] in self?.showPreferences() },
+            hide: { [weak self] in self?.model.hideLyrics() }, showPreferences: { [weak self] in self?.showPreferences() },
             quit: { [weak self] in self?.quit() }))
         restoreFloatingPosition()
         notch = makePanel(size: NSSize(width: 580, height: 220))
@@ -56,9 +61,13 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
             self?.floating.ignoresMouseEvents = value; self?.notch.ignoresMouseEvents = value
             DispatchQueue.main.async { self?.rebuildMenu() }
         }.store(in: &subscriptions)
-        model.$notchMode.dropFirst().sink { [weak self] _ in
+        model.$notchMode.combineLatest(model.$lyricsHidden).dropFirst().sink { [weak self] _ in
             // @Published emits before the value changes. Apply the new model state on the next turn.
-            DispatchQueue.main.async { self?.hidden = false; self?.updatePresentation(); self?.rebuildMenu() }
+            DispatchQueue.main.async { self?.updatePresentation(); self?.rebuildMenu() }
+        }.store(in: &subscriptions)
+        model.$windowShortcut.removeDuplicates().sink { [weak self] shortcut in
+            self?.registerShortcut(shortcut)
+            DispatchQueue.main.async { self?.rebuildMenu() }
         }.store(in: &subscriptions)
         model.$source.dropFirst().sink { [weak self] _ in DispatchQueue.main.async { self?.rebuildMenu() } }.store(in: &subscriptions)
         model.$appearance.map(\.islandWidth).removeDuplicates().dropFirst().sink { [weak self] _ in
@@ -101,7 +110,8 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     }
 
     private func updatePresentation() {
-        guard !hidden else { floating.orderOut(nil); notch.orderOut(nil); return }
+        logger.debug("Updating lyrics presentation: hidden=\(self.model.lyricsHidden), island=\(self.model.notchMode)")
+        guard !model.lyricsHidden else { island.close(); floating.orderOut(nil); notch.orderOut(nil); return }
         if model.notchMode {
             floating.orderOut(nil)
             positionNotch()
@@ -129,8 +139,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         UserDefaults.standard.set(NSStringFromRect(floating.frame), forKey: "floatingFrame")
     }
 
-    private func hide() { hidden = true; updatePresentation(); rebuildMenu() }
-    @objc private func toggleVisibility() { hidden.toggle(); updatePresentation(); rebuildMenu() }
+    @objc private func toggleVisibility() { model.toggleLyricsVisibility() }
     @objc private func toggleNotch() { model.notchMode.toggle() }
     @objc private func chooseSource(_ sender: NSMenuItem) { if let raw = sender.representedObject as? String, let source = PlayerSource(rawValue: raw) { model.source = source } }
     @objc private func retry() { model.retry() }
@@ -163,10 +172,30 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         window.setFrame(frame, display: true)
     }
 
+    private func registerShortcut(_ shortcut: KeyboardShortcuts.Shortcut?) {
+        logger.debug("Updating global visibility shortcut: assigned=\(shortcut != nil)")
+        shortcutTask?.cancel()
+        shortcutTask = nil
+        guard let shortcut else { return }
+        shortcutTask = Task { [weak self] in
+            // Key-up toggles once, even when the user holds the combination down.
+            for await event in KeyboardShortcuts.events(for: shortcut) where event == .keyUp {
+                guard !Task.isCancelled else { return }
+                self?.model.toggleLyricsVisibility()
+            }
+        }
+    }
+
+    // Let the menu handle its displayed key equivalent without a second global callback.
+    func menuWillOpen(_ menu: NSMenu) { KeyboardShortcuts.isEnabled = false }
+    func menuDidClose(_ menu: NSMenu) { KeyboardShortcuts.isEnabled = true }
+
     private func rebuildMenu() {
         guard statusItem != nil else { return }
         let menu = NSMenu()
-        add(hidden ? "Show Lyrics" : "Hide Lyrics", action: #selector(toggleVisibility), key: "l", menu: menu)
+        menu.delegate = self
+        let visibility = add(model.visibilityMenuTitle, action: #selector(toggleVisibility), menu: menu)
+        visibility.setShortcut(model.windowShortcut)
         add("Dynamic Island", action: #selector(toggleNotch), key: "n", checked: model.notchMode, menu: menu)
         let playerMenu = NSMenu()
         for source in PlayerSource.allCases {

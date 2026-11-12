@@ -1,5 +1,9 @@
 # Credits and rights
 
+- Global shortcut recording and handling use
+  [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) 3.1.0
+  by Sindre Sorhus, distributed under the
+  [MIT license](Resources/ThirdPartyLicenses/KeyboardShortcuts.txt).
 - Playback metadata comes from the user's installed Spotify or Apple Music app.
   Float Lyrics is independent of, and not endorsed by, Spotify or Apple.
 - Lyrics are fetched from [LRCLIB](https://lrclib.net). Lyrics remain the property

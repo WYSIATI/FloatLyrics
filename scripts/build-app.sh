@@ -4,18 +4,24 @@ cd "$(dirname "$0")/.."
 
 configuration="${CONFIGURATION:-release}"
 architecture="${ARCHITECTURE:-universal}"
-swift_args=(-c "$configuration")
+# Use Xcode's resource-bundle lookup for both native and universal app bundles.
+swift_args=(-c "$configuration" --build-system xcode)
 if [[ "$architecture" == "universal" ]]; then
     swift_args+=(--arch arm64 --arch x86_64)
+else
+    swift_args+=(--arch "$(uname -m)")
 fi
 swift build "${swift_args[@]}"
 binary_dir="$(swift build "${swift_args[@]}" --show-bin-path)"
 app="$PWD/build/Float Lyrics.app"
+rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$binary_dir/FloatLyrics" "$app/Contents/MacOS/FloatLyrics"
 cp Resources/Info.plist "$app/Contents/Info.plist"
 cp LICENSE "$app/Contents/Resources/LICENSE.txt"
 cp NOTICE.md "$app/Contents/Resources/NOTICE.md"
+cp Resources/ThirdPartyLicenses/KeyboardShortcuts.txt "$app/Contents/Resources/KeyboardShortcuts-LICENSE.txt"
+ditto "$binary_dir/KeyboardShortcuts_KeyboardShortcuts.bundle" "$app/Contents/Resources/KeyboardShortcuts_KeyboardShortcuts.bundle"
 swift scripts/make-icon.swift "$PWD/build"
 iconutil -c icns build/AppIcon.iconset -o "$app/Contents/Resources/AppIcon.icns"
 chmod +x "$app/Contents/MacOS/FloatLyrics"

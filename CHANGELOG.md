@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- A configurable global shortcut in **Settings → Behavior & timing → Show / hide
+  lyrics**. Record a combination to toggle lyrics from any app; clear it to
+  disable the shortcut. No combination is assigned by default.
+- Native debug logs for visibility and shortcut configuration changes, without
+  recording song details, lyrics or the chosen combination.
+
+### Changed
+
+- The floating window's options menu now labels its hide action **Hide Window**.
+  Hiding keeps the menu-bar icon available, with **Show Window** switching back
+  to **Hide Window** when restored. Visibility changes preserve the selected
+  floating-window or Dynamic Island mode and leave playback running.
+- Package the pinned KeyboardShortcuts 3.1.0 dependency, its localized recorder
+  resources and MIT license with the app.
+
 ## 1.4.2 · Installer identity and verification
 
 - The public installer is signed by Mini Motion AI LLC and notarized by Apple,

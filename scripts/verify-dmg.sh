@@ -29,6 +29,8 @@ test -f "$app/Contents/Resources/AppIcon.icns"
 cmp "$mount/.VolumeIcon.icns" "$app/Contents/Resources/AppIcon.icns"
 test "$(GetFileInfo -aC "$mount")" = 1
 test -f "$app/Contents/Resources/LICENSE.txt"
+test -f "$app/Contents/Resources/KeyboardShortcuts-LICENSE.txt"
+test -f "$app/Contents/Resources/KeyboardShortcuts_KeyboardShortcuts.bundle/Contents/Resources/en.lproj/Localizable.strings"
 test "$(readlink "$mount/Applications")" = /Applications
 test -f "$mount/Read me.txt"
 test -f "$mount/License.txt"

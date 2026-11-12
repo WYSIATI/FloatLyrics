@@ -38,7 +38,7 @@ struct FloatingView: View {
             Button("Move to Dynamic Island") { model.notchMode = true }
             Button("Settings…", action: showPreferences)
             Divider()
-            Button("Hide Lyrics", action: hide)
+            Button("Hide Window", action: hide)
             Divider()
             Button("Quit Float Lyrics", action: quit)
                 .keyboardShortcut("q", modifiers: .command)

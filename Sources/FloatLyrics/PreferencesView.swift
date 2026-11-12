@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import KeyboardShortcuts
 import LyricsCore
 
 private enum AppearanceTarget: String, CaseIterable { case window = "Window", island = "Island" }
@@ -20,7 +21,7 @@ private enum SettingsPage {
         case .music: 310
         case .appearance: 350
         case .details: 370
-        case .behavior: 360
+        case .behavior: 460
         }
     }
 }
@@ -210,6 +211,12 @@ struct PreferencesView: View {
                 Toggle("Click through lyrics", isOn: $model.clickThrough)
             }.toggleStyle(.switch).controlSize(.small)
             Text("Open Settings from the menu bar to turn click through off.").font(.system(size: 10)).foregroundStyle(.secondary)
+            Divider()
+            VStack(alignment: .leading, spacing: 8) {
+                KeyboardShortcuts.Recorder("Show / hide lyrics", shortcut: $model.windowShortcut)
+                Text("Works in any app. Hide keeps the menu-bar icon and your current display mode. Clear the shortcut to disable it.")
+                    .font(.system(size: 10)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
             Divider()
             HStack {
                 sectionLabel("Lyric timing")

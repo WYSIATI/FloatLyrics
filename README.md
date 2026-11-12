@@ -96,6 +96,16 @@ opacity and text preferences. Only the background fades; lyrics stay crisp.
 Always-on-top, click through and lyric timing live under Behavior & timing.
 The menu bar restores access when lyrics are hidden or click through is enabled.
 
+Choose **••• → Hide Window** to put the floating window away. The menu-bar icon
+stays visible: choose **Show Window** to bring it back; the same item becomes
+**Hide Window** while it is visible. Hiding preserves your display mode.
+
+To toggle lyrics while working in another app, open **Settings → Behavior &
+timing → Show / hide lyrics**, click **Record Shortcut**, and press your preferred
+combination. The shortcut is saved across launches; use its clear button to
+disable it. No global shortcut is assigned until you choose one. In island mode,
+the same shortcut hides and restores the island.
+
 To quit, choose **••• → Quit Float Lyrics** in the floating window. In notch
 mode, click the island to expand it, then choose **••• → Quit Float Lyrics**.
 The menu-bar menu also includes Quit.
@@ -118,8 +128,10 @@ have not been tested end to end. See [validation](docs/VALIDATION.md).
 
 ## Build and contribute
 
-Use **Xcode 26 or newer**. The Swift 6 / SwiftUI / AppKit app has no third-party
-runtime dependencies.
+Use **Xcode 26 or newer**. The Swift 6 / SwiftUI / AppKit app uses the MIT-licensed
+[KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) package for
+global shortcut recording and handling. Swift Package Manager resolves the
+pinned version; the app build script includes its resources and license.
 
 ```sh
 swift test
@@ -138,6 +150,10 @@ For visual previews with original product-demo text, launch the executable with 
 `--demo-position 15` starts at a chosen sample time. Preview preferences are
 separate from listening preferences. `--diagnostics` prints opt-in playback
 diagnostics.
+
+Visibility and shortcut configuration emit native debug logs under subsystem
+`app.floatlyrics.desktop`, category `WindowPresentation`, viewable in Console.
+These messages contain display state only, without song details or key combinations.
 
 `--recording-preview` uses real desktop-player playback with isolated appearance
 preferences for screen recording; it does not substitute sample lyrics.

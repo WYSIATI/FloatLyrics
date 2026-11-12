@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import KeyboardShortcuts
 import LyricsCore
 
 @MainActor
@@ -17,7 +18,23 @@ final class AppModel: NSObject, ObservableObject {
     }
     @Published var alwaysOnTop: Bool { didSet { defaults.set(alwaysOnTop, forKey: "alwaysOnTop") } }
     @Published var clickThrough = false
-    @Published var notchMode: Bool { didSet { defaults.set(notchMode, forKey: "notchMode") } }
+    @Published var notchMode: Bool {
+        didSet {
+            guard notchMode != oldValue else { return }
+            defaults.set(notchMode, forKey: "notchMode")
+            lyricsHidden = false
+        }
+    }
+    @Published private(set) var lyricsHidden = false
+    @Published var windowShortcut: KeyboardShortcuts.Shortcut? {
+        didSet {
+            if let windowShortcut, let data = try? JSONEncoder().encode(windowShortcut) {
+                defaults.set(data, forKey: "windowShortcut.v1")
+            } else {
+                defaults.removeObject(forKey: "windowShortcut.v1")
+            }
+        }
+    }
     @Published var fontSize: Double { didSet { defaults.set(fontSize, forKey: "fontSize") } }
     @Published var timingAdjustment: Double = 0
     @Published private(set) var snapshot = PlaybackSnapshot(track: nil, isPlaying: false, position: 0)
@@ -36,24 +53,34 @@ final class AppModel: NSObject, ObservableObject {
     private var reading = false
     private var generation = 0
 
-    override init() {
-        let arguments = ProcessInfo.processInfo.arguments
+    init(defaults suppliedDefaults: UserDefaults? = nil, arguments: [String] = ProcessInfo.processInfo.arguments) {
         demo = arguments.contains("--demo")
         visualPreview = demo || arguments.contains("--recording-preview")
         // Visual previews must not overwrite the listener's real preferences.
-        defaults = visualPreview ? UserDefaults(suiteName: "app.floatlyrics.preview")! : .standard
+        defaults = suppliedDefaults ?? (visualPreview ? UserDefaults(suiteName: "app.floatlyrics.preview")! : .standard)
         let defaults = self.defaults
         source = PlayerSource(rawValue: defaults.string(forKey: "source") ?? "") ?? .spotify
         appearance = .restore(defaults.data(forKey: "appearance.v1"))
         opacity = defaults.object(forKey: "opacity").map { _ in min(1, max(0.15, defaults.double(forKey: "opacity"))) } ?? 0.70
         alwaysOnTop = defaults.object(forKey: "alwaysOnTop") == nil || defaults.bool(forKey: "alwaysOnTop")
         notchMode = defaults.bool(forKey: "notchMode")
+        windowShortcut = defaults.data(forKey: "windowShortcut.v1").flatMap {
+            try? JSONDecoder().decode(KeyboardShortcuts.Shortcut.self, from: $0)
+        }
         fontSize = defaults.object(forKey: "fontSize").map { _ in min(34, max(18, defaults.double(forKey: "fontSize"))) } ?? 26
         let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?
             .appendingPathComponent("app.floatlyrics.desktop/lyrics", isDirectory: true)
         client = LRCLibClient(cacheDirectory: caches)
         super.init()
     }
+
+    var visibilityMenuTitle: String {
+        if notchMode { return lyricsHidden ? "Show Dynamic Island" : "Hide Dynamic Island" }
+        return lyricsHidden ? "Show Window" : "Hide Window"
+    }
+
+    func hideLyrics() { lyricsHidden = true }
+    func toggleLyricsVisibility() { lyricsHidden.toggle() }
 
     func start() {
         if demo {

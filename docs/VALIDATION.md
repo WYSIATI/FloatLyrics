@@ -1,5 +1,48 @@
 # Validation
 
+## Unreleased window visibility and shortcuts · 2026-11-12
+
+- All 35 Swift tests pass. Eight new regression tests cover floating-window and
+  island hide/show transitions, menu labels, explicit mode changes while hidden,
+  shortcut replacement/removal/persistence, malformed saved shortcuts, visible
+  startup and preserving demo playback while hidden. Tests use isolated
+  preferences and original demo lyrics.
+- Native arm64 and universal arm64/x86_64 app builds pass strict code-signature
+  verification. Both use Xcode's SwiftPM resource-bundle lookup; the packaged
+  recorder resources live in `Contents/Resources`, alongside its MIT license.
+- The local preview DMG passes checksum verification and a read-only mounted
+  check of both architectures, app signature, recorder resources, licenses and
+  matching volume artwork. Its ZIP preserves the DMG bytes and Finder metadata.
+  This is an ad-hoc-signed development preview, not a notarized public release.
+- KeyboardShortcuts is pinned to 3.1.0 in the manifest and lockfile. No global
+  combination is assigned by default. Preview shortcuts use the same isolated
+  preferences as other preview settings.
+- Native debug logs use subsystem `app.floatlyrics.desktop` and category
+  `WindowPresentation`. They report visibility, display mode and whether a
+  shortcut is assigned; they do not include song details, lyrics or key values.
+- Interactive verification and new screenshots remain pending: the computer-use
+  tool became unavailable before the app could be exercised. The automated tests
+  above validate model behavior, not physical key delivery or visual layout.
+
+Manual acceptance checklist:
+
+1. In a `--demo` instance, choose **••• → Hide Window**. Confirm the floating
+   window disappears, no island appears, and the menu-bar icon remains. Open its
+   menu, choose **Show Window**, and confirm the item changes to **Hide Window**.
+2. In **Settings → Behavior & timing**, record a combination under **Show / hide
+   lyrics**. Switch to another app and use it to hide and restore lyrics. Hold
+   the keys to check it toggles once. Verify the displayed menu shortcut works
+   while the menu is open without toggling twice.
+3. Replace the combination and confirm the old one stops working. Re-record the
+   current combination, cancel recording with Escape, and try a system/menu
+   conflict. Clear the field and confirm the shortcut is disabled. Relaunch and
+   verify the saved assignment or cleared state.
+4. Hide in island mode and restore it with the shortcut. Change display mode
+   from the menu while hidden and confirm the selected presentation appears.
+   Repeat hide/show with click through enabled and while Settings is open.
+5. Inspect the behavior page at native scale, including its recorder and timing
+   controls, and capture original-demo screenshots before public release.
+
 ## 1.4.2 installer packaging · 2026-11-10
 
 - The recommended download is now a metadata-preserving `.dmg.zip` archive.
