@@ -1,3 +1,4 @@
+#if !APP_STORE
 import XCTest
 import LyricsCore
 @testable import FloatLyrics
@@ -84,3 +85,4 @@ private actor UpdateRequestGate {
         continuation = nil
     }
 }
+#endif

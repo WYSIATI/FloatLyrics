@@ -1,3 +1,4 @@
+#if !APP_STORE
 import AppKit
 import Combine
 import LyricsCore
@@ -89,3 +90,4 @@ final class UpdateChecker: ObservableObject {
         }
     }
 }
+#endif

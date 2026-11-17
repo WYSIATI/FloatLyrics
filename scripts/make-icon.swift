@@ -3,7 +3,8 @@ import AppKit
 // Vector artwork, drawn at each output size so the menu/Dock icon stays crisp.
 // The same lifted-line F appears in BrandMark.swift and docs/brand/mark.svg.
 let output = URL(fileURLWithPath: CommandLine.arguments[1])
-let iconset = output.appendingPathComponent("AppIcon.iconset")
+let assetCatalog = CommandLine.arguments.dropFirst(2).contains("--asset-catalog")
+let iconset = output.appendingPathComponent(assetCatalog ? "Assets.xcassets/AppIcon.appiconset" : "AppIcon.iconset")
 try FileManager.default.createDirectory(at: iconset, withIntermediateDirectories: true)
 
 func markPath() -> NSBezierPath {
@@ -66,11 +67,17 @@ func render(pixels: Int, tile: Bool = true) -> Data {
     return bitmap.representation(using: .png, properties: [:])!
 }
 
+var images: [[String: String]] = []
 for size in [16, 32, 128, 256, 512] {
     for scale in [1, 2] {
         let name = "icon_\(size)x\(size)\(scale == 2 ? "@2x" : "").png"
         try render(pixels: size * scale).write(to: iconset.appendingPathComponent(name))
+        images.append(["filename": name, "idiom": "mac", "size": "\(size)x\(size)", "scale": "\(scale)x"])
     }
+}
+if assetCatalog {
+    let contents: [String: Any] = ["images": images, "info": ["author": "xcode", "version": 1]]
+    try JSONSerialization.data(withJSONObject: contents).write(to: iconset.appendingPathComponent("Contents.json"))
 }
 try render(pixels: 1024).write(to: output.appendingPathComponent("AppIcon.png"))
 try render(pixels: 512, tile: false).write(to: output.appendingPathComponent("BrandMark.png"))

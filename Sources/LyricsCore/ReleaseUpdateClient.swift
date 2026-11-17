@@ -1,3 +1,4 @@
+#if !APP_STORE
 import Foundation
 
 public struct AppVersion: Comparable, Sendable, CustomStringConvertible {
@@ -114,3 +115,4 @@ public struct ReleaseUpdateClient: Sendable {
         let size: Int
     }
 }
+#endif

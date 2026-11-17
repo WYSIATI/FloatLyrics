@@ -30,6 +30,77 @@ The app targets macOS 14+; native Liquid Glass needs macOS 26+. The DMG contains
 both arm64 and x86_64 executables. Compiling for Intel or an older deployment
 target does not prove runtime behavior on that hardware/OS.
 
+## Mac App Store
+
+The store build uses the Music category and bundle ID `app.floatlyrics.desktop`.
+It enables App Sandbox, outbound HTTPS and Apple Events to the two players.
+It declares the keyboard shortcut and appearance preferences in its required-reason
+API manifest. The `APP_STORE` compilation condition removes the GitHub updater.
+
+With a configured Xcode, build a locally signed sandboxed copy to exercise the
+store UI, playback and Automation permission flow on your Mac:
+
+```sh
+bash scripts/build-app.sh --app-store
+open "build/app-store/Float Lyrics.app"
+```
+
+Use the installed Spotify and Music desktop apps separately. Check a playing,
+paused and seeked track, the lyric lookup, window and island, the shortcut,
+and the denial/reconnect path for each player. Spotify publishes the
+`com.spotify.playback` and `com.spotify.library` scripting groups. Music
+publishes `com.apple.Music.playback` and `com.apple.Music.library.read`.
+Float Lyrics reads the current track's fields and timing through these groups.
+
+### Xcode Organizer
+
+After building the release Store app, sign in to the seller’s team in
+**Xcode → Settings → Apple Accounts** and register the explicit bundle ID.
+To sign and archive the verified binary with the account available in Xcode,
+prepare its native project and open the path printed by the command.
+
+```sh
+python3 scripts/archive-app-store.py --team-id YOURTEAMID --prepare-project
+```
+
+Choose the **Float Lyrics** scheme. Under the target’s **Signing & Capabilities**,
+verify the team, bundle identifier and automatic signing selection. Choose
+**Product → Archive**. Xcode signs the app for the team and copies the matching
+debug symbols into the archive. In Organizer, choose **Distribute App → App Store
+Connect**. Xcode can use cloud-managed distribution certificates with the team’s
+permissions. [Apple’s cloud-managed certificates](https://developer.apple.com/help/account/certificates/cloud-managed-certificates/)
+
+To perform the same archive step from a shell that can access the Xcode account
+and signing keychain, run the command without `--prepare-project`. Both commands
+write matching `*-ExportOptions.plist` settings into `dist/app-store/`. For a
+local Store export, pass the team-signed archive and that file to
+`xcodebuild -exportArchive -allowProvisioningUpdates` with an `-exportPath`.
+The export options preserve the build number. Running the script without
+`--team-id` packages the local build for inspection.
+
+### Signed installer package
+
+To create the upload package, register the explicit bundle ID for the seller's
+team. Install both signing identities and their private keys on the build Mac.
+Run `security find-identity -v` for their full names. Set `SIGNING_KEYCHAIN`
+if they are stored in a separate keychain. For TestFlight, set `STORE_PROFILE`
+to the Mac App Store distribution profile for this app. This build's sandbox
+and hardened-runtime entitlements also support direct App Store submission
+without a profile. [Apple's provisioning profile rules](https://developer.apple.com/documentation/technotes/tn3125-inside-code-signing-provisioning-profiles)
+
+```sh
+STORE_APP_IDENTITY='Apple Distribution: Your Team (TEAMID)' \
+STORE_INSTALLER_IDENTITY='3rd Party Mac Developer Installer: Your Team (TEAMID)' \
+bash scripts/package-app-store.sh
+```
+
+The signed package is written to `dist/app-store/Float-Lyrics-<version>-<build>.pkg`.
+Use Transporter to verify and deliver it to the macOS app record. Wait for
+processing, then select that build on the version page. Each subsequent upload
+requires a higher build number in `Resources/Info.plist`.
+[Apple's packaging instructions](https://developer.apple.com/documentation/xcode/packaging-mac-software-for-distribution)
+and [submission fields](app-store/submission.md).
+
 ## Signing
 
 Locally built apps (`scripts/build-app.sh`) remain ad-hoc signed by default.

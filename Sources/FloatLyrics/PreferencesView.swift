@@ -28,7 +28,9 @@ enum SettingsPage {
 struct PreferencesView: View {
     static let size = CGSize(width: 350, height: SettingsPage.root.height)
     @ObservedObject var model: AppModel
-    @ObservedObject var updates: UpdateChecker
+#if !APP_STORE
+    @EnvironmentObject private var updates: UpdateChecker
+#endif
     let dismiss: () -> Void
     let resize: (CGFloat) -> Void
     let shortcutMenus: () -> [NSMenu]
@@ -36,10 +38,9 @@ struct PreferencesView: View {
     @State private var target: AppearanceTarget
     @State private var hexDraft: String
 
-    init(model: AppModel, updates: UpdateChecker, dismiss: @escaping () -> Void, resize: @escaping (CGFloat) -> Void,
+    init(model: AppModel, dismiss: @escaping () -> Void, resize: @escaping (CGFloat) -> Void,
          shortcutMenus: @escaping () -> [NSMenu] = { NSApp.mainMenu.map { [$0] } ?? [] }, initialPage: SettingsPage = .root) {
         self.model = model
-        self.updates = updates
         self.dismiss = dismiss
         self.resize = resize
         self.shortcutMenus = shortcutMenus
@@ -95,10 +96,18 @@ struct PreferencesView: View {
                     HStack {
                         Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")")
                         Spacer()
+#if APP_STORE
+                        Link("Privacy Policy", destination: URL(string: "https://github.com/WYSIATI/FloatLyrics/blob/main/PRIVACY.md")!)
+#else
                         Button(updates.isChecking ? "Checking…" : "Check for Updates…") { updates.checkForUpdates() }
                             .buttonStyle(.plain).disabled(updates.isChecking)
+#endif
                     }
+#if APP_STORE
+                    Link("Support ↗", destination: URL(string: "https://github.com/WYSIATI/FloatLyrics/blob/main/docs/app-store/support.md")!)
+#else
                     Link("Help & source ↗", destination: URL(string: "https://github.com/WYSIATI/FloatLyrics#install")!)
+#endif
                 }.font(.system(size: 10)).foregroundStyle(.secondary)
             }
         }.font(.system(size: 12)).padding(22).frame(width: Self.size.width, height: page.height)

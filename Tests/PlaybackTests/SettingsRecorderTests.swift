@@ -126,8 +126,12 @@ final class SettingsRecorderTests: XCTestCase {
         model.opacity = 0.15
         let window = SettingsWindow(size: NSSize(width: 350, height: 540))
         defer { window.close() }
-        let view = NSHostingView(rootView: PreferencesView(model: model, updates: UpdateChecker(),
-            dismiss: {}, resize: { _ in }, initialPage: .behavior))
+        let content = PreferencesView(model: model, dismiss: {}, resize: { _ in }, initialPage: .behavior)
+#if APP_STORE
+        let view = NSHostingView(rootView: content)
+#else
+        let view = NSHostingView(rootView: content.environmentObject(UpdateChecker()))
+#endif
         window.contentView = view
         view.frame = NSRect(x: 0, y: 0, width: 350, height: 540)
         await Task.yield()

@@ -17,7 +17,9 @@ private final class LyricsPanel: NSPanel {
 @MainActor
 final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
     let model = AppModel()
+#if !APP_STORE
     private let updates = UpdateChecker()
+#endif
     private var floating: LyricsPanel!
     private var notch: LyricsPanel!
     private var island: IslandPresentation!
@@ -70,9 +72,11 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
             self?.registerShortcut(shortcut)
             DispatchQueue.main.async { self?.rebuildMenu() }
         }.store(in: &subscriptions)
+#if !APP_STORE
         updates.$isChecking.dropFirst().sink { [weak self] _ in
             DispatchQueue.main.async { self?.rebuildMenu() }
         }.store(in: &subscriptions)
+#endif
         model.$source.dropFirst().sink { [weak self] _ in DispatchQueue.main.async { self?.rebuildMenu() } }.store(in: &subscriptions)
         model.$appearance.map(\.islandWidth).removeDuplicates().dropFirst().sink { [weak self] _ in
             DispatchQueue.main.async { if self?.model.notchMode == true { self?.positionNotch(reset: false) } }
@@ -149,7 +153,9 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
     @objc private func retry() { model.retry() }
     @objc private func openPlayer() { model.openPlayer() }
     @objc private func quit() { NSApp.terminate(nil) }
+#if !APP_STORE
     @objc private func checkForUpdates() { updates.checkForUpdates() }
+#endif
 
     @objc private func showPreferences() {
         if preferences == nil {
@@ -157,10 +163,15 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
             window.center(); preferences = window
         }
         // Each opening starts at the small Settings index; details stay one level deeper.
-        preferences?.contentView = NSHostingView(rootView: PreferencesView(model: model, updates: updates,
+        let content = PreferencesView(model: model,
             dismiss: { [weak self] in self?.preferences?.orderOut(nil) },
             resize: { [weak self] height in self?.resizePreferences(height: height) },
-            shortcutMenus: { [weak self] in [NSApp.mainMenu, self?.statusItem?.menu].compactMap { $0 } }))
+            shortcutMenus: { [weak self] in [NSApp.mainMenu, self?.statusItem?.menu].compactMap { $0 } })
+#if APP_STORE
+        preferences?.contentView = NSHostingView(rootView: content)
+#else
+        preferences?.contentView = NSHostingView(rootView: content.environmentObject(updates))
+#endif
         resizePreferences(height: PreferencesView.size.height)
         NSApp.activate(ignoringOtherApps: true)
         preferences?.makeKeyAndOrderFront(nil)
@@ -212,8 +223,10 @@ final class WindowCoordinator: NSObject, NSWindowDelegate, NSMenuDelegate {
         playerItem.submenu = playerMenu; menu.addItem(playerItem)
         menu.addItem(.separator())
         add("Settings…", action: #selector(showPreferences), key: ",", menu: menu)
+#if !APP_STORE
         let update = add(updates.isChecking ? "Checking for Updates…" : "Check for Updates…", action: #selector(checkForUpdates), menu: menu)
         update.isEnabled = !updates.isChecking
+#endif
         menu.autoenablesItems = false
         add("Quit Float Lyrics", action: #selector(quit), key: "q", menu: menu)
         statusItem.menu = menu

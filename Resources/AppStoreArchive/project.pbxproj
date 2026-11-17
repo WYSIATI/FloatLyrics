@@ -1,0 +1,110 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 54;
+	objects = {
+		84392F8FE6B6059EC06FA193 /* Project */ = {
+			isa = PBXProject;
+			attributes = { TargetAttributes = { 09A17EECC2C746D0EA8999DC = { ProvisioningStyle = Automatic; }; }; };
+			buildConfigurationList = 08BCE86EADD04762224DDDF5;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
+			mainGroup = F916CE7054A66A7F180F8EDE;
+			productRefGroup = 42691EA571F737A288FA95E1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (09A17EECC2C746D0EA8999DC /* Float Lyrics */);
+		};
+		F916CE7054A66A7F180F8EDE = {
+			isa = PBXGroup;
+			children = (A283DFD31B22688C29665C4D /* Release.xcconfig */, 42691EA571F737A288FA95E1 /* Products */);
+			sourceTree = "<group>";
+		};
+		42691EA571F737A288FA95E1 /* Products */ = {
+			isa = PBXGroup;
+			children = (A283DFD31B22688C29665C4C /* Float Lyrics.app */);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A283DFD31B22688C29665C4C /* Float Lyrics.app */ = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			path = "Float Lyrics.app";
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A283DFD31B22688C29665C4D /* Release.xcconfig */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xcconfig;
+			path = Release.xcconfig;
+			sourceTree = "<group>";
+		};
+		09A17EECC2C746D0EA8999DC /* Float Lyrics */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1BB9989759B4E3074CEC36F;
+			buildPhases = (DD448E14784024CFD3AEBB88 /* Package Store product */);
+			buildRules = ();
+			dependencies = ();
+			name = "Float Lyrics";
+			productName = "Float Lyrics";
+			productReference = A283DFD31B22688C29665C4C;
+			productType = "com.apple.product-type.application";
+		};
+		DD448E14784024CFD3AEBB88 /* Package Store product */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			outputPaths = ();
+			name = "Package verified Store app and symbols";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"/bin/sh\" \"$SRCROOT/input/stage-product.sh\"\n";
+		};
+		08BCE86EADD04762224DDDF5 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (4996FD9BD745080E7EE683BB /* Release */);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1BB9989759B4E3074CEC36F = {
+			isa = XCConfigurationList;
+			buildConfigurations = (5D59B79806DFD7E2CD17791C /* Release */);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4996FD9BD745080E7EE683BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = { SDKROOT = macosx; };
+			name = Release;
+		};
+		5D59B79806DFD7E2CD17791C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A283DFD31B22688C29665C4D /* Release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = input/Store.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_DEBUG_DYLIB = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = input/Info.plist;
+				INSTALL_PATH = /Applications;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "Float Lyrics";
+				SKIP_INSTALL = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Release;
+		};
+	};
+	rootObject = 84392F8FE6B6059EC06FA193 /* Project */;
+}

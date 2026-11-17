@@ -1,3 +1,4 @@
+#if !APP_STORE
 import XCTest
 @testable import LyricsCore
 
@@ -128,3 +129,4 @@ private actor UpdateTransportStub {
         return (data, status)
     }
 }
+#endif
