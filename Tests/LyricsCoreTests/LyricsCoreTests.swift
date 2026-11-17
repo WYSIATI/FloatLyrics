@@ -90,6 +90,23 @@ final class LyricsCoreTests: XCTestCase {
         XCTAssertEqual(second.1, 429)
         XCTAssertTrue(second.0.isEmpty, "A second HTTP request was sent during Retry-After.")
     }
+    func testVeryLongRetryAfterIsCapped() async throws {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [DayLongRateLimitResponse.self]
+        let session = URLSession(configuration: configuration)
+        defer { session.invalidateAndCancel() }
+        let clock = TestClock(Date(timeIntervalSince1970: 1_000_000))
+        let transport = NetworkTransport(session: session, now: { clock.now })
+        let url = URL(string: "https://example.invalid/api/get?track=A")!
+        _ = try await transport.get(URLRequest(url: url))
+        clock.advance(TimeInterval(NetworkTransport.maximumRetryAfter) * 0.5)
+        let held = try await transport.get(URLRequest(url: url))
+        XCTAssertTrue(held.0.isEmpty, "A request was sent before the capped pause ended.")
+        // The pause includes up to 30% jitter on top of the cap.
+        clock.advance(TimeInterval(NetworkTransport.maximumRetryAfter))
+        let resumed = try await transport.get(URLRequest(url: url))
+        XCTAssertEqual(resumed.0, RateLimitResponse.body, "A day-long Retry-After still blocks lookups.")
+    }
     func testEmptyExactRecordFallsBackToUsableSearchResult() async throws {
         let empty = #"{"id":3,"trackName":"Cafe","artistName":"Artist","duration":200,"instrumental":false,"plainLyrics":"  ","syncedLyrics":"[00:00.00]"}"#
         let transport = MockTransport(responses: [(Data(empty.utf8), 200), (Data(Self.records.utf8), 200)])
@@ -124,13 +141,26 @@ private actor MockTransport: LyricsTransport {
     }
 }
 
-private final class RateLimitResponse: URLProtocol {
+private final class TestClock: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value: Date
+    init(_ value: Date) { self.value = value }
+    var now: Date { lock.withLock { value } }
+    func advance(_ seconds: TimeInterval) { lock.withLock { value = value.addingTimeInterval(seconds) } }
+}
+
+private final class DayLongRateLimitResponse: RateLimitResponse {
+    override class var retryAfter: String { "86400" }
+}
+
+private class RateLimitResponse: URLProtocol {
     static let body = Data("Rate limit reached".utf8)
+    class var retryAfter: String { "60" }
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     override func startLoading() {
         let response = HTTPURLResponse(url: request.url!, statusCode: 429, httpVersion: nil,
-                                       headerFields: ["Retry-After": "60"])!
+                                       headerFields: ["Retry-After": type(of: self).retryAfter])!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: Self.body)
         client?.urlProtocolDidFinishLoading(self)

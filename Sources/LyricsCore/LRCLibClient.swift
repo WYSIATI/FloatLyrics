@@ -6,20 +6,27 @@ public protocol LyricsTransport: Sendable {
 }
 
 public actor NetworkTransport: LyricsTransport {
+    /// Longest pause, in seconds, accepted from a Retry-After header.
+    public static let maximumRetryAfter = 300
     private let session: URLSession
+    private let now: @Sendable () -> Date
     private var retryAfter = Date.distantPast
 
-    public init(session: URLSession = .shared) { self.session = session }
+    public init(session: URLSession = .shared, now: @escaping @Sendable () -> Date = { Date.now }) {
+        self.session = session; self.now = now
+    }
 
     public func get(_ request: URLRequest) async throws -> (Data, Int) {
-        guard Date.now >= retryAfter else { return (Data(), 429) }
+        guard now() >= retryAfter else { return (Data(), 429) }
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { return (data, 0) }
         if http.statusCode == 429 {
             // LRCLIB sends Retry-After in seconds. Apply it to all tracks and manual refreshes.
-            let seconds = max(1, http.value(forHTTPHeaderField: "Retry-After").flatMap(Int.init) ?? 1)
+            // Cap it so one oversized value cannot block lookups until the app is relaunched.
+            let requested = http.value(forHTTPHeaderField: "Retry-After").flatMap(Int.init) ?? 1
+            let seconds = min(max(1, requested), Self.maximumRetryAfter)
             let delay = Double(seconds) * Double.random(in: 1...1.3)
-            retryAfter = max(retryAfter, Date.now.addingTimeInterval(delay))
+            retryAfter = max(retryAfter, now().addingTimeInterval(delay))
         }
         return (data, http.statusCode)
     }
