@@ -5,11 +5,23 @@ public protocol LyricsTransport: Sendable {
     func get(_ request: URLRequest) async throws -> (Data, Int)
 }
 
-public struct NetworkTransport: LyricsTransport {
-    public init() {}
+public actor NetworkTransport: LyricsTransport {
+    private let session: URLSession
+    private var retryAfter = Date.distantPast
+
+    public init(session: URLSession = .shared) { self.session = session }
+
     public func get(_ request: URLRequest) async throws -> (Data, Int) {
-        let (data, response) = try await URLSession.shared.data(for: request)
-        return (data, (response as? HTTPURLResponse)?.statusCode ?? 0)
+        guard Date.now >= retryAfter else { return (Data(), 429) }
+        let (data, response) = try await session.data(for: request)
+        guard let http = response as? HTTPURLResponse else { return (data, 0) }
+        if http.statusCode == 429 {
+            // LRCLIB sends Retry-After in seconds. Apply it to all tracks and manual refreshes.
+            let seconds = max(1, http.value(forHTTPHeaderField: "Retry-After").flatMap(Int.init) ?? 1)
+            let delay = Double(seconds) * Double.random(in: 1...1.3)
+            retryAfter = max(retryAfter, Date.now.addingTimeInterval(delay))
+        }
+        return (data, http.statusCode)
     }
 }
 
@@ -75,9 +87,12 @@ public actor LRCLibClient {
     private let transport: any LyricsTransport
     private let cacheDirectory: URL?
     private var memory: [String: Lyrics] = [:]
+    private let userAgent: String
 
     public init(transport: any LyricsTransport = NetworkTransport(), cacheDirectory: URL? = nil) {
         self.transport = transport; self.cacheDirectory = cacheDirectory
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "development"
+        userAgent = "FloatLyrics/\(version) (macOS; https://github.com/WYSIATI/FloatLyrics)"
     }
 
     public func fetch(_ track: Track, force: Bool = false) async throws -> Lyrics {
@@ -125,7 +140,7 @@ public actor LRCLibClient {
         components.queryItems = query
         var request = URLRequest(url: components.url!)
         request.timeoutInterval = 15
-        request.setValue("FloatLyrics (macOS; https://github.com/WYSIATI/FloatLyrics)", forHTTPHeaderField: "User-Agent")
+        request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         return try await transport.get(request)
     }

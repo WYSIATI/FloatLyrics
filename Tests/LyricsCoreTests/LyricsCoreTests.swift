@@ -64,6 +64,11 @@ final class LyricsCoreTests: XCTestCase {
         XCTAssertEqual(cached, lyrics)
         let count = await transport.count
         XCTAssertEqual(count, 2)
+        let requests = await transport.requests
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "development"
+        XCTAssertTrue(requests.allSatisfy {
+            $0.value(forHTTPHeaderField: "User-Agent") == "FloatLyrics/\(version) (macOS; https://github.com/WYSIATI/FloatLyrics)"
+        })
     }
     func testRateLimitDoesNotSearch() async throws {
         let transport = MockTransport(responses: [(Data(), 429)])
@@ -71,6 +76,19 @@ final class LyricsCoreTests: XCTestCase {
         catch { XCTAssertTrue(error.localizedDescription.contains("busy")) }
         let count = await transport.count
         XCTAssertEqual(count, 1)
+    }
+    func testRateLimitAppliesAcrossTrackLookups() async throws {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [RateLimitResponse.self]
+        let session = URLSession(configuration: configuration)
+        defer { session.invalidateAndCancel() }
+        let transport = NetworkTransport(session: session)
+        let first = try await transport.get(URLRequest(url: URL(string: "https://example.invalid/api/get?track=A")!))
+        XCTAssertEqual(first.1, 429)
+        XCTAssertEqual(first.0, RateLimitResponse.body)
+        let second = try await transport.get(URLRequest(url: URL(string: "https://example.invalid/api/get?track=B")!))
+        XCTAssertEqual(second.1, 429)
+        XCTAssertTrue(second.0.isEmpty, "A second HTTP request was sent during Retry-After.")
     }
     func testEmptyExactRecordFallsBackToUsableSearchResult() async throws {
         let empty = #"{"id":3,"trackName":"Cafe","artistName":"Artist","duration":200,"instrumental":false,"plainLyrics":"  ","syncedLyrics":"[00:00.00]"}"#
@@ -96,11 +114,26 @@ final class LyricsCoreTests: XCTestCase {
 }
 
 private actor MockTransport: LyricsTransport {
-    var count = 0
+    var requests: [URLRequest] = []
+    var count: Int { requests.count }
     let responses: [(Data, Int)]
     init(responses: [(Data, Int)]) { self.responses = responses }
     func get(_ request: URLRequest) async throws -> (Data, Int) {
-        defer { count += 1 }
+        defer { requests.append(request) }
         return responses[min(count, responses.count - 1)]
     }
+}
+
+private final class RateLimitResponse: URLProtocol {
+    static let body = Data("Rate limit reached".utf8)
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {
+        let response = HTTPURLResponse(url: request.url!, statusCode: 429, httpVersion: nil,
+                                       headerFields: ["Retry-After": "60"])!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: Self.body)
+        client?.urlProtocolDidFinishLoading(self)
+    }
+    override func stopLoading() {}
 }
