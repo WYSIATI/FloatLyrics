@@ -1,0 +1,18 @@
+{
+  "platform": "MAC_OS",
+  "bundleId": "app.floatlyrics.desktop",
+  "primaryCategory": "MUSIC",
+  "baseStorefront": "USA",
+  "requestedCustomerPriceUSD": "999.00",
+  "supportURL": "https://github.com/WYSIATI/FloatLyrics/blob/main/docs/app-store/support.md",
+  "privacyPolicyURL": "https://github.com/WYSIATI/FloatLyrics/blob/main/PRIVACY.md",
+  "localizations": {
+    "en-US": {
+      "name": "Float Lyrics",
+      "subtitle": "Synced lyrics on your desktop",
+      "promotionalText": "Keep the current line beside your work. Float Lyrics follows the song in a floating window or tucks a single line into your Mac’s notch.",
+      "description": "Catch the next line while you write, read or browse. Float Lyrics follows the song playing in the Spotify or Music desktop app on your Mac. When timed lyrics are available, the highlighted line moves with the music.\n\nPlace a small lyric window beside your work. Keep it on top, or let clicks pass through to the app underneath. For a quieter view, move the current line to your Mac’s notch. Click to expand it for song details. On a display without a notch, the line sits at the top edge.\n\nChoose the text color and background opacity separately for the window and the notch view. Adjust lyric timing for the current song, or record a keyboard shortcut to hide and show the words.\n\nPlay music in the desktop app on this Mac and allow Automation when prompted. Float Lyrics sends track details to LRCLIB to find lyrics and keeps a local cache. Coverage varies by recording. If only untimed lyrics are available, you can read them in the floating window.\n\nRequires macOS 14 or later. The interface is in English. No Float Lyrics account is needed.",
+      "keywords": "overlay,notch,floating,song,words,timed,playback,menubar,shortcut,music"
+    }
+  }
+}
