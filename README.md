@@ -5,7 +5,7 @@
 <h1 align="center">Float Lyrics</h1>
 
 <p align="center"><strong>Keep the words close.</strong><br>
-Live lyrics for Spotify and Apple Music, quietly beside your work.</p>
+Free Spotify and Apple Music lyrics for Mac, quietly beside your work.</p>
 
 <p align="center">
   <a href="https://github.com/WYSIATI/FloatLyrics/releases/latest/download/Float-Lyrics.dmg"><strong>Download for macOS →</strong></a>
@@ -14,11 +14,15 @@ Live lyrics for Spotify and Apple Music, quietly beside your work.</p>
 
 <p align="center"><sub>macOS 14+ &nbsp;·&nbsp; Apple Silicon & Intel &nbsp;·&nbsp; Free & open source</sub></p>
 
-![Float Lyrics — Keep the words close. Live lyrics for Spotify and Apple Music in a floating window or your Mac’s notch.](docs/images/social-preview-v2.png)
+[![Float Lyrics over the coastal photograph on the right-hand page of a field notebook. The text on the left is fully visible.](docs/app-store/screenshots/en-US/01-floating-window.png)](docs/app-store/screenshots/en-US/01-floating-window.png)
 
 Your song keeps playing. The current line follows along in a small floating
 window, or tucks into your Mac's notch. Stay with your work and catch the words
 with a glance.
+
+Float Lyrics is a native **macOS desktop lyrics app** for the **Spotify and
+Apple Music desktop players**. Follow synced lyrics in an always-on-top window
+or a compact notch island. No account is needed.
 
 | Beside your work | In your notch | Your own rhythm |
 | --- | --- | --- |
@@ -26,31 +30,13 @@ with a glance.
 
 ## Screenshots
 
-Native app captures with original demo text. Click an image for full resolution.
+Watch the lyric follow the playhead as it jumps forward and back in the [Mac preview](docs/app-store/preview/float-lyrics-mac-preview.mp4). The clip also shows the floating window above a field notebook, the notch view and the appearance controls.
 
-**Floating window** — the current lyric, song details and the options menu.
-
-<a href="docs/screenshots/floating-window.png"><img src="docs/screenshots/floating-window.png" width="640" alt="Float Lyrics floating window showing Desktop lyrics, the demo artist and Make the lyrics feel like yours, with the options menu at the top right."></a>
-
-**Dynamic Island** — a compact line at the screen edge; click to expand for song
-details and the controls to return to the window or collapse the island.
-
-<a href="docs/screenshots/island-compact.png"><img src="docs/screenshots/island-compact.png" width="640" alt="Compact Dynamic Island showing a single white demo lyric beneath the camera area."></a>
-
-<a href="docs/screenshots/island-expanded.png"><img src="docs/screenshots/island-expanded.png" width="640" alt="Expanded Dynamic Island showing the demo song, current lyric, Spotify status, return-to-window button, collapse button and options menu."></a>
-
-| Settings | Appearance |
+| Keep a line at the top of the screen | Adjust the lyric window |
 | --- | --- |
-| <a href="docs/screenshots/settings.png"><img src="docs/screenshots/settings.png" width="350" alt="Float Lyrics 1.4.2 Settings with Music player, Appearance, and Behavior and timing."></a> | <a href="docs/screenshots/appearance.png"><img src="docs/screenshots/appearance.png" width="350" alt="Appearance settings with separate Window and Island tabs, background opacity at 70 percent, lyric color swatches and More options."></a> |
+| [![Compact and expanded notch views of Float Lyrics.](docs/app-store/screenshots/en-US/02-notch.png)](docs/app-store/screenshots/en-US/02-notch.png) | [![Appearance set to 85 percent opacity and white text, beside the resulting dark lyric window.](docs/app-store/screenshots/en-US/03-appearance.png)](docs/app-store/screenshots/en-US/03-appearance.png) |
 
-The social card above is a composed brand illustration. These screenshots are
-captures of the app itself. [Capture notes and refresh instructions](docs/screenshots/README.md).
-
-**Shortcut settings in 1.5.1** — an opaque background with accepted combinations,
-recording instructions and clear conflict feedback. Rendered from the actual
-SwiftUI/AppKit Settings view during validation.
-
-<a href="docs/screenshots/settings-shortcuts.png"><img src="docs/screenshots/settings-shortcuts.png" width="350" alt="Float Lyrics 1.5.1 solid Settings panel with the shortcut recorder, Control Shift H and Command Shift H examples, cancellation and clearing instructions."></a>
+The images use Float Lyrics’ native interface and original demo lyrics. [App Store media review](docs/app-store/media.md) · [Original window captures and shortcut settings](docs/screenshots/README.md)
 
 ## Install
 
@@ -107,7 +93,8 @@ The menu bar restores access when lyrics are hidden or click through is enabled.
 
 Choose **••• → Hide Window** to put the floating window away. The menu-bar icon
 stays visible: choose **Show Window** to bring it back; the same item becomes
-**Hide Window** while it is visible. Hiding preserves your display mode.
+**Hide Window** while it is visible. In island mode the items are **Show Dynamic
+Island** and **Hide Dynamic Island**. Hiding preserves your display mode.
 
 To toggle lyrics while working in another app, open **Settings → Behavior &
 timing → Show / hide lyrics**, click **Record Shortcut**, and press your preferred
